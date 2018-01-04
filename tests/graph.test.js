@@ -63,14 +63,11 @@ describe('Test query execution', () => {
         expect(currentRequestOptions.qs.keyspace).toBe('testkeyspace');
     });
 
-    test('Executing a query sends infer in params', () => {
-        graph.execute(query);
-        expect(currentRequestOptions.qs.infer).toBe(true);
+    test('Executing a query with params has correctly merged parameters', () => {
+        const params = {infer: false, multi: true, txType: graph.txType.READ};
+        graph.execute(query, params);
+        expect(currentRequestOptions.qs.infer).toBeFalsy();
+        expect(currentRequestOptions.qs.multi).toBeTruthy();
+        expect(currentRequestOptions.qs.txType).toBe('READ');
     });
-
-    test('Executing a query sends materialise in params', () => {
-        graph.execute(query);
-        expect(currentRequestOptions.qs.materialise).toBe(false);
-    });
-    
 });

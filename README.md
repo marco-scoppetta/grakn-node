@@ -62,12 +62,18 @@ Constructor function that accepts two optional parameters:
 
 ---
 
-#### `execute(query, [infer, materialise])`
+#### `execute(query, [params])`
 
 It executes query against the running graph. It returns a Promise.
 
-It accepts two optional parameters:
-
-- **infer**: default is **true**. Determine if inference must be used for the current query.
-- **materialise**: default is **false**. Determine if inferred results must be persisted in the graph.
+- **params** is an object which contains optional parameters to apply to the current transaction:
+    - **infer**: Determine if inference must be used for the current query [default is **true**]. 
+    - **multi**: Allow multiple queries to be executed in one single request/transaction [default is **false**].
+    - **defineAllVars**: Define all anonymous variables in the query [default is **false**]. 
+            E.g. `match ($x,$y); get;` would also return the anonymous relationship variable.
+    - **loading**: Used to check if serialisation of results is needed. When set to `true`, the endpoint will not return a formatted response. [default is **false**]
+    - **txType**: Transaction type. The following are valid value: 
+        `graph.txType.WRITE` - Type of transaction that allows reading and writing on the graph. It also performs all the consistency checks and validations.  [This is the **default** value.]
+        `graph.txType.READ` - Type of transaction that only allows reading from the graph. It also performs all the consistency checks and validations.
+        `graph.txType.BATCH` - Type of transaction that allows reading and writing on the graph. It skips some consistency checks to allow faster writes to graph. Useful for for batch loading.
 ---
