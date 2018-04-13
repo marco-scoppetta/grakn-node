@@ -1,0 +1,59 @@
+Arguments: 
+  /usr/local/Cellar/node/8.9.2/bin/node /usr/local/Cellar/yarn/1.3.2/libexec/bin/yarn.js install
+
+PATH: 
+  /Users/marcoscoppetta/Downloads/google-cloud-sdk 2/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/marcoscoppetta/Downloads/google-cloud-sdk 2/bin
+
+Yarn version: 
+  1.3.2
+
+Node version: 
+  8.9.2
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "grakn",
+    "version": "0.1.1",
+    "graknVersion": "1.0.0",
+    "description": "Grakn Node.js Client",
+    "main": "src/GraknGraph.js",
+    "author": "Grakn Labs",
+    "license": "Apache License 2.0",
+    "homepage": "https://grakn.ai",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/graknlabs/grakn-node"
+    },
+    "scripts": {
+      "test": "./node_modules/.bin/cucumber.js --tags \"not @skip\"",
+      "unit-test": "./node_modules/jest/bin/jest.js"
+    },
+    "dependencies": {
+      "request": "^2.81.0",
+      "request-promise-native": "^1.0.4",
+      "grpc": "^1.0.0",
+    },
+    "devDependencies": {
+      "chai": "^4.1.2",
+      "cucumber": "^3.2.0",
+      "jest": "^21.0.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  SyntaxError: /Users/marcoscoppetta/Grakn/grakn-node/package.json: Unexpected token } in JSON at position 581
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.3.2/libexec/lib/cli.js:770:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.3.2/libexec/lib/cli.js:92:30)
+      at /usr/local/Cellar/yarn/1.3.2/libexec/lib/cli.js:103:13
+      at <anonymous>
