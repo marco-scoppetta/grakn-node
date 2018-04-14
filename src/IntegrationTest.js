@@ -1,7 +1,10 @@
-const GraknClient = require('./GraknClient');
+const GraknClient = require("./GraknClient");
 
+const client = new GraknClient("localhost:48555", "grakn", {
+  username: "cassandra",
+  password: "cassandra"
+});
 
-const client = new GraknClient();
-
-const tx = client.open();
-console.log('tx instantiated');
+client.execute("match $x; get;").then(() => {
+  console.log("yay");
+});

@@ -1,5 +1,4 @@
-
-const gc = require('../src/GraknClient');
+const gc = require("../src/GraknClient");
 
 // describe('Test Graph constructor', () => {
 //     test('Graph initialised with default values', () => {
@@ -17,11 +16,15 @@ const gc = require('../src/GraknClient');
 //         expect(graph.uri).toBe('http://www.nasa.gov');
 //     });
 // });
+const DEFAULT_URI = "localhost:48555";
+const DEFAULT_KEYSPACE = "grakn";
 
-describe('Test Client opening connection', () => {
-    test('GraknClient open request', () => {
-        let client = new gc();
-        client.open();
+describe("Test Client opening connection", () => {
+  test("GraknClient open request", () => {
+    let client = new gc(DEFAULT_URI, DEFAULT_KEYSPACE, {
+      username: "cassandra",
+      password: "cassandra"
     });
-
+    client.execute("match $x; get;");
+  });
 });
