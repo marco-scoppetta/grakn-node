@@ -42,9 +42,23 @@ const ConceptMethods = {
     const conceptMethod = new conceptMessages.ConceptMethod();
     const unitDelete = new conceptMessages.Unit();
     conceptMethod.setDelete(unitDelete);
-    runConceptMethodRequest.setId(this.conceptId);
+    runConceptMethodRequest.setId(this.id);
     runConceptMethodRequest.setConceptmethod(conceptMethod);
   }
+};
+
+const TypeMethods = {
+  getInstances: function() {}
+};
+
+const SchemaConceptMethods = {
+  getLabel: function() {},
+  setLabel: function() {},
+  isImplicit: function() {},
+  getSubConcepts: function() {},
+  getSuperConcepts: function() {},
+  getDirectSuperConcept: function() {},
+  setDirectSuperConcept: function() {}
 };
 
 function _buildState(conceptId, duplex) {
@@ -54,10 +68,18 @@ function _buildState(conceptId, duplex) {
   };
 }
 
+// Each new object gets created by composing all the methods of super types
+
 function AttributeType() {}
 
 function RelationshipType(conceptId, stream) {
-  return Object.create(ConceptMethods, _buildState(conceptId, stream));
+  // Compose methods of super types: Concept and Type
+  const methods = Object.assign(
+    ConceptMethods,
+    TypeMethods,
+    SchemaConceptMethods
+  );
+  return Object.create(methods, _buildState(conceptId, stream));
 }
 
 function EntityType() {}
