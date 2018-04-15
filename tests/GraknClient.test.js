@@ -25,6 +25,8 @@ describe("Test Client opening connection", () => {
       username: "cassandra",
       password: "cassandra"
     });
-    client.execute("match $x; get;");
+    client.execute("match $x; get;").then(result => {
+      console.log("done" + result);
+    });
   });
 });
