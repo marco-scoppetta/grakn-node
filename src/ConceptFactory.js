@@ -57,7 +57,7 @@ const TypeMethods = {
 const SchemaConceptMethods = {
   getLabel: function() {
     const getLabelMethod = MethodBuilder.getLabel(this.id);
-    this.communicator.send(getLabelMethod).then(resp => {
+    return this.communicator.send(getLabelMethod).then(resp => {
       return resp
         .getConceptresponse()
         .getLabel()
