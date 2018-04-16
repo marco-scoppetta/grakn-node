@@ -12,6 +12,7 @@ function GraknClient(uri, keyspace, credentials) {
   this.keyspace = keyspace;
   this.credentials = credentials;
   this.stream = null;
+  this.response = [];
   this.result = [];
 }
 

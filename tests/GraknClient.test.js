@@ -26,6 +26,14 @@ describe("Test Client opening connection", () => {
       password: "cassandra"
     });
     client.execute("match $x; get;").then(result => {
+      result.forEach(map => {
+        map.forEach((value, key) => {
+          value.delete();
+          if (value instanceof RelationshipType) {
+            console.log("c'e' una relazione type!!");
+          }
+        });
+      });
       console.log("done" + result);
     });
   });
