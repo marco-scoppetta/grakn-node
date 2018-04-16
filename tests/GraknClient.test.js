@@ -25,21 +25,19 @@ describe("Test Client opening connection", () => {
       username: "cassandra",
       password: "cassandra"
     });
-    client
-      .execute("match $x; get;")
-
-      .then(async result => {
-        if (!result) {
-          console.log("nigga say wha?!");
-        }
-        for (let map of result) {
-          for (let [key, value] of map) {
+    client.execute("match $x; get;").then(async result => {
+      for (let map of result) {
+        for (let [key, value] of map) {
+          if (value.isSchemaConcept()) {
             const label = await value.getLabel();
-            console.log("dio porco: " + label);
+            console.log("Label " + label);
+            const isImplicit = await value.isImplicit();
+            console.log("Is inferred: " + isImplicit);
           }
         }
+      }
 
-        console.log("done" + result);
-      });
+      console.log("done" + result);
+    });
   });
 });

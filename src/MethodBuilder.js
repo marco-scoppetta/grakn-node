@@ -25,4 +25,16 @@ function getLabel(conceptId) {
   return TxRequest;
 }
 
-module.exports = { delete: deleteConcept, getLabel };
+function isImplicit(conceptId) {
+  const TxRequest = new messages.TxRequest();
+  const runConceptMethodRequest = new messages.RunConceptMethod();
+  const conceptMethod = new conceptMessages.ConceptMethod();
+  const unitIsImplicit = new conceptMessages.Unit();
+  conceptMethod.setIsimplicit(unitIsImplicit);
+  runConceptMethodRequest.setId(conceptId);
+  runConceptMethodRequest.setConceptmethod(conceptMethod);
+  TxRequest.setRunconceptmethod(runConceptMethodRequest);
+  return TxRequest;
+}
+
+module.exports = { delete: deleteConcept, getLabel, isImplicit };

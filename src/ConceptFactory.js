@@ -1,4 +1,4 @@
-const MethodBuilder = require("./MethodBuilder");
+const SchemaConcept = require("./methods/SchemaConcept");
 
 function createConcept(grpcConcept, communicator) {
   switch (grpcConcept.getBasetype()) {
@@ -38,8 +38,7 @@ const ConceptMethods = function(baseType) {
   return {
     delete: function() {
       const deleteMethod = MethodBuilder.delete(this.id);
-      this.stream.write(deleteMethod);
-      return;
+      return this.communicator.send(deleteMethod);
     },
     getBaseType: function() {
       return baseType;
@@ -50,27 +49,6 @@ const ConceptMethods = function(baseType) {
 const TypeMethods = {
   getInstances: function() {},
   isType: function() {
-    return true;
-  }
-};
-
-const SchemaConceptMethods = {
-  getLabel: function() {
-    const getLabelMethod = MethodBuilder.getLabel(this.id);
-    return this.communicator.send(getLabelMethod).then(resp => {
-      return resp
-        .getConceptresponse()
-        .getLabel()
-        .getValue();
-    });
-  },
-  setLabel: function() {},
-  isImplicit: function() {},
-  getSubConcepts: function() {},
-  getSuperConcepts: function() {},
-  getDirectSuperConcept: function() {},
-  setDirectSuperConcept: function() {},
-  isSchemaConcept: function() {
     return true;
   }
 };
@@ -97,7 +75,7 @@ function RelationshipType(conceptId, communicator) {
   const methods = Object.assign(
     ConceptMethods("RELATIONSHIP_TYPE"),
     TypeMethods,
-    SchemaConceptMethods,
+    SchemaConcept.getMethods(),
     RelationshipTypeMethods
   );
   return Object.create(methods, _buildState(conceptId, communicator));
