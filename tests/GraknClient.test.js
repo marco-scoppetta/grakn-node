@@ -29,7 +29,7 @@ describe("Test Client opening connection", () => {
       for (let map of result) {
         for (let [key, value] of map) {
           const label = await value.getLabel();
-          console.log("dio porco");
+          console.log("dio porco: " + label);
         }
       }
 

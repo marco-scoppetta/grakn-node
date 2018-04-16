@@ -59,8 +59,10 @@ const SchemaConceptMethods = {
     const getLabelMethod = MethodBuilder.getLabel(this.id);
     this.stream.write(getLabelMethod);
     return this.response.pop().then(resp => {
-      console.log("Received Label response:");
-      console.log(resp);
+      return resp
+        .getConceptresponse()
+        .getLabel()
+        .getValue();
     });
   },
   setLabel: function() {},
