@@ -27,24 +27,22 @@ function executeQuery(query, stream) {
   stream.write(txRequest);
 }
 
-function openTx(duplex, keyspace, credentials) {
-  return new Promise((resolve, reject) => {
-    const openRequest = new messages.Open();
-    const txRequest = new messages.TxRequest();
-    const messageKeyspace = new messages.Keyspace();
-    messageKeyspace.setValue(keyspace);
+GraknClient.prototype._openTx = async function() {
+  const openRequest = new messages.Open();
+  const txRequest = new messages.TxRequest();
+  const messageKeyspace = new messages.Keyspace();
+  messageKeyspace.setValue(this.keyspace);
 
-    openRequest.setKeyspace(messageKeyspace);
-    openRequest.setTxtype(messages.TxType.WRITE);
-    openRequest.setUsername(credentials.username);
-    openRequest.setPassword(credentials.password);
-    txRequest.setOpen(openRequest);
+  openRequest.setKeyspace(messageKeyspace);
+  openRequest.setTxtype(messages.TxType.WRITE);
+  openRequest.setUsername(this.credentials.username);
+  openRequest.setPassword(this.credentials.password);
+  txRequest.setOpen(openRequest);
 
-    duplex.write(txRequest);
+  this.stream.write(txRequest);
 
-    this.response.pop().then(() => {});
-  });
-}
+  await this.response.pop();
+};
 
 GraknClient.prototype._setResponse = function(resp) {
   this.response.add(resp);
@@ -57,30 +55,28 @@ GraknClient.prototype._getResponse = function() {
   return this.response.pop();
 };
 
-GraknClient.prototype._executeQueryCb = function executeQueryCb(
-  resolve,
-  reject
-) {
-  this.response.pop().then(resp => {
-    if (resp.hasDone()) {
-      const currentResult = this.result;
-      this.result = [];
-      return resolve(currentResult);
-    } else if (resp.hasIteratorid()) {
-      const nr = new messages.Next();
-      nr.setIteratorid(resp.getIteratorid());
-      const tr = new messages.TxRequest();
-      tr.setNext(nr);
-      this.nextRequest = tr;
-      this._getNextResult();
-    } else if (resp.hasQueryresult()) {
-      this._parseResult(resp.getQueryresult());
-      this._getNextResult();
-    }
-  });
+GraknClient.prototype._executeQueryCb = async function executeQueryCb() {
+  const resp = await this.response.pop();
+  if (resp.hasDone()) {
+    const currentResult = this.result;
+    this.result = [];
+    return currentResult;
+  } else if (resp.hasIteratorid()) {
+    const nr = new messages.Next();
+    nr.setIteratorid(resp.getIteratorid());
+    const tr = new messages.TxRequest();
+    tr.setNext(nr);
+    this.nextRequest = tr;
+    this._getNextResult();
+    return await this._executeQueryCb();
+  } else if (resp.hasQueryresult()) {
+    this._parseResult(resp.getQueryresult());
+    this._getNextResult();
+    return await this._executeQueryCb();
+  }
 };
 
-GraknClient.prototype._getNextResult = function() {
+GraknClient.prototype._getNextResult = function(cb) {
   this.stream.write(this.nextRequest);
 };
 
@@ -102,17 +98,17 @@ GraknClient.prototype._parseResult = function(queryResult) {
   }
 };
 
-GraknClient.prototype._initStream = function() {
+GraknClient.prototype._initStream = async function() {
   this.stream = this.client.tx();
   this.stream.on("data", resp => {
     this.response.add(resp);
   });
 
-  duplex.on("end", () => {
+  this.stream.on("end", () => {
     console.log("Stream from server terminated.");
   });
 
-  duplex.on("error", err => {
+  this.stream.on("error", err => {
     console.log("BAD ERROR: " + err);
   });
 
@@ -123,21 +119,15 @@ GraknClient.prototype._initStream = function() {
   // call.on('status', () => {
   //     // do we need this callback?
   // })
-  return openTx(this.stream, this.keyspace, this.credentials);
+  await this._openTx(this.stream, this.keyspace, this.credentials);
 };
 
-GraknClient.prototype.execute = function execute(query) {
-  return new Promise((resolve, reject) => {
-    if (!this.stream) {
-      this._initStream().then(() => {
-        executeQuery(query, this.stream);
-        this._executeQueryCb(resolve, reject);
-      });
-    } else {
-      executeQuery(query, this.stream);
-      this._executeQueryCb(resolve, reject);
-    }
-  });
+GraknClient.prototype.execute = async function execute(query) {
+  if (!this.stream) {
+    await this._initStream();
+  }
+  executeQuery(query, this.stream);
+  return await this._executeQueryCb();
 };
 
 module.exports = GraknClient;
