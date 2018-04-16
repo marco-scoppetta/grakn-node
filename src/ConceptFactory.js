@@ -1,6 +1,6 @@
 const MethodBuilder = require("./MethodBuilder");
 
-function createConcept(grpcConcept, stream, response) {
+function createConcept(grpcConcept, communicator) {
   switch (grpcConcept.getBasetype()) {
     case 0:
       return new Entity();
@@ -15,7 +15,7 @@ function createConcept(grpcConcept, stream, response) {
       return new EntityType();
       break;
     case 4:
-      return new RelationshipType(grpcConcept.getId(), stream, response);
+      return new RelationshipType(grpcConcept.getId(), communicator);
       break;
     case 5:
       return new AttributeType();
@@ -57,8 +57,7 @@ const TypeMethods = {
 const SchemaConceptMethods = {
   getLabel: function() {
     const getLabelMethod = MethodBuilder.getLabel(this.id);
-    this.stream.write(getLabelMethod);
-    return this.response.pop().then(resp => {
+    this.communicator.send(getLabelMethod).then(resp => {
       return resp
         .getConceptresponse()
         .getLabel()
@@ -82,11 +81,10 @@ const RelationshipTypeMethods = {
   unsetRelatedRole: function() {}
 };
 
-function _buildState(conceptId, duplex, response) {
+function _buildState(conceptId, communicator) {
   return {
     id: { value: conceptId },
-    stream: { value: duplex },
-    response: { value: response }
+    communicator: { value: communicator }
   };
 }
 
@@ -94,7 +92,7 @@ function _buildState(conceptId, duplex, response) {
 
 function AttributeType() {}
 
-function RelationshipType(conceptId, stream, response) {
+function RelationshipType(conceptId, communicator) {
   // Compose methods of super types: Concept and Type
   const methods = Object.assign(
     ConceptMethods("RELATIONSHIP_TYPE"),
@@ -102,7 +100,7 @@ function RelationshipType(conceptId, stream, response) {
     SchemaConceptMethods,
     RelationshipTypeMethods
   );
-  return Object.create(methods, _buildState(conceptId, stream, response));
+  return Object.create(methods, _buildState(conceptId, communicator));
 }
 
 function EntityType() {}

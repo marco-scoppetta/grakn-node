@@ -25,15 +25,21 @@ describe("Test Client opening connection", () => {
       username: "cassandra",
       password: "cassandra"
     });
-    client.execute("match $x; get;").then(async result => {
-      for (let map of result) {
-        for (let [key, value] of map) {
-          const label = await value.getLabel();
-          console.log("dio porco: " + label);
-        }
-      }
+    client
+      .execute("match $x; get;")
 
-      console.log("done" + result);
-    });
+      .then(async result => {
+        if (!result) {
+          console.log("nigga say wha?!");
+        }
+        for (let map of result) {
+          for (let [key, value] of map) {
+            const label = await value.getLabel();
+            console.log("dio porco: " + label);
+          }
+        }
+
+        console.log("done" + result);
+      });
   });
 });
