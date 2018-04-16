@@ -25,15 +25,14 @@ describe("Test Client opening connection", () => {
       username: "cassandra",
       password: "cassandra"
     });
-    client.execute("match $x; get;").then(result => {
-      result.forEach(map => {
-        map.forEach((value, key) => {
-          value.delete();
-          if (value instanceof RelationshipType) {
-            console.log("c'e' una relazione type!!");
-          }
-        });
-      });
+    client.execute("match $x; get;").then(async result => {
+      for (let map of result) {
+        for (let [key, value] of map) {
+          const label = await value.getLabel();
+          console.log("dio porco");
+        }
+      }
+
       console.log("done" + result);
     });
   });

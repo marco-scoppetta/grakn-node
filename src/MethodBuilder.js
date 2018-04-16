@@ -13,4 +13,16 @@ function deleteConcept(conceptId) {
   return TxRequest;
 }
 
-module.exports = { delete: deleteConcept };
+function getLabel(conceptId) {
+  const TxRequest = new messages.TxRequest();
+  const runConceptMethodRequest = new messages.RunConceptMethod();
+  const conceptMethod = new conceptMessages.ConceptMethod();
+  const unitGetLabel = new conceptMessages.Unit();
+  conceptMethod.setGetlabel(unitGetLabel);
+  runConceptMethodRequest.setId(conceptId);
+  runConceptMethodRequest.setConceptmethod(conceptMethod);
+  TxRequest.setRunconceptmethod(runConceptMethodRequest);
+  return TxRequest;
+}
+
+module.exports = { delete: deleteConcept, getLabel };

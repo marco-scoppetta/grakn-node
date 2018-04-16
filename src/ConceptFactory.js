@@ -1,6 +1,6 @@
 const MethodBuilder = require("./MethodBuilder");
 
-function createConcept(grpcConcept, stream) {
+function createConcept(grpcConcept, stream, response) {
   switch (grpcConcept.getBasetype()) {
     case 0:
       return new Entity();
@@ -15,7 +15,7 @@ function createConcept(grpcConcept, stream) {
       return new EntityType();
       break;
     case 4:
-      return new RelationshipType(grpcConcept.getId(), stream);
+      return new RelationshipType(grpcConcept.getId(), stream, response);
       break;
     case 5:
       return new AttributeType();
@@ -39,6 +39,7 @@ const ConceptMethods = function(baseType) {
     delete: function() {
       const deleteMethod = MethodBuilder.delete(this.id);
       this.stream.write(deleteMethod);
+      return;
     },
     getBaseType: function() {
       return baseType;
@@ -54,7 +55,14 @@ const TypeMethods = {
 };
 
 const SchemaConceptMethods = {
-  getLabel: function() {},
+  getLabel: function() {
+    const getLabelMethod = MethodBuilder.getLabel(this.id);
+    this.stream.write(getLabelMethod);
+    return this.response.pop().then(resp => {
+      console.log("Received Label response:");
+      console.log(resp);
+    });
+  },
   setLabel: function() {},
   isImplicit: function() {},
   getSubConcepts: function() {},
@@ -72,10 +80,11 @@ const RelationshipTypeMethods = {
   unsetRelatedRole: function() {}
 };
 
-function _buildState(conceptId, duplex) {
+function _buildState(conceptId, duplex, response) {
   return {
     id: { value: conceptId },
-    stream: { value: duplex }
+    stream: { value: duplex },
+    response: { value: response }
   };
 }
 
@@ -83,7 +92,7 @@ function _buildState(conceptId, duplex) {
 
 function AttributeType() {}
 
-function RelationshipType(conceptId, stream) {
+function RelationshipType(conceptId, stream, response) {
   // Compose methods of super types: Concept and Type
   const methods = Object.assign(
     ConceptMethods("RELATIONSHIP_TYPE"),
@@ -91,7 +100,7 @@ function RelationshipType(conceptId, stream) {
     SchemaConceptMethods,
     RelationshipTypeMethods
   );
-  return Object.create(methods, _buildState(conceptId, stream));
+  return Object.create(methods, _buildState(conceptId, stream, response));
 }
 
 function EntityType() {}

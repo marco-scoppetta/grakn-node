@@ -5,6 +5,12 @@ const client = new GraknClient("localhost:48555", "grakn", {
   password: "cassandra"
 });
 
-client.execute("match $x; get;").then(() => {
-  console.log("yay");
+client.execute("match $x; get;").then(result => {
+  result.forEach(map => {
+    map.forEach((value, key) => {
+      value.getLabel().then(resp => {
+        console.log(resp);
+      });
+    });
+  });
 });

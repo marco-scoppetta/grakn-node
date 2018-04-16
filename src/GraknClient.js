@@ -81,19 +81,20 @@ GraknClient.prototype._getNextResult = function(cb) {
 };
 
 GraknClient.prototype._parseResult = function(queryResult) {
-  const prova = conceptMessages.BaseType.RelationshipType;
   if (queryResult.hasOtherresult()) {
     // compute or aggregate query
     this.result = JSON.parse(queryResult.getOtherresult());
   } else {
-    const grpcMap = queryResult.getAnswer().getAnswerMap();
     const answerMap = new Map();
-    grpcMap.forEach((grpcConcenpt, key) => {
-      answerMap.set(
-        key,
-        ConceptFactory.createConcept(grpcConcenpt, this.stream)
-      );
-    });
+    queryResult
+      .getAnswer()
+      .getAnswerMap()
+      .forEach((grpcConcenpt, key) => {
+        answerMap.set(
+          key,
+          ConceptFactory.createConcept(grpcConcenpt, this.stream, this.response)
+        );
+      });
     this.result.push(answerMap);
   }
 };
