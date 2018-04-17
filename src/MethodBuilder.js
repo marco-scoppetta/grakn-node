@@ -5,8 +5,8 @@ function deleteConcept(conceptId) {
   const TxRequest = new messages.TxRequest();
   const runConceptMethodRequest = new messages.RunConceptMethod();
   const conceptMethod = new conceptMessages.ConceptMethod();
-  const unitDelete = new conceptMessages.Unit();
-  conceptMethod.setDelete(unitDelete);
+  const unit = new conceptMessages.Unit();
+  conceptMethod.setDelete(unit);
   runConceptMethodRequest.setId(conceptId);
   runConceptMethodRequest.setConceptmethod(conceptMethod);
   TxRequest.setRunconceptmethod(runConceptMethodRequest);
@@ -17,8 +17,8 @@ function getLabel(conceptId) {
   const TxRequest = new messages.TxRequest();
   const runConceptMethodRequest = new messages.RunConceptMethod();
   const conceptMethod = new conceptMessages.ConceptMethod();
-  const unitGetLabel = new conceptMessages.Unit();
-  conceptMethod.setGetlabel(unitGetLabel);
+  const unit = new conceptMessages.Unit();
+  conceptMethod.setGetlabel(unit);
   runConceptMethodRequest.setId(conceptId);
   runConceptMethodRequest.setConceptmethod(conceptMethod);
   TxRequest.setRunconceptmethod(runConceptMethodRequest);
@@ -29,8 +29,20 @@ function isImplicit(conceptId) {
   const TxRequest = new messages.TxRequest();
   const runConceptMethodRequest = new messages.RunConceptMethod();
   const conceptMethod = new conceptMessages.ConceptMethod();
-  const unitIsImplicit = new conceptMessages.Unit();
-  conceptMethod.setIsimplicit(unitIsImplicit);
+  const unit = new conceptMessages.Unit();
+  conceptMethod.setIsimplicit(unit);
+  runConceptMethodRequest.setId(conceptId);
+  runConceptMethodRequest.setConceptmethod(conceptMethod);
+  TxRequest.setRunconceptmethod(runConceptMethodRequest);
+  return TxRequest;
+}
+
+function getRelatedRoles() {
+  const TxRequest = new messages.TxRequest();
+  const runConceptMethodRequest = new messages.RunConceptMethod();
+  const conceptMethod = new conceptMessages.ConceptMethod();
+  const unit = new conceptMessages.Unit();
+  conceptMethod.setGetrelatedroles(unit);
   runConceptMethodRequest.setId(conceptId);
   runConceptMethodRequest.setConceptmethod(conceptMethod);
   TxRequest.setRunconceptmethod(runConceptMethodRequest);

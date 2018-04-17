@@ -28,11 +28,13 @@ describe("Test Client opening connection", () => {
     client.execute("match $x; get;").then(async result => {
       for (let map of result) {
         for (let [key, value] of map) {
-          if (value.isSchemaConcept()) {
+          if (value.getBaseType() === "RELATIONSHIP_TYPE") {
             const label = await value.getLabel();
-            console.log("Label " + label);
+            expect(label).toBe("relationship");
             const isImplicit = await value.isImplicit();
-            console.log("Is inferred: " + isImplicit);
+            expect(isImplicit).toBeFalsy();
+            const roles = await value.getRelatedRoles();
+            console.log("Here are the roles" + roles);
           }
         }
       }
