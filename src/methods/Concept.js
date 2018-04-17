@@ -1,4 +1,4 @@
-const MethodBuilder = require("../MethodBuilder");
+const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = function(baseType) {
   return {
@@ -13,7 +13,7 @@ const methods = function(baseType) {
 };
 
 module.exports = {
-  getMethods: function(baseType) {
+  get: function(baseType) {
     return methods(baseType);
   }
 };

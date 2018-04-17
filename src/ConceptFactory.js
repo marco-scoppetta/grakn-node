@@ -1,7 +1,14 @@
-const SchemaConcept = require("./methods/SchemaConcept");
-const RelationshipType = require("./methods/RelationshipType");
-const Concept = require("./methods/Concept");
-const Type = require("./methods/Type");
+const SchemaConceptMethods = require("./methods/SchemaConcept");
+const RelationshipTypeMethods = require("./methods/RelationshipType");
+const ConceptMethods = require("./methods/Concept");
+const TypeMethods = require("./methods/Type");
+const ThingMethods = require("./methods/Thing");
+const AttributeMethods = require("./methods/Attribute");
+const RelationshipMethods = require("./methods/Relationship");
+const RuleMethods = require("./methods/Rule");
+const RoleMethods = require("./methods/Role");
+const AttributeTypeMethods = require("./methods/AttributeType");
+const EntityTypeMethods = require("./methods/EntityType");
 
 function createConcept(grpcConcept, communicator) {
   const conceptId = grpcConcept.getId();
@@ -50,56 +57,81 @@ function _buildState(conceptId, communicator) {
 function AttributeType(conceptId, communicator) {
   // Compose methods of super types: Concept , SchemaConcept andType
   const methods = Object.assign(
-    Concept.getMethods("ATTRIBUTE_TYPE"),
-    Type.getMethods(),
-    SchemaConcept.getMethods()
+    ConceptMethods.get("ATTRIBUTE_TYPE"),
+    TypeMethods.get(),
+    SchemaConceptMethods.get(),
+    AttributeTypeMethods.get()
   );
   return Object.create(methods, _buildState(conceptId, communicator));
 }
 
 function RelationshipType(conceptId, communicator) {
   const methods = Object.assign(
-    Concept.getMethods("RELATIONSHIP_TYPE"),
-    SchemaConcept.getMethods(),
-    Type.getMethods(),
-    RelationshipType.getMethods()
+    ConceptMethods.get("RELATIONSHIP_TYPE"),
+    SchemaConceptMethods.get(),
+    TypeMethods.get(),
+    RelationshipTypeMethods.get()
   );
   return Object.create(methods, _buildState(conceptId, communicator));
 }
 
 function EntityType(conceptId, communicator) {
   const methods = Object.assign(
-    Concept.getMethods("ENTITY_TYPE"),
-    SchemaConcept.getMethods(),
-    Type.getMethods()
+    ConceptMethods.get("ENTITY_TYPE"),
+    SchemaConceptMethods.get(),
+    TypeMethods.get(),
+    EntityTypeMethods.get()
   );
   return Object.create(methods, _buildState(conceptId, communicator));
 }
 
-function Relationship(conceptId, communicator) {}
+function Relationship(conceptId, communicator) {
+  const methods = Object.assign(
+    ConceptMethods.get("RELATIONSHIP"),
+    ThingMethods.get(),
+    RelationshipMethods.get()
+  );
+  return Object.create(methods, _buildState(conceptId, communicator));
+}
 
-function Attribute(conceptId, communicator) {}
+function Attribute(conceptId, communicator) {
+  const methods = Object.assign(
+    ConceptMethods.get("ATTRIBUTE"),
+    ThingMethods.get(),
+    AttributeMethods.get()
+  );
+  return Object.create(methods, _buildState(conceptId, communicator));
+}
 
-function Entity(conceptId, communicator) {}
+function Entity(conceptId, communicator) {
+  const methods = Object.assign(
+    ConceptMethods.get("ENTITY"),
+    ThingMethods.get()
+    // There are no specific methods for Entity instance
+  );
+  return Object.create(methods, _buildState(conceptId, communicator));
+}
 
 function Role(conceptId, communicator) {
   const methods = Object.assign(
-    Concept.getMethods("ROLE"),
-    SchemaConcept.getMethods()
+    ConceptMethods.get("ROLE"),
+    SchemaConceptMethods.get(),
+    RoleMethods.get()
   );
   return Object.create(methods, _buildState(conceptId, communicator));
 }
 
 function Rule(conceptId, communicator) {
   const methods = Object.assign(
-    ConceptMethods("RULE"),
-    SchemaConcept.getMethods()
+    ConceptMethods.get("RULE"),
+    SchemaConceptMethods.get(),
+    RuleMethods.get()
   );
   return Object.create(methods, _buildState(conceptId, communicator));
 }
 
 function MetaType(conceptId, communicator) {
-  const methods = ConceptMethods("THING");
+  const methods = ConceptMethods.get("THING");
   return Object.create(methods, _buildState(conceptId, communicator));
 }
 

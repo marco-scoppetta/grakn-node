@@ -1,11 +1,11 @@
-const MethodBuilder = require("../MethodBuilder");
+const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
   addEntity: function() {}
 };
 
 module.exports = {
-  getMethods: function() {
+  get: function() {
     return methods;
   }
 };

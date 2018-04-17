@@ -21,7 +21,7 @@ AsyncBlockingQueue.prototype.pop = function() {
   if (!this.promises.length) this._addPromise();
   return this.promises.shift();
 };
-// now some utilities:
+// Utilities:
 AsyncBlockingQueue.prototype.isEmpty = function() {
   // there are no values available
   return !this.promises.length; // this.length == 0
