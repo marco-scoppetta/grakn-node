@@ -22,3 +22,5 @@ function _buildNextRequest(iteratorId) {
   tr.setNext(nr);
   return tr;
 }
+
+module.exports = GrpcIterator;

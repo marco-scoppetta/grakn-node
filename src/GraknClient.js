@@ -13,18 +13,52 @@ function GraknClient(uri, keyspace, credentials) {
   this.keyspace = keyspace;
   this.credentials = credentials;
   this.communicator = null;
-  this.result = [];
 }
 
 GraknClient.prototype._executeQuery = async function executeQuery(query) {
+  this.result = [];
   const txRequest = new messages.TxRequest();
   const executeQuery = new messages.ExecQuery();
   const queryRequest = new messages.Query();
   queryRequest.setValue(query);
   executeQuery.setQuery(queryRequest);
   txRequest.setExecquery(executeQuery);
-  const result = await this.communicator.send(txRequest);
-  return await this._executeQueryCb(result);
+  return await this.communicator
+    .send(txRequest)
+    .then(resp => this._parseResponse(resp));
+};
+
+GraknClient.prototype._parseResponse = async function parseResponse(resp) {
+  if (resp.hasDone()) return [];
+  if (resp.hasIteratorid()) {
+    const iterator = new GrpcIterator(resp.getIteratorid(), this.communicator);
+    const executeQueryResult = [];
+    let nextResult = await iterator.nextResult();
+    while (nextResult) {
+      executeQueryResult.push(this._parseResult(nextResult));
+      nextResult = await iterator.nextResult();
+    }
+    return executeQueryResult;
+  }
+};
+
+GraknClient.prototype._parseResult = function parseResult(queryResult) {
+  if (queryResult.hasOtherresult()) {
+    // compute or aggregate query
+    this.result = JSON.parse(queryResult.getOtherresult());
+  } else {
+    const answerMap = new Map();
+    queryResult
+      .getAnswer()
+      .getAnswerMap()
+      .forEach((grpcConcenpt, key) => {
+        answerMap.set(
+          key,
+          ConceptFactory.createConcept(grpcConcenpt, this.communicator)
+        );
+      });
+    return answerMap;
+  }
 };
 
 GraknClient.prototype._openTx = async function() {
@@ -42,55 +76,20 @@ GraknClient.prototype._openTx = async function() {
   await this.communicator.send(txRequest);
 };
 
-GraknClient.prototype._executeQueryCb = async function executeQueryCb(resp) {
-  if (resp.hasDone()) {
-    const currentResult = this.result;
-    this.result = [];
-    return currentResult;
-  } else if (resp.hasIteratorid()) {
-    const iterator = new GrpcIterator(resp.getIteratorid());
-    const nextResult = await iterator.next();
-    return await this._executeQueryCb(nextResult);
-  } else if (resp.hasQueryresult()) {
-    this._parseResult(resp.getQueryresult());
-    const nextResult = await this._getNextResult();
-    return await this._executeQueryCb(nextResult);
-  }
-};
-
-GraknClient.prototype._getNextResult = async function(cb) {
-  return await this.communicator.send(this.nextRequest);
-};
-
-GraknClient.prototype._parseResult = function(queryResult) {
-  if (queryResult.hasOtherresult()) {
-    // compute or aggregate query
-    this.result = JSON.parse(queryResult.getOtherresult());
-  } else {
-    const answerMap = new Map();
-    queryResult
-      .getAnswer()
-      .getAnswerMap()
-      .forEach((grpcConcenpt, key) => {
-        answerMap.set(
-          key,
-          ConceptFactory.createConcept(grpcConcenpt, this.communicator)
-        );
-      });
-    this.result.push(answerMap);
-  }
-};
-
 GraknClient.prototype._init = async function() {
   this.communicator = new GrpcCommunicator(this.client.tx());
   await this._openTx();
 };
 
 GraknClient.prototype.execute = async function execute(query) {
-  if (!this.communicator) {
-    await this._init();
+  try {
+    if (!this.communicator) {
+      await this._init();
+    }
+    return await this._executeQuery(query);
+  } catch (e) {
+    console.error(e);
   }
-  return await this._executeQuery(query);
 };
 
 module.exports = GraknClient;

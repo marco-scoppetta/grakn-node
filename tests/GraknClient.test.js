@@ -9,6 +9,7 @@ describe("Test Client opening connection", () => {
       password: "cassandra"
     });
     client.execute("match $x; get;").then(async result => {
+      expect(result.length).toBe(6);
       for (let map of result) {
         for (let [key, value] of map) {
           if (value.getBaseType() === "RELATIONSHIP_TYPE") {

@@ -27,12 +27,7 @@ function GrpcCommunicator(stream) {
 
 GrpcCommunicator.prototype.send = async function(request) {
   this.stream.write(request);
-  try {
-    const newresponse = await this.response.pop();
-    return newresponse;
-  } catch (e) {
-    console.error(e);
-  }
+  return await this.response.pop();
 };
 
 module.exports = GrpcCommunicator;
