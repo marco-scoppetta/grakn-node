@@ -31,7 +31,7 @@ GrpcCommunicator.prototype.send = async function(request) {
     const newresponse = await this.response.pop();
     return newresponse;
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
