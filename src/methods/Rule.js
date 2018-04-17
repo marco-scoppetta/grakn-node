@@ -2,8 +2,7 @@ const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
   getWhen: function() {},
-  getThen: function() {},
-  isType: () => false
+  getThen: function() {}
 };
 
 module.exports = {

@@ -2,8 +2,7 @@ const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
   getRelationshipTypesThatRelateRole: function() {},
-  getTypesThatPlayRole: function() {},
-  isType: () => false
+  getTypesThatPlayRole: function() {}
 };
 
 module.exports = {

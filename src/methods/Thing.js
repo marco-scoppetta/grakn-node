@@ -11,10 +11,7 @@ const methods = {
   getKeys: function() {},
   getKeysByTypes: function() {},
   setAttribute: function() {},
-  unsetAttribute: function() {},
-  isType: () => false,
-  isThing: () => true,
-  isSchemaConcept: () => false
+  unsetAttribute: function() {}
 };
 
 module.exports = {

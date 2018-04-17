@@ -1,8 +1,7 @@
 const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
-  getInstances: function() {},
-  isType: () => true
+  getInstances: function() {}
 };
 
 module.exports = {

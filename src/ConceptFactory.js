@@ -57,7 +57,7 @@ function _buildState(conceptId, communicator) {
 function AttributeType(conceptId, communicator) {
   // Compose methods of super types: Concept , SchemaConcept andType
   const methods = Object.assign(
-    ConceptMethods.get("ATTRIBUTE_TYPE"),
+    ConceptMethods.get(ConceptMethods.THING),
     TypeMethods.get(),
     SchemaConceptMethods.get(),
     AttributeTypeMethods.get()
@@ -67,7 +67,7 @@ function AttributeType(conceptId, communicator) {
 
 function RelationshipType(conceptId, communicator) {
   const methods = Object.assign(
-    ConceptMethods.get("RELATIONSHIP_TYPE"),
+    ConceptMethods.get(ConceptMethods.RELATIONSHIP_TYPE),
     SchemaConceptMethods.get(),
     TypeMethods.get(),
     RelationshipTypeMethods.get()
@@ -77,7 +77,7 @@ function RelationshipType(conceptId, communicator) {
 
 function EntityType(conceptId, communicator) {
   const methods = Object.assign(
-    ConceptMethods.get("ENTITY_TYPE"),
+    ConceptMethods.get(ConceptMethods.ENTITY_TYPE),
     SchemaConceptMethods.get(),
     TypeMethods.get(),
     EntityTypeMethods.get()
@@ -87,7 +87,7 @@ function EntityType(conceptId, communicator) {
 
 function Relationship(conceptId, communicator) {
   const methods = Object.assign(
-    ConceptMethods.get("RELATIONSHIP"),
+    ConceptMethods.get(ConceptMethods.RELATIONSHIP),
     ThingMethods.get(),
     RelationshipMethods.get()
   );
@@ -96,7 +96,7 @@ function Relationship(conceptId, communicator) {
 
 function Attribute(conceptId, communicator) {
   const methods = Object.assign(
-    ConceptMethods.get("ATTRIBUTE"),
+    ConceptMethods.get(ConceptMethods.ATTRIBUTE),
     ThingMethods.get(),
     AttributeMethods.get()
   );
@@ -105,7 +105,7 @@ function Attribute(conceptId, communicator) {
 
 function Entity(conceptId, communicator) {
   const methods = Object.assign(
-    ConceptMethods.get("ENTITY"),
+    ConceptMethods.get(ConceptMethods.ENTITY),
     ThingMethods.get()
     // There are no specific methods for Entity instance
   );
@@ -114,7 +114,7 @@ function Entity(conceptId, communicator) {
 
 function Role(conceptId, communicator) {
   const methods = Object.assign(
-    ConceptMethods.get("ROLE"),
+    ConceptMethods.get(ConceptMethods.ROLE),
     SchemaConceptMethods.get(),
     RoleMethods.get()
   );
@@ -123,7 +123,7 @@ function Role(conceptId, communicator) {
 
 function Rule(conceptId, communicator) {
   const methods = Object.assign(
-    ConceptMethods.get("RULE"),
+    ConceptMethods.get(ConceptMethods.RULE),
     SchemaConceptMethods.get(),
     RuleMethods.get()
   );
@@ -131,7 +131,7 @@ function Rule(conceptId, communicator) {
 }
 
 function MetaType(conceptId, communicator) {
-  const methods = ConceptMethods.get("THING");
+  const methods = ConceptMethods.get(ConceptMethods.THING);
   return Object.create(methods, _buildState(conceptId, communicator));
 }
 

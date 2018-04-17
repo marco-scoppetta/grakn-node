@@ -20,9 +20,7 @@ const methods = {
   getSubConcepts: function() {},
   getSuperConcepts: function() {},
   getDirectSuperConcept: function() {},
-  setDirectSuperConcept: function() {},
-  isSchemaConcept: () => true,
-  isThing: () => false
+  setDirectSuperConcept: function() {}
 };
 
 module.exports = {

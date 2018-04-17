@@ -14,6 +14,12 @@ describe("Test Client opening connection", () => {
         for (let [key, value] of map) {
           if (value.getBaseType() === "RELATIONSHIP_TYPE") {
             const label = await value.getLabel();
+            expect(value.isRelationship()).toBeTruthy();
+            expect(value.isType()).toBeTruthy();
+            expect(value.isSchemaConcept()).toBeTruthy();
+            expect(value.isThing()).toBeFalsy();
+            expect(value.isAttributeType()).toBeFalsy();
+            expect(value.isEntityType()).toBeFalsy();
             expect(label).toBe("relationship");
             const isImplicit = await value.isImplicit();
             expect(isImplicit).toBeFalsy();
