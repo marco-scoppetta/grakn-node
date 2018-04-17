@@ -17,6 +17,7 @@ describe("Test Client opening connection", () => {
             expect(label).toBe("relationship");
             const isImplicit = await value.isImplicit();
             expect(isImplicit).toBeFalsy();
+            const pene = await value.getRelatedRoles();
             // const roles = await value.getRelatedRoles();
             // console.log("Here are the roles" + roles);
           }

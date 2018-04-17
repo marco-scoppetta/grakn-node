@@ -51,4 +51,9 @@ function getRelatedRoles(conceptId) {
   return TxRequest;
 }
 
-module.exports = { delete: deleteConcept, getLabel, isImplicit };
+module.exports = {
+  delete: deleteConcept,
+  getLabel,
+  isImplicit,
+  getRelatedRoles
+};

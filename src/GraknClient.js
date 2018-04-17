@@ -31,7 +31,10 @@ GraknClient.prototype._executeQuery = async function executeQuery(query) {
 GraknClient.prototype._parseResponse = async function parseResponse(resp) {
   if (resp.hasDone()) return [];
   if (resp.hasIteratorid()) {
-    const iterator = new GrpcIterator(resp.getIteratorid(), this.communicator);
+    const iterator = new GrpcIterator.GrpcQueryIterator(
+      resp.getIteratorid(),
+      this.communicator
+    );
     const executeQueryResult = [];
     let nextResult = await iterator.nextResult();
     while (nextResult) {
