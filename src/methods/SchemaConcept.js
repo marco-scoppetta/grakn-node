@@ -21,9 +21,8 @@ const methods = {
   getSuperConcepts: function() {},
   getDirectSuperConcept: function() {},
   setDirectSuperConcept: function() {},
-  isSchemaConcept: function() {
-    return true;
-  }
+  isSchemaConcept: () => true,
+  isThing: () => false
 };
 
 module.exports = {
