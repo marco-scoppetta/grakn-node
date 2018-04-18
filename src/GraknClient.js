@@ -12,7 +12,11 @@ function GraknClient(uri, keyspace, credentials) {
   );
   this.keyspace = keyspace;
   this.credentials = credentials;
-  this.communicator = null;
+  try {
+    this.communicator = null;
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 GraknClient.prototype._executeQuery = async function executeQuery(query) {
@@ -64,7 +68,7 @@ GraknClient.prototype._parseResult = function parseResult(queryResult) {
   }
 };
 
-GraknClient.prototype._openTx = async function() {
+GraknClient.prototype._openTx = async function () {
   const openRequest = new messages.Open();
   const txRequest = new messages.TxRequest();
   const messageKeyspace = new messages.Keyspace();
@@ -76,12 +80,18 @@ GraknClient.prototype._openTx = async function() {
   openRequest.setPassword(this.credentials.password);
   txRequest.setOpen(openRequest);
 
-  await this.communicator.send(txRequest);
+  await this.communicator.send(txRequest)
+    .catch((e) => {
+      throw e;
+    });
 };
 
-GraknClient.prototype._init = async function() {
+GraknClient.prototype._init = async function () {
   this.communicator = new GrpcCommunicator(this.client.tx());
-  await this._openTx();
+  await this._openTx()
+    .catch((e) => {
+      throw e;
+    });
 };
 
 GraknClient.prototype.execute = async function execute(query) {
@@ -91,7 +101,7 @@ GraknClient.prototype.execute = async function execute(query) {
     }
     return await this._executeQuery(query);
   } catch (e) {
-    console.error(e);
+    throw e;
   }
 };
 

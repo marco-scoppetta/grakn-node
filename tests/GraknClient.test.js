@@ -6,7 +6,7 @@ describe("Test Client opening connection", () => {
   test("GraknClient open request", () => {
     let client = new gc(DEFAULT_URI, DEFAULT_KEYSPACE, {
       username: "cassandra",
-      password: "cassandra"
+      password: "pene"
     });
     client.execute("match $x; get;").then(async result => {
       expect(result.length).toBe(6);
@@ -29,6 +29,8 @@ describe("Test Client opening connection", () => {
           }
         }
       }
+    }).catch((err) => {
+      console.log(err);
     });
   });
 });
