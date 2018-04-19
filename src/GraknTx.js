@@ -30,18 +30,6 @@ GraknTx.prototype._openTx = async function () {
         });
 };
 
-GraknTx.prototype.open = async function () {
-    if (this._isOpen) throw "Transaction already open.";
-    if (!this.communicator) {
-        this.communicator = new GrpcCommunicator(this.client.tx());
-    }
-    await this._openTx()
-        .then(() => { this._isOpen = true; })
-        .catch((e) => {
-            throw e;
-        });
-};
-
 GraknTx.prototype._parseResponse = async function parseResponse(resp) {
     if (resp.hasDone()) return [];
     if (resp.hasIteratorid()) {
@@ -89,6 +77,18 @@ GraknTx.prototype.execute = async function executeQuery(query) {
     return await this.communicator
         .send(txRequest)
         .then(resp => this._parseResponse(resp))
+        .catch((e) => {
+            throw e;
+        });
+};
+
+GraknTx.prototype.open = async function () {
+    if (this._isOpen) throw "Transaction is already open.";
+    if (!this.communicator) {
+        this.communicator = new GrpcCommunicator(this.client.tx());
+    }
+    await this._openTx()
+        .then(() => { this._isOpen = true; })
         .catch((e) => {
             throw e;
         });

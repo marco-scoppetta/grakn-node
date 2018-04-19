@@ -10,6 +10,7 @@ const RoleMethods = require("./methods/Role");
 const AttributeTypeMethods = require("./methods/AttributeType");
 const EntityTypeMethods = require("./methods/EntityType");
 
+
 function createConcept(grpcConcept, communicator) {
   const conceptId = grpcConcept.getId();
   switch (grpcConcept.getBasetype()) {
