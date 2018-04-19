@@ -95,6 +95,10 @@ test("GraknClient open request", async () => {
     for (let [key, value] of map) {
       const inferred = await value.isInferred();
       console.log(inferred);
+      const relationships = await value.getRolesPlayedByThing();
+      relationships.forEach(rel => {
+        console.log(rel);
+      });
     }
   }
 

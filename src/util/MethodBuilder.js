@@ -63,10 +63,36 @@ function getRelatedRoles(conceptId) {
   return TxRequest;
 }
 
+function getRelationships(conceptId) {
+  const TxRequest = new messages.TxRequest();
+  const runConceptMethodRequest = new messages.RunConceptMethod();
+  const conceptMethod = new conceptMessages.ConceptMethod();
+  const unit = new conceptMessages.Unit();
+  conceptMethod.setGetrelationships(unit);
+  runConceptMethodRequest.setId(conceptId);
+  runConceptMethodRequest.setConceptmethod(conceptMethod);
+  TxRequest.setRunconceptmethod(runConceptMethodRequest);
+  return TxRequest;
+}
+
+function getRolesPlayedByThing(conceptId) {
+  const TxRequest = new messages.TxRequest();
+  const runConceptMethodRequest = new messages.RunConceptMethod();
+  const conceptMethod = new conceptMessages.ConceptMethod();
+  const unit = new conceptMessages.Unit();
+  conceptMethod.setGetrolesplayedbything(unit);
+  runConceptMethodRequest.setId(conceptId);
+  runConceptMethodRequest.setConceptmethod(conceptMethod);
+  TxRequest.setRunconceptmethod(runConceptMethodRequest);
+  return TxRequest;
+}
+
 module.exports = {
   delete: deleteConcept,
   getLabel,
   isImplicit,
   getRelatedRoles,
-  isInferred
+  isInferred,
+  getRelationships,
+  getRolesPlayedByThing
 };

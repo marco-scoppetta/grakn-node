@@ -91,7 +91,7 @@ function EntityType(conceptId, state) {
   return Object.create(methods, state);
 }
 
-function Relationship(conceptId, communicator) {
+function Relationship(conceptId, state) {
   const methods = Object.assign(
     ConceptMethods.get(ConceptMethods.RELATIONSHIP),
     ThingMethods.get(),
@@ -100,7 +100,7 @@ function Relationship(conceptId, communicator) {
   return Object.create(methods, state);
 }
 
-function Attribute(conceptId, communicator) {
+function Attribute(conceptId, state) {
   const methods = Object.assign(
     ConceptMethods.get(ConceptMethods.ATTRIBUTE),
     ThingMethods.get(),
