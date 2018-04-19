@@ -9,6 +9,7 @@ function GraknTx(client, keyspace, credentials) {
     this._isOpen = false;
     this.credentials = credentials;
     this.keyspace = keyspace;
+    this.conceptFactory = null;
 }
 
 GraknTx.prototype._openTx = async function () {
@@ -59,7 +60,7 @@ GraknTx.prototype._parseResult = function parseResult(queryResult) {
             .forEach((grpcConcenpt, key) => {
                 answerMap.set(
                     key,
-                    ConceptFactory.createConcept(grpcConcenpt, this.communicator)
+                    this.conceptFactory.createConcept(grpcConcenpt, this.communicator, this.conceptFactory)
                 );
             });
         return answerMap;
@@ -86,6 +87,7 @@ GraknTx.prototype.open = async function () {
     if (this._isOpen) throw "Transaction is already open.";
     if (!this.communicator) {
         this.communicator = new GrpcCommunicator(this.client.tx());
+        this.conceptFactory = new ConceptFactory(this.communicator);
     }
     await this._openTx()
         .then(() => { this._isOpen = true; })

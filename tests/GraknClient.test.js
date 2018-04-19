@@ -61,9 +61,13 @@ describe("Test Client opening Tx", () => {
             // expect(label).toBe("relationship");
             const isImplicit = await value.isImplicit();
             expect(isImplicit).toBeFalsy();
-            const pene = await value.getRelatedRoles();
+            const roles = await value.getRelatedRoles();
+            roles.forEach(async role => {
+              const aaa = await role.getLabel();
+              expect(role.isRole()).toBeTruthy();
+            })
             // const roles = await value.getRelatedRoles();
-            // console.log("Here are the roles" + roles);
+            console.log("Here are the roles" + roles);
           }
         }
       }
