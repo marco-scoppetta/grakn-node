@@ -20,15 +20,15 @@ const SCHEMA_CONCEPTS = new Set([
 
 const TYPES = new Set([ATTRIBUTE_TYPE, RELATIONSHIP_TYPE, ENTITY_TYPE]);
 
-const THINGS = new Set([ATTRIBUTE, RELATIONSHIP, ATTRIBUTE]);
+const THINGS = new Set([ATTRIBUTE, RELATIONSHIP, ATTRIBUTE, ENTITY]);
 
-const methods = function(baseType) {
+const methods = function (baseType) {
   return {
-    delete: function() {
+    delete: function () {
       const deleteMethod = MethodBuilder.delete(this.id);
       return this.communicator.send(deleteMethod);
     },
-    getBaseType: function() {
+    getBaseType: function () {
       return baseType;
     },
     isSchemaConcept: () => SCHEMA_CONCEPTS.has(baseType),
@@ -46,7 +46,7 @@ const methods = function(baseType) {
 };
 
 module.exports = {
-  get: function(baseType) {
+  get: function (baseType) {
     return methods(baseType);
   },
   THING,

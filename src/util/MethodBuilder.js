@@ -39,6 +39,18 @@ function isImplicit(conceptId) {
   return TxRequest;
 }
 
+function isInferred(conceptId) {
+  const TxRequest = new messages.TxRequest();
+  const runConceptMethodRequest = new messages.RunConceptMethod();
+  const conceptMethod = new conceptMessages.ConceptMethod();
+  const unit = new conceptMessages.Unit();
+  conceptMethod.setIsinferred(unit);
+  runConceptMethodRequest.setId(conceptId);
+  runConceptMethodRequest.setConceptmethod(conceptMethod);
+  TxRequest.setRunconceptmethod(runConceptMethodRequest);
+  return TxRequest;
+}
+
 function getRelatedRoles(conceptId) {
   const TxRequest = new messages.TxRequest();
   const runConceptMethodRequest = new messages.RunConceptMethod();
@@ -55,5 +67,6 @@ module.exports = {
   delete: deleteConcept,
   getLabel,
   isImplicit,
-  getRelatedRoles
+  getRelatedRoles,
+  isInferred
 };
