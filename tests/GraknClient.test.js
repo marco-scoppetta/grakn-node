@@ -82,7 +82,7 @@ test("GraknClient open request", async () => {
     username: "cassandra",
     password: "cassandra"
   });
-  const tx = await client.open();
+  const tx = await client.open(client.txType.WRITE);
   // const tx2 = await client.open().catch(e => {
   //   console.log(e);
   // });
@@ -90,17 +90,19 @@ test("GraknClient open request", async () => {
   const result = await tx.execute("match $x isa person; get;").catch((err) => {
     console.log(err);
   });
-
-  for (let map of result) {
-    for (let [key, value] of map) {
-      const inferred = await value.isInferred();
-      console.log(inferred);
-      const relationships = await value.getRolesPlayedByThing();
-      relationships.forEach(rel => {
-        console.log(rel);
-      });
+  try {
+    for (let map of result) {
+      for (let [key, value] of map) {
+        const inferred = await value.isInferred();
+        console.log(inferred);
+        const relationships = await value.getRolesPlayedByThing();
+        relationships.forEach(rel => {
+          console.log(rel);
+        });
+      }
     }
+
+  } catch (err) {
+    console.log(err);
   }
-
-
 });

@@ -1,5 +1,6 @@
 const GrpcCommunicator = require("./util/GrpcCommunicator");
 const ConceptFactory = require("./ConceptFactory");
+const TxService = require("./TxService");
 
 function GraknTx(client, keyspace, credentials) {
     this.client = client;
@@ -13,14 +14,14 @@ GraknTx.prototype.execute = async function executeQuery(query) {
     return await this.txService.execute(query);
 };
 
-GraknTx.prototype.open = async function () {
+GraknTx.prototype.open = async function (txType) {
     if (this._isOpen) throw "Transaction is already open.";
     if (!this.txService) {
         const communicator = new GrpcCommunicator(this.client.tx());
         const conceptFactory = new ConceptFactory(this.communicator);
-        this.txService = new TxService(this.communicator, this.conceptFactory)
+        this.txService = new TxService(communicator, conceptFactory);
     }
-    await this.txService.openTx()
+    await this.txService.openTx(this.keyspace, txType, this.credentials)
         .then(() => { this._isOpen = true; })
         .catch((e) => {
             throw e;
