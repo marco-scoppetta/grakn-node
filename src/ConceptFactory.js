@@ -10,13 +10,14 @@ const RoleMethods = require("./methods/Role");
 const AttributeTypeMethods = require("./methods/AttributeType");
 const EntityTypeMethods = require("./methods/EntityType");
 
-function ConceptFactory(communicator) {
-  this.communicator = communicator;
+
+// Empty constructor for now so that we create object and inject/mock
+function ConceptFactory() {
 }
 
-ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, communicator, factory) {
+ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, txService) {
   const conceptId = grpcConcept.getId();
-  const state = _buildState(conceptId, this.communicator, factory);
+  const state = _buildState(conceptId, txService);
   switch (grpcConcept.getBasetype()) {
     case 0:
       return new Entity(conceptId, state);
@@ -50,11 +51,10 @@ ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, com
   }
 }
 
-function _buildState(conceptId, communicator, factory) {
+function _buildState(conceptId, txService) {
   return {
     id: { value: conceptId },
-    communicator: { value: communicator },
-    conceptFactory: { value: factory }
+    txService: { value: txService }
   };
 }
 

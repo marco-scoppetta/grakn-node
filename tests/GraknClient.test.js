@@ -78,25 +78,28 @@ const DEFAULT_KEYSPACE = "grakn";
 
 
 test("GraknClient open request", async () => {
-  let client = new gc(DEFAULT_URI, "gene", {
-    username: "cassandra",
-    password: "cassandra"
-  });
-  const tx = await client.open(client.txType.WRITE);
-  // const tx2 = await client.open().catch(e => {
-  //   console.log(e);
-  // });
-
-  const result = await tx.execute("match $x isa person; get;").catch((err) => {
-    console.log(err);
-  });
   try {
+
+    let client = new gc(DEFAULT_URI, "gene", {
+      username: "cassandra",
+      password: "cassandra"
+    });
+    const tx = await client.open(client.txType.WRITE);
+    // const tx2 = await client.open().catch(e => {
+    //   console.log(e);
+    // });
+
+    const result = await tx.execute("match $x isa person; get;").catch((err) => {
+      console.log(err);
+    });
     for (let map of result) {
       for (let [key, value] of map) {
         const inferred = await value.isInferred();
         console.log(inferred);
         const relationships = await value.getRolesPlayedByThing();
+        await relationships[0].getLabel();
         relationships.forEach(rel => {
+          // await rel.
           console.log(rel);
         });
       }

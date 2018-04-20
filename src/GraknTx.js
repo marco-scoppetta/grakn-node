@@ -18,7 +18,7 @@ GraknTx.prototype.open = async function (txType) {
     if (this._isOpen) throw "Transaction is already open.";
     if (!this.txService) {
         const communicator = new GrpcCommunicator(this.client.tx());
-        const conceptFactory = new ConceptFactory(this.communicator);
+        const conceptFactory = new ConceptFactory();
         this.txService = new TxService(communicator, conceptFactory);
     }
     await this.txService.openTx(this.keyspace, txType, this.credentials)

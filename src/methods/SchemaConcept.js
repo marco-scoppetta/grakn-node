@@ -2,14 +2,7 @@ const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
   getLabel: function () {
-    const getLabelMethod = MethodBuilder.getLabel(this.id);
-    return this.communicator.send(getLabelMethod).then(resp =>
-      resp
-        .getConceptresponse()
-        .getLabel()
-        .getValue()
-    )
-      .catch(e => { throw e; });
+    return this.txService.getLabel(this.id);
   },
   setLabel: function () { },
   isImplicit: function () {
