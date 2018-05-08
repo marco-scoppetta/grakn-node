@@ -9,6 +9,7 @@ const RuleMethods = require("./methods/Rule");
 const RoleMethods = require("./methods/Role");
 const AttributeTypeMethods = require("./methods/AttributeType");
 const EntityTypeMethods = require("./methods/EntityType");
+const EntityMethods = require("./methods/Entity");
 
 
 // Empty constructor for now so that we create object and inject/mock
@@ -112,8 +113,8 @@ function Attribute(conceptId, state) {
 function Entity(conceptId, state) {
   const methods = Object.assign(
     ConceptMethods.get(ConceptMethods.ENTITY),
-    ThingMethods.get()
-    // There are no specific methods for Entity instance
+    ThingMethods.get(),
+    EntityMethods.get()
   );
   return Object.create(methods, state);
 }

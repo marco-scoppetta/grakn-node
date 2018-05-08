@@ -1,21 +1,12 @@
-const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
-  getLabel: function () {
-    return this.txService.getLabel(this.id);
-  },
-  setLabel: function () { },
-  isImplicit: function () {
-    const isImplicitMethod = MethodBuilder.isImplicit(this.id);
-    return this.communicator
-      .send(isImplicitMethod)
-      .then(resp => resp.getConceptresponse().getBool())
-      .catch(e => { throw e; });
-  },
-  getSubConcepts: function () { },
-  getSuperConcepts: function () { },
-  getDirectSuperConcept: function () { },
-  setDirectSuperConcept: function () { }
+  getLabel: function () { return this.txService.getLabel(this.id); },
+  setLabel: function () { return this.txService.setLabel(this.id); },
+  isImplicit: function () { return this.txService.isImplicit(this.id); },
+  getSubConcepts: function () { return this.txService.getSubConcepts(this.id); },
+  getSuperConcepts: function () { return this.txService.getSuperConcepts(this.id); },
+  getDirectSuperConcept: function () { return this.txService.getDirectSuperConcept(this.id); },
+  setDirectSuperConcept: function () { return this.txService.setDirectSuperConcept(this.id); }
 };
 
 module.exports = {

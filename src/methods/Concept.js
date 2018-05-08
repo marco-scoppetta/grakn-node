@@ -1,5 +1,3 @@
-const MethodBuilder = require("../util/MethodBuilder");
-
 const THING = "THING";
 const ATTRIBUTE_TYPE = "ATTRIBUTE_TYPE";
 const RELATIONSHIP_TYPE = "RELATIONSHIP_TYPE";
@@ -24,13 +22,8 @@ const THINGS = new Set([ATTRIBUTE, RELATIONSHIP, ATTRIBUTE, ENTITY]);
 
 const methods = function (baseType) {
   return {
-    delete: function () {
-      const deleteMethod = MethodBuilder.delete(this.id);
-      return this.communicator.send(deleteMethod);
-    },
-    getBaseType: function () {
-      return baseType;
-    },
+    delete: function () { return this.txService.delete(this.id); },
+    getBaseType: function () { return baseType; },
     isSchemaConcept: () => SCHEMA_CONCEPTS.has(baseType),
     isType: () => TYPES.has(baseType),
     isThing: () => THINGS.has(baseType),

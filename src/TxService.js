@@ -15,6 +15,7 @@ function TxService(communicator, factory) {
     this.conceptFactory = factory;
 }
 
+//   ==============  DATA INSTANCES ================== //
 
 //Thing gRPC methods
 
@@ -32,20 +33,95 @@ TxService.prototype.isInferred = function (id) {
         .then(resp => resp.getConceptresponse().getBool())
         .catch(e => { throw e; });
 }
+TxService.prototype.getDirectType = function (id) { };
+TxService.prototype.getRelationshipsByRole = function (id) { };
+TxService.prototype.getAttributes = function (id) { };
+TxService.prototype.getAttributesByTypes = function (id) { };
+TxService.prototype.getKeys = function (id) { };
+TxService.prototype.getKeysByTypes = function (id) { };
+TxService.prototype.setAttribute = function (id) { };
+TxService.prototype.unsetAttribute = function (id) { };
+
+
+
+// Attribute gRPC methods
+
+TxService.prototype.getValue = function (id) { };
+TxService.prototype.getOwners = function (id) { };
+
+// Relationship gRPC methods
+
+TxService.prototype.addRelationship = function (id) { };
+TxService.prototype.getRolePlayers = function (id) { };
+TxService.prototype.getRolePlayersByRoles = function (id) { };
+TxService.prototype.setRolePlayer = function (id) { };
+TxService.prototype.unsetRolePlayer = function (id) { };
+
+
+
+
+// ================= SCHEMA =================== //
+
+// Concepts gRPC methods
+
+TxService.prototype.delete = function (id) {
+    const deleteMethod = MethodBuilder.delete(this.id);
+    return this.communicator.send(deleteMethod);
+};
 
 // Schema concept gRPC methods
 TxService.prototype.getLabel = function (id) {
     const getLabelMethod = MethodBuilder.getLabel(id);
-    return this.communicator.send(getLabelMethod).then(resp =>
-        resp.getConceptresponse()
-            .getLabel()
-            .getValue()
-    ).catch(e => { throw e; });
+    return this.communicator
+        .send(getLabelMethod)
+        .then(resp =>
+            resp.getConceptresponse()
+                .getLabel()
+                .getValue()
+        ).catch(e => { throw e; });
 }
 
+TxService.prototype.isImplicit = function (id) {
+    const isImplicitMethod = MethodBuilder.isImplicit(id);
+    return this.communicator
+        .send(isImplicitMethod)
+        .then(resp => resp.getConceptresponse().getBool())
+        .catch(e => { throw e; });
+}
+
+TxService.prototype.setLabel = function (id) { };
+TxService.prototype.getSubConcepts = function (id) { };
+TxService.prototype.getSuperConcepts = function (id) { };
+TxService.prototype.getDirectSuperConcept = function (id) { };
+TxService.prototype.setDirectSuperConcept = function (id) { };
+
+// Type concept gRPC methods
+
+TxService.prototype.getInstances = function (id) { };
 
 
-// Create module that contains both communicator and concept factory
+// Relationship Type concept gRPC methods
+
+TxService.prototype.getRelatedRoles = function (id) {
+    const getRelatedRolesMethod = MethodBuilder.getRelatedRoles(id);
+    return this.communicator
+        .send(getRelatedRolesMethod)
+        .then(async result => {
+            const iterator = new GrpcIterator.GrpcConceptIterator(
+                result.getConceptresponse().getIteratorid(),
+                this.communicator
+            );
+            return await _buildConcepts(iterator, this);
+        });
+}
+
+TxService.prototype.setRelatedRole = function (id) { };
+TxService.prototype.unsetRelatedRole = function (id) { };
+
+
+// Entity type concept gRPC methods
+
+TxService.prototype.addEntity = function (id) { };
 
 //This method should be move to an Helper class!
 TxService.prototype._executeAndParse = function (method) {
@@ -60,11 +136,23 @@ TxService.prototype._executeAndParse = function (method) {
         });
 }
 
+// Role gRPC methods
+
+TxService.prototype.getRelationshipTypesThatRelateRole = function (id) { }
+TxService.prototype.getTypesThatPlayRole = function (id) { }
+
+// Rule gRPC methods 
+
+TxService.prototype.getWhen = function (id) { };
+TxService.prototype.getThen = function (id) { };
+
+// ====== UTILS METHODS =====//
+
 async function _buildConcepts(iterator, txService) {
     const concepts = [];
     let concept = await iterator.nextResult().catch(e => { throw e; });
     while (concept) {
-        concepts.push(txService.factory.createConcept(concept, txService));
+        concepts.push(txService.conceptFactory.createConcept(concept, txService));
         concept = await iterator.nextResult().catch(e => { throw e; });
     }
     return concepts;

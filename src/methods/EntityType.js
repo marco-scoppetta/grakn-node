@@ -1,11 +1,10 @@
-const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
-  addEntity: function() {}
+  addEntity: function () { return this.txService.addEntity(this.id); },
 };
 
 module.exports = {
-  get: function() {
+  get: function () {
     return methods;
   }
 };

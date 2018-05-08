@@ -1,12 +1,11 @@
-const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
-  getWhen: function() {},
-  getThen: function() {}
+  getWhen: function () { return this.txService.getWhen(this.id); },
+  getThen: function () { return this.txService.getThen(this.id); }
 };
 
 module.exports = {
-  get: function() {
+  get: function () {
     return methods;
   }
 };

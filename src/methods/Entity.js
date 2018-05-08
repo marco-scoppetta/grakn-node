@@ -1,6 +1,8 @@
 
 const methods = {
-  getInstances: function () { return this.txService.getInstances(this.id); }
+  isEntity: () => true,
+  isRelationship: () => false,
+  isAttribute: () => false
 };
 
 module.exports = {
