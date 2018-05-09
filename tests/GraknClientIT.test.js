@@ -13,7 +13,7 @@ test("Retrieve schema concepts in empty graph", (done) => {
   });
 });
 
-test("Relationship concept in empty graph", (done) => {
+test.only("Relationship concept in empty graph", (done) => {
   let client = new gc(DEFAULT_URI, "emptykeyspace", DEFAULT_CREDENTIALS);
   client.execute("match $x sub relationship; get;").then(async result => {
     expect(result.length).toBe(1);
