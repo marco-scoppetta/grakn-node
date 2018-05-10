@@ -28,10 +28,7 @@ TxService.prototype.getLabel = function (id) {
     const getLabelTxRequest = TxRequestBuilder.getLabel(id);
     return this.communicator
         .send(getLabelTxRequest)
-        .then(resp =>
-            resp.getConceptresponse()
-                .getLabel()
-                .getValue()
+        .then(resp => resp.getConceptresponse().getLabel().getValue()
         ).catch(e => { throw e; });
 }
 
@@ -39,7 +36,6 @@ TxService.prototype.setLabel = function (id, label) {
     const setLabelTxRequest = TxRequestBuilder.setLabel(id, label);
     return this.communicator.send(setLabelTxRequest)
         .catch(e => { throw e; });
-    )
 };
 
 TxService.prototype.isImplicit = function (id) {
@@ -159,7 +155,15 @@ TxService.prototype.isInferred = function (id) {
         .catch(e => { throw e; });
 }
 
-TxService.prototype.getDirectType = function (id) { };
+TxService.prototype.getDirectType = function (id) {
+    const txRequest = TxRequestBuilder.getDirectType(id);
+    return this.communicator.send(txRequest)
+        .then(response => {
+            const concept = response.getConceptresponse().getConcept();
+            return this.conceptFactory.createConcept(concept, this);
+        })
+        .catch(e => { throw e; });
+};
 
 TxService.prototype.getRelationships = function (id) {
     const txRequest = TxRequestBuilder.getRelationships(id);

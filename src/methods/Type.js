@@ -1,6 +1,24 @@
 
 const methods = {
-  getInstances: function () { return this.txService.getInstances(this.id); }
+  setAbstract: function () { return this.txService.setAbstract(this.id); },
+  plays: function (role) {
+    if (role) {
+      return this.txService.setRolePlayedByType(this.id, role);
+    } else {
+      return this.txService.getRolesPlayedByType(this.id);
+    }
+  },
+  key: function (attributeType) {
+    return this.txService.setKeyType(this.id);
+  },
+  attribute: function (attributeType) { return this.txService.setAttributeTypes(this.id, attributeType); },
+  attributes: function () { return this.txService.getAttributeTypes(this.id); },
+  keys: function () { return this.txService.getKeyTypes(this.id); },
+  instances: function () { return this.txService.getInstances(this.id); },
+  isAbstract: function () { return this.txService.isAbstract(this.id); },
+  deletePlays: function (role) { return this.txService.unsetRolePlayedByType(this.id, role); },
+  deleteAttribute: function (attributeType) { return this.txService.unsetAttributeType(this.id, attributeType); },
+  deleteKey: function (attributeType) { return this.txService.setAbstract(this.id, attributeType); },
 };
 
 module.exports = {

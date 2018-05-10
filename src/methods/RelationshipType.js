@@ -1,8 +1,14 @@
 
 const methods = {
-  getRelatedRoles: function () { return this.txService.getRelatedRoles(this.id); },
-  setRelatedRole: function () { return this.txService.setRelatedRole(this.id); },
-  unsetRelatedRole: function () { return this.txService.unsetRelatedRole(this.id); }
+  addRelationship: function () { return this.txService.addRelationship(this.id); },
+  relates: function (role) {
+    if (role) {
+      return this.txService.getRelatedRoles(this.id);
+    } else {
+      return this.txService.setRelatedRole(this.id, role);
+    }
+  },
+  deleteRelates: function (role) { return this.txService.unsetRelatedRole(this.id, role); }
 };
 
 module.exports = {

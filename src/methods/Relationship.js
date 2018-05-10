@@ -1,10 +1,17 @@
 
 const methods = {
-  addRelationship: function () { return this.txService.addRelationship(this.id); },
-  getRolePlayers: function () { return this.txService.getRolePlayers(this.id); },
-  getRolePlayersByRoles: function () { return this.txService.getRolePlayersByRoles(this.id); },
-  setRolePlayer: function () { return this.txService.setRolePlayer(this.id); },
-  unsetRolePlayer: function () { return this.txService.unsetRolePlayer(this.id); },
+  allRolePlayers: function () {
+    // TODO: understand difference with rolePlayers() and implement
+  },
+  rolePlayers: function (...roles) {
+    if (roles.length > 0) {
+      return this.txService.getRolePlayersByRoles(this.id, roles);
+    } else {
+      return this.txService.getRolePlayers(this.id);
+    }
+  },
+  addRolePlayer: function (role, thing) { return this.txService.setRolePlayer(this.id, role, thing); },
+  removeRolePlayer: function (role, thing) { return this.txService.unsetRolePlayer(this.id, role, thing); },
   isEntity: () => false,
   isRelationship: () => true,
   isAttribute: () => false
