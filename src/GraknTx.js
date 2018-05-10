@@ -14,6 +14,9 @@ GraknTx.prototype.execute = async function executeQuery(query) {
     return await this.txService.execute(query);
 };
 
+
+// TODO: Keep an open method only in GraknClient - that method creates a new transaction, which is already open.
+
 GraknTx.prototype.open = async function (txType) {
     if (this._isOpen) throw "Transaction is already open.";
     if (!this.txService) {

@@ -28,9 +28,11 @@ const methods = {
     return TxRequest(conceptId, conceptMethod);
   },
 
-  setLabel: function (conceptId) {
+  setLabel: function (conceptId, labelValue) {
     const conceptMethod = new conceptMessages.ConceptMethod();
-    conceptMethod.setSetlabel();// Pass a Label
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(labelValue);
+    conceptMethod.setSetlabel(labelMessage);
     return TxRequest(conceptId, conceptMethod);
   },
 

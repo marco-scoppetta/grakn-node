@@ -1,7 +1,7 @@
 
 const methods = {
   getLabel: function () { return this.txService.getLabel(this.id); },
-  setLabel: function () { return this.txService.setLabel(this.id); },
+  setLabel: function (label) { return this.txService.setLabel(this.id, label); },
   isImplicit: function () { return this.txService.isImplicit(this.id); },
   getSubConcepts: function () { return this.txService.getSubConcepts(this.id); },
   getSuperConcepts: function () { return this.txService.getSuperConcepts(this.id); },
