@@ -18,33 +18,42 @@ function ConceptFactory() {
 
 ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, txService) {
   const conceptId = grpcConcept.getId();
-  const state = _buildState(conceptId, txService);
+  let state;
   switch (grpcConcept.getBasetype()) {
     case 0:
+      state = _buildState(conceptId, ConceptMethods.ENTITY, txService);
       return new Entity(conceptId, state);
       break;
     case 1:
+      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP, txService);
       return new Relationship(conceptId, state);
       break;
     case 2:
+      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE, txService);
       return new Attribute(conceptId, state);
       break;
     case 3:
+      state = _buildState(conceptId, ConceptMethods.ENTITY_TYPE, txService);
       return new EntityType(conceptId, state);
       break;
     case 4:
+      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP_TYPE, txService);
       return new RelationshipType(conceptId, state);
       break;
     case 5:
+      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE_TYPE, txService);
       return new AttributeType(conceptId, state);
       break;
     case 6:
+      state = _buildState(conceptId, ConceptMethods.ROLE, txService);
       return new Role(conceptId, state);
       break;
     case 7:
+      state = _buildState(conceptId, ConceptMethods.RULE, txService);
       return new Rule(conceptId, state);
       break;
     case 8:
+      state = _buildState(conceptId, ConceptMethods.META_TYPE, txService);
       return new MetaType(conceptId, state);
       break;
     default:
@@ -52,9 +61,10 @@ ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, txS
   }
 }
 
-function _buildState(conceptId, txService) {
+function _buildState(conceptId, baseType, txService) {
   return {
     id: { value: conceptId },
+    baseType: { value: baseType },
     txService: { value: txService }
   };
 }
@@ -64,7 +74,7 @@ function _buildState(conceptId, txService) {
 function AttributeType(conceptId, state) {
   // Compose methods of super types: Concept , SchemaConcept andType
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.THING),
+    ConceptMethods.get(),
     TypeMethods.get(),
     SchemaConceptMethods.get(),
     AttributeTypeMethods.get()
@@ -74,7 +84,7 @@ function AttributeType(conceptId, state) {
 
 function RelationshipType(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.RELATIONSHIP_TYPE),
+    ConceptMethods.get(),
     SchemaConceptMethods.get(),
     TypeMethods.get(),
     RelationshipTypeMethods.get()
@@ -84,7 +94,7 @@ function RelationshipType(conceptId, state) {
 
 function EntityType(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.ENTITY_TYPE),
+    ConceptMethods.get(),
     SchemaConceptMethods.get(),
     TypeMethods.get(),
     EntityTypeMethods.get()
@@ -94,7 +104,7 @@ function EntityType(conceptId, state) {
 
 function Relationship(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.RELATIONSHIP),
+    ConceptMethods.get(),
     ThingMethods.get(),
     RelationshipMethods.get()
   );
@@ -103,7 +113,7 @@ function Relationship(conceptId, state) {
 
 function Attribute(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.ATTRIBUTE),
+    ConceptMethods.get(),
     ThingMethods.get(),
     AttributeMethods.get()
   );
@@ -112,7 +122,7 @@ function Attribute(conceptId, state) {
 
 function Entity(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.ENTITY),
+    ConceptMethods.get(),
     ThingMethods.get(),
     EntityMethods.get()
   );
@@ -121,7 +131,7 @@ function Entity(conceptId, state) {
 
 function Role(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.ROLE),
+    ConceptMethods.get(),
     SchemaConceptMethods.get(),
     RoleMethods.get()
   );
@@ -130,7 +140,7 @@ function Role(conceptId, state) {
 
 function Rule(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.RULE),
+    ConceptMethods.get(),
     SchemaConceptMethods.get(),
     RuleMethods.get()
   );
@@ -138,7 +148,7 @@ function Rule(conceptId, state) {
 }
 
 function MetaType(conceptId, state) {
-  const methods = ConceptMethods.get(ConceptMethods.THING);
+  const methods = ConceptMethods.get();
   return Object.create(methods, state);
 }
 

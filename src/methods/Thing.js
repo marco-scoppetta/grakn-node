@@ -3,7 +3,7 @@ const methods = {
   type: function () { return this.txService.getDirectType(this.id); },
   relationships: function (...roles) {
     if (roles.length > 0) {
-      return this.txService.getRelationshipsByRole(this.id, roles);
+      return this.txService.getRelationshipsByRoles(this.id, roles);
     } else {
       return this.txService.getRelationships(this.id);
     }

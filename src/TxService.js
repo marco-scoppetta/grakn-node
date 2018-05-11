@@ -172,8 +172,8 @@ TxService.prototype.getRelationships = function (id) {
         .catch(e => { throw e; });
 }
 
-TxService.prototype.getRelationshipsByRole = function (id) {
-    const txRequest = TxRequestBuilder.getRelationshipsByRole(id);
+TxService.prototype.getRelationshipsByRoles = function (id, roles) {
+    const txRequest = TxRequestBuilder.getRelationshipsByRoles(id, roles);
     return this.communicator.send(txRequest)
         .then(async response => await _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
@@ -244,7 +244,7 @@ TxService.prototype.getOwners = function (id) { };
  */
 async function _consumeConceptIterator(grpcConceptResponse, txService) {
     const iterator = new GrpcIterator.GrpcConceptIterator(
-        result.getConceptresponse().getIteratorid(),
+        grpcConceptResponse.getConceptresponse().getIteratorid(),
         txService.communicator
     );
     const concepts = [];
@@ -280,6 +280,10 @@ TxService.prototype.openTx = async function (keyspace, txType, credentials) {
 
 
 // EXEC QUERY
+/**
+ * Execute query and always return array of concepts. Returns empty array if server
+ * returns Done.
+ */
 
 TxService.prototype.execute = async function executeQuery(query) {
     this.result = [];
@@ -311,6 +315,9 @@ TxService.prototype._parseResponse = async function parseResponse(resp) {
             nextResult = await iterator.nextResult();
         }
         return executeQueryResult;
+    }
+    if (resp.hasQueryresult()) {
+        return [this._parseResult(resp.getQueryresult())];
     }
 };
 

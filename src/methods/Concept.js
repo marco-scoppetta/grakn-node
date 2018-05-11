@@ -1,4 +1,4 @@
-const THING = "THING";
+const META_TYPE = "META_TYPE";
 const ATTRIBUTE_TYPE = "ATTRIBUTE_TYPE";
 const RELATIONSHIP_TYPE = "RELATIONSHIP_TYPE";
 const ENTITY_TYPE = "ENTITY_TYPE";
@@ -20,21 +20,20 @@ const TYPES = new Set([ATTRIBUTE_TYPE, RELATIONSHIP_TYPE, ENTITY_TYPE]);
 
 const THINGS = new Set([ATTRIBUTE, RELATIONSHIP, ATTRIBUTE, ENTITY]);
 
-const methods = function (baseType) {
+const methods = function () {
   return {
     delete: function () { return this.txService.delete(this.id); },
-    getBaseType: function () { return baseType; },
-    isSchemaConcept: () => SCHEMA_CONCEPTS.has(baseType),
-    isType: () => TYPES.has(baseType),
-    isThing: () => THINGS.has(baseType),
-    isAttributeType: () => baseType === ATTRIBUTE_TYPE,
-    isEntityType: () => baseType === ENTITY_TYPE,
-    isRelationshipType: () => baseType === RELATIONSHIP_TYPE,
-    isRole: () => baseType === ROLE,
-    isRule: () => baseType === RULE,
-    isAttribute: () => baseType === ATTRIBUTE,
-    isEntity: () => baseType === ENTITY,
-    isRelationship: () => baseType === RELATIONSHIP
+    isSchemaConcept: function () { return SCHEMA_CONCEPTS.has(this.baseType); },
+    isType: function () { return TYPES.has(this.baseType); },
+    isThing: function () { return THINGS.has(this.baseType); },
+    isAttributeType: function () { return this.baseType === ATTRIBUTE_TYPE; },
+    isEntityType: function () { return this.baseType === ENTITY_TYPE; },
+    isRelationshipType: function () { return this.baseType === RELATIONSHIP_TYPE; },
+    isRole: function () { return this.baseType === ROLE; },
+    isRule: function () { return this.baseType === RULE; },
+    isAttribute: function () { return this.baseType === ATTRIBUTE; },
+    isEntity: function () { return this.baseType === ENTITY; },
+    isRelationship: function () { return this.baseType === RELATIONSHIP; }
   };
 };
 
@@ -42,7 +41,7 @@ module.exports = {
   get: function (baseType) {
     return methods(baseType);
   },
-  THING,
+  META_TYPE,
   ATTRIBUTE,
   ATTRIBUTE_TYPE,
   ROLE,
