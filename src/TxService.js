@@ -62,8 +62,23 @@ TxService.prototype.getSuperConcepts = function (id) {
         })
         .catch(e => { throw e; });
 };
-TxService.prototype.getDirectSuperConcept = function (id) { };
-TxService.prototype.setDirectSuperConcept = function (id) { };
+TxService.prototype.getDirectSuperConcept = function (id) {
+    const TxRequest = TxRequestBuilder.getDirectSuperConcept(id);
+    return this.communicator.send(TxRequest)
+        .then(async grpcConceptResponse => {
+            const optionalConcept = grpcConceptResponse.getConceptresponse().getOptionalconcept();
+            if (optionalConcept.hasPresent()) {
+                const concept = optionalConcept.getPresent();
+                return this.conceptFactory.createConcept(concept, this);
+            } else {
+                return null;
+            }
+        })
+        .catch(e => { throw e; });
+};
+TxService.prototype.setDirectSuperConcept = function (id) {
+
+};
 
 // Rule 
 
@@ -141,7 +156,6 @@ TxService.prototype.unsetRelatedRole = function (id) { };
 TxService.prototype.putAttribute = function (id) { };
 TxService.prototype.getAttribute = function (id) { };
 TxService.prototype.getDataTypeOfType = function (id) { };
-TxService.prototype.getDataTypeOfAttribute = function (id) { };
 TxService.prototype.getRegex = function (id) { };
 TxService.prototype.setRegex = function (id) { };
 
@@ -216,9 +230,31 @@ TxService.prototype.unsetAttribute = function (id) { };
 // Relationship
 
 TxService.prototype.addRelationship = function (id) { };
-TxService.prototype.getRolePlayers = function (id) { };
-TxService.prototype.getRolePlayersByRoles = function (id) {
-    const txRequest = TxRequestBuilder.getAttributesByTypes(id);
+TxService.prototype.getRolePlayers = function (id) {
+    const txRequest = TxRequestBuilder.getRolePlayers(id);
+    return this.communicator.send(txRequest)
+        .then(async response => {
+            const rolePlayers = await _consumeRolePlayerIterator(response, this);
+            // Temp map to store String id to Role object
+            const tempMap = new Map(rolePlayers.map(entry => [entry.role.id.getValue(), entry.role]));
+            const map = new Map();
+            // Create map using string as key and set as value
+            rolePlayers.forEach(rp => {
+                const key = rp.role.id.getValue();
+                if (map.has(key)) map.set(key, map.get(key).add(rp.player));
+                else map.set(key, new Set([rp.player]));
+            })
+            const resultMap = new Map();
+            // Convert map to use Role object as key
+            map.forEach((value, key) => {
+                resultMap.set(tempMap.get(key), value);
+            });
+            return resultMap;
+        })
+        .catch(e => { throw e; });
+};
+TxService.prototype.getRolePlayersByRoles = function (id, roles) {
+    const txRequest = TxRequestBuilder.getRolePlayersByRoles(id);
     return this.communicator.send(txRequest)
         .then(async response => await _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
@@ -246,7 +282,33 @@ TxService.prototype.getValue = function (id) {
         .then(response => _getAttributeValue(response))
         .catch(e => { throw e; });
 };
-TxService.prototype.getOwners = function (id) { };
+TxService.prototype.getOwners = function (id) {
+    const txRequest = TxRequestBuilder.getOwners(id);
+    return this.communicator.send(txRequest)
+        .then(async response => await _consumeConceptIterator(response, this))
+        .catch(e => { throw e; });
+};
+
+
+function _getDataType(resp) {
+    const dataType = resp.getConceptresponse().getDatatype();
+    switch (dataType) {
+        case 0: return "String"; break;
+        case 1: return "Boolean"; break;
+        case 2: return "Integer"; break;
+        case 3: return "Long"; break;
+        case 4: return "Float"; break;
+        case 5: return "Double"; break;
+        case 6: return "Date"; break;
+    }
+}
+
+TxService.prototype.getDataTypeOfAttribute = function (id) {
+    const txRequest = TxRequestBuilder.getDataTypeOfAttribute(id);
+    return this.communicator.send(txRequest)
+        .then(async response => _getDataType(response))
+        .catch(e => { throw e; });
+};
 
 
 // ====== UTILS METHODS =====//
@@ -270,6 +332,23 @@ async function _consumeConceptIterator(grpcConceptResponse, txService) {
         concept = await iterator.nextResult().catch(e => { throw e; });
     }
     return concepts;
+}
+
+async function _consumeRolePlayerIterator(grpcConceptResponse, txService) {
+    const iterator = new GrpcIterator.GrpcRolePlayerIterator(
+        grpcConceptResponse.getConceptresponse().getIteratorid(),
+        txService.communicator
+    );
+    const rolePlayers = [];
+    let grpcRolePlayer = await iterator.nextResult().catch(e => { throw e; });
+    while (grpcRolePlayer) {
+        rolePlayers.push({
+            role: txService.conceptFactory.createConcept(grpcRolePlayer.getRole(), txService),
+            player: txService.conceptFactory.createConcept(grpcRolePlayer.getPlayer(), txService)
+        });
+        grpcRolePlayer = await iterator.nextResult().catch(e => { throw e; });
+    }
+    return rolePlayers;
 }
 
 

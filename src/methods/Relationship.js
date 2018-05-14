@@ -1,7 +1,7 @@
 
 const methods = {
   allRolePlayers: function () {
-    // TODO: understand difference with rolePlayers() and implement
+    // TODO: implement this that returns map of Role to a set of Things that play that role in the current relationship`
   },
   rolePlayers: function (...roles) {
     if (roles.length > 0) {

@@ -54,7 +54,7 @@ ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, txS
       break;
     case 8:
       state = _buildState(conceptId, ConceptMethods.META_TYPE, txService);
-      return new MetaType(conceptId, state);
+      return new MetaSchemaConcept(conceptId, state);
       break;
     default:
       throw "BaseType not recognised.";
@@ -147,8 +147,11 @@ function Rule(conceptId, state) {
   return Object.create(methods, state);
 }
 
-function MetaType(conceptId, state) {
-  const methods = ConceptMethods.get();
+function MetaSchemaConcept(conceptId, state) {
+  const methods = Object.assign(
+    ConceptMethods.get(),
+    SchemaConceptMethods.get(),
+  );
   return Object.create(methods, state);
 }
 

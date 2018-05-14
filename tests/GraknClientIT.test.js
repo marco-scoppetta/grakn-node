@@ -13,7 +13,7 @@ test("Retrieve schema concepts in empty graph", (done) => {
   });
 });
 
-test.only("Relationship concept in empty graph", (done) => {
+test("Relationship concept in empty graph", (done) => {
   let client = new gc(DEFAULT_URI, "emptykeyspace", DEFAULT_CREDENTIALS);
   client.execute("match $x sub relationship; get;").then(async result => {
     expect(result.length).toBe(1);
@@ -35,33 +35,6 @@ test.only("Relationship concept in empty graph", (done) => {
   }).catch((err) => {
     done.fail(err);
   });
-});
-
-
-test("Entity instance methods", async (done) => {
-  try {
-    let client = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
-    const tx = await client.open(client.txType.WRITE);
-
-    const result = await tx.execute("match $x isa person; limit 1; get;");
-    for (let map of result) {
-      for (let [key, person] of map) {
-        const inferred = await person.isInferred();
-        expect(person.isThing()).toBeTruthy();
-        expect(person.isRelationship()).toBeFalsy();
-        expect(person.isEntity()).toBeTruthy();
-        expect(person.isAttribute()).toBeFalsy();
-        expect(inferred).toBeFalsy();
-        const roles = await person.getRolesPlayedByThing();
-        roles.forEach(role => {
-          expect(role.isRole()).toBeTruthy();
-        });
-      }
-    }
-    done();
-  } catch (err) {
-    done.fail(err);
-  }
 });
 
 // test("Relationship instance methods", async () => {

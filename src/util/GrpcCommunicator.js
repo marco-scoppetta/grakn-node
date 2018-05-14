@@ -22,7 +22,7 @@ function GrpcCommunicator(stream) {
   // })
 
   this.stream.on('status', (e) => {
-    // this.rejectOnError(e)
+    this.rejectOnError(e)
   })
 }
 

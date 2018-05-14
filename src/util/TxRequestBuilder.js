@@ -225,11 +225,6 @@ const methods = {
     conceptMethod.setGetdatatypeoftype(UNIT_MESSAGE);
     return TxRequest(conceptId, conceptMethod);
   },
-  getDataTypeOfAttriubute: function (conceptId) {
-    const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setGetdatatypeofattribute(UNIT_MESSAGE);
-    return TxRequest(conceptId, conceptMethod);
-  },
   getRegex: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setGetregex(UNIT_MESSAGE);
@@ -345,6 +340,11 @@ const methods = {
   getOwners: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setGetowners(UNIT_MESSAGE);
+    return TxRequest(conceptId, conceptMethod);
+  },
+  getDataTypeOfAttribute: function (conceptId) {
+    const conceptMethod = new messages.ConceptMethod();
+    conceptMethod.setGetdatatypeofattribute(UNIT_MESSAGE);
     return TxRequest(conceptId, conceptMethod);
   },
 
