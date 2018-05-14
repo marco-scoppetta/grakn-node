@@ -187,7 +187,7 @@ TxService.prototype.getRolesPlayedByThing = function (id) {
 }
 
 TxService.prototype.getAttributes = function (id) {
-    const txRequest = TxRequestBuilder.getRolesPlayedByThing(id);
+    const txRequest = TxRequestBuilder.getAttributes(id);
     return this.communicator.send(txRequest)
         .then(async response => await _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
@@ -229,7 +229,23 @@ TxService.prototype.unsetRolePlayer = function (id) { };
 
 // Attribute
 
-TxService.prototype.getValue = function (id) { };
+function _getAttributeValue(resp) {
+    const attrValue = resp.getConceptresponse().getAttributevalue();
+    if (attrValue.hasString()) return attrValue.getString();
+    if (attrValue.hasBoolean()) return attrValue.getBoolean();
+    if (attrValue.hasInteger()) return attrValue.getInteger();
+    if (attrValue.hasLong()) return attrValue.getLong();
+    if (attrValue.hasFloat()) return attrValue.getFloat();
+    if (attrValue.hasDouble()) return attrValue.getDouble();
+    if (attrValue.hasDate()) return attrValue.getDate();
+}
+
+TxService.prototype.getValue = function (id) {
+    const txRequest = TxRequestBuilder.getValue(id);
+    return this.communicator.send(txRequest)
+        .then(response => _getAttributeValue(response))
+        .catch(e => { throw e; });
+};
 TxService.prototype.getOwners = function (id) { };
 
 

@@ -32,6 +32,10 @@ test("Thing methods", async (done) => {
                     expect(rel.isRelationship()).toBeTruthy();
                 });
                 const roles = await person.plays();
+                const attributes = await person.attributes();
+                attributes.forEach(async a => {
+                    const value = await a.getValue()
+                });
                 // const filteredRelationships = await person.relationships(...roles);
                 console.log("yolo");
             }

@@ -30,8 +30,10 @@ function convertBaseType(baseType) {
 
 function toGrpcConcept(conceptObject) {
   const conceptMessage = new messages.Concept();
-  conceptMessage.setId(conceptObject.id);
-  conceptMessage.setBasetype(conceptObject.baesType);
+  const conceptIdMessage = new messages.ConceptId();
+  conceptIdMessage.setValue(conceptObject.id);
+  conceptMessage.setId(conceptIdMessage);
+  conceptMessage.setBasetype(convertBaseType(conceptObject.baseType));
   return conceptMessage;
 }
 
@@ -264,7 +266,7 @@ const methods = {
     const conceptMethod = new messages.ConceptMethod();
     const grpcConcepts = roles.map(role => toGrpcConcept(role))
     conceptsMessage.setConceptList(grpcConcepts);
-    conceptMethod.setGetrelationshipsbyroles(concepstMessage); // Pass Concepts
+    conceptMethod.setGetrelationshipsbyroles(conceptsMessage); // Pass Concepts
     return TxRequest(conceptId, conceptMethod);
   },
 

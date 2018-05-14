@@ -21,16 +21,16 @@ function GrpcCommunicator(stream) {
   //     // probably delete some iterators?
   // })
 
-  // call.on('status', () => {
-  //     // do we need this callback?
-  // })
+  this.stream.on('status', (e) => {
+    // this.rejectOnError(e)
+  })
 }
 
 GrpcCommunicator.prototype.send = async function (request) {
   return new Promise(async (resolve, reject) => {
     this.rejectOnError = reject;
     this.stream.write(request);
-    const response = await this.response.pop()
+    const response = await this.response.pop();
     resolve(response);
   })
 };
