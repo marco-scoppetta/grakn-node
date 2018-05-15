@@ -37,30 +37,3 @@ test("Relationship concept in empty graph", (done) => {
   });
 });
 
-// test("Relationship instance methods", async () => {
-//   try {
-//     let client = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
-//     const tx = await client.open(client.txType.WRITE);
-
-//     const result = await tx.execute("match $x isa marriage; limit 1; get;").catch((err) => {
-//       console.log(err);
-//     });
-//     for (let map of result) {
-//       for (let [key, marriage] of map) {
-//         expect(marriage.isThing()).toBeTruthy();
-//         expect(marriage.isRelationship()).toBeTruthy();
-//         expect(marriage.isEntity()).toBeFalsy();
-//         expect(marriage.isAttribute()).toBeFalsy();
-
-//         const relationships = await value.getRolesPlayedByThing();
-//         relationships.forEach(async rel => {
-//           const labb = await rel.getLabel();
-//           console.log(labb);
-//         });
-//       }
-//     }
-//     console.log()
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });

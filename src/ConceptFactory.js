@@ -17,7 +17,7 @@ function ConceptFactory() {
 }
 
 ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, txService) {
-  const conceptId = grpcConcept.getId();
+  const conceptId = grpcConcept.getId().getValue();
   let state;
   switch (grpcConcept.getBasetype()) {
     case 0:

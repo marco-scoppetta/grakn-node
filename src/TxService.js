@@ -233,24 +233,7 @@ TxService.prototype.addRelationship = function (id) { };
 TxService.prototype.getRolePlayers = function (id) {
     const txRequest = TxRequestBuilder.getRolePlayers(id);
     return this.communicator.send(txRequest)
-        .then(async response => {
-            const rolePlayers = await _consumeRolePlayerIterator(response, this);
-            // Temp map to store String id to Role object
-            const tempMap = new Map(rolePlayers.map(entry => [entry.role.id.getValue(), entry.role]));
-            const map = new Map();
-            // Create map using string as key and set as value
-            rolePlayers.forEach(rp => {
-                const key = rp.role.id.getValue();
-                if (map.has(key)) map.set(key, map.get(key).add(rp.player));
-                else map.set(key, new Set([rp.player]));
-            })
-            const resultMap = new Map();
-            // Convert map to use Role object as key
-            map.forEach((value, key) => {
-                resultMap.set(tempMap.get(key), value);
-            });
-            return resultMap;
-        })
+        .then(async response => await _consumeRolePlayerIterator(response, this))
         .catch(e => { throw e; });
 };
 TxService.prototype.getRolePlayersByRoles = function (id, roles) {

@@ -38,6 +38,9 @@ test("Thing methods", async (done) => {
                     expect(rel.isType()).toBeFalsy();
                 });
                 const roles = await person.plays();
+                roles.forEach(role => {
+                    expect(role.isRole()).toBeTruthy();
+                });
                 const attributes = await person.attributes();
                 attributes.forEach(async a => {
                     const value = await a.getValue()
@@ -59,7 +62,7 @@ test("Thing methods", async (done) => {
 });
 
 
-test.only("Relationship methods", async (done) => {
+test("Relationship methods", async (done) => {
     try {
         let client = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
         const tx = await client.open(client.txType.WRITE);
@@ -69,10 +72,16 @@ test.only("Relationship methods", async (done) => {
             for (let [key, marriage] of map) {
                 expect(marriage.isThing()).toBeTruthy();
                 expect(marriage.isRelationship()).toBeTruthy();
-                const rolePlayers = await marriage.rolePlayers();
-                rolePlayers.forEach((value, key) => {
+                const rolePlayersMap = await marriage.allRolePlayers();
+                rolePlayersMap.forEach((setValue, key) => {
                     expect(key.isRole()).toBeTruthy();
-                    expect(value.isThing()).toBeTruthy();
+                    setValue.forEach(thing => {
+                        expect(thing.isThing()).toBeTruthy();
+                    })
+                });
+                const rolePlayersArray = await marriage.rolePlayers();
+                rolePlayersArray.forEach(role => {
+                    expect(role.isRole()).toBeTruthy();
                 });
                 console.log("yolo");
             }

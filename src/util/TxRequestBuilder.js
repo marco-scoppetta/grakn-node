@@ -4,9 +4,11 @@ const ConceptsBaseType = require("../methods/Concept");
 const UNIT_MESSAGE = new messages.Unit();
 
 function TxRequest(conceptId, conceptMethod) {
+  const idMessage = new messages.ConceptId();
+  idMessage.setValue(conceptId);
   const TxRequest = new messages.TxRequest();
   const runConceptMethodRequest = new messages.RunConceptMethod();
-  runConceptMethodRequest.setId(conceptId);
+  runConceptMethodRequest.setId(idMessage);
   runConceptMethodRequest.setConceptmethod(conceptMethod);
   TxRequest.setRunconceptmethod(runConceptMethodRequest);
   return TxRequest;
