@@ -1,12 +1,15 @@
-const MethodBuilder = require("../util/MethodBuilder");
 
 const methods = {
-  getValue: function() {},
-  getOwners: function() {}
+  dataType: function () { return this.txService.getDataTypeOfAttribute(this.id); },
+  getValue: function () { return this.txService.getValue(this.id); },
+  ownerInstances: function () { return this.txService.getOwners(this.id); },
+  isEntity: () => false,
+  isRelationship: () => false,
+  isAttribute: () => true
 };
 
 module.exports = {
-  get: function() {
+  get: function () {
     return methods;
   }
 };

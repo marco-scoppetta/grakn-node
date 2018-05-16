@@ -1,6 +1,8 @@
 
 const methods = {
-  addEntity: function () { return this.txService.addEntity(this.id); },
+  isEntity: () => true,
+  isRelationship: () => false,
+  isAttribute: () => false
 };
 
 module.exports = {

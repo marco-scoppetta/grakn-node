@@ -7,10 +7,11 @@ function GrpcQueryIterator(iteratorId, communicator) {
   this.communicator = communicator;
 }
 
-GrpcQueryIterator.prototype.nextResult = async function() {
+GrpcQueryIterator.prototype.nextResult = async function () {
   return await this.communicator
     .send(this.nextRequest)
-    .then(_handleQueryResponse);
+    .then(_handleQueryResponse)
+    .catch(e => { throw e; });
 };
 
 function _handleQueryResponse(response) {
@@ -26,15 +27,36 @@ function GrpcConceptIterator(iteratorId, communicator) {
   this.communicator = communicator;
 }
 
-GrpcConceptIterator.prototype.nextResult = async function() {
+GrpcConceptIterator.prototype.nextResult = async function () {
   return await this.communicator
     .send(this.nextRequest)
-    .then(_handleConceptResponse);
+    .then(_handleConceptResponse)
+    .catch(e => { throw e; });
 };
 
 function _handleConceptResponse(response) {
   if (response.hasDone()) return null;
-  if (response.hasConceptresult()) return response.getConceptresult();
+  if (response.hasConcept()) return response.getConcept();
+  throw "Unexpected response from server.";
+}
+
+// -- RolePlayer Iterator -- //
+
+function GrpcRolePlayerIterator(iteratorId, communicator) {
+  this.nextRequest = _buildNextRequest(iteratorId);
+  this.communicator = communicator;
+}
+
+GrpcRolePlayerIterator.prototype.nextResult = async function () {
+  return await this.communicator
+    .send(this.nextRequest)
+    .then(_handleRolePlayerResponse)
+    .catch(e => { throw e; });
+};
+
+function _handleRolePlayerResponse(response) {
+  if (response.hasDone()) return null;
+  if (response.hasRoleplayer()) return response.getRoleplayer();
   throw "Unexpected response from server.";
 }
 
@@ -48,4 +70,4 @@ function _buildNextRequest(iteratorId) {
   return tr;
 }
 
-module.exports = { GrpcQueryIterator, GrpcConceptIterator };
+module.exports = { GrpcQueryIterator, GrpcConceptIterator, GrpcRolePlayerIterator };

@@ -9,130 +9,150 @@ const RuleMethods = require("./methods/Rule");
 const RoleMethods = require("./methods/Role");
 const AttributeTypeMethods = require("./methods/AttributeType");
 const EntityTypeMethods = require("./methods/EntityType");
+const EntityMethods = require("./methods/Entity");
 
-function createConcept(grpcConcept, communicator) {
-  const conceptId = grpcConcept.getId();
+
+// Empty constructor for now so that we create object and inject/mock
+function ConceptFactory() {
+}
+
+ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, txService) {
+  const conceptId = grpcConcept.getId().getValue();
+  let state;
   switch (grpcConcept.getBasetype()) {
     case 0:
-      return new Entity(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.ENTITY, txService);
+      return new Entity(conceptId, state);
       break;
     case 1:
-      return new Relationship(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP, txService);
+      return new Relationship(conceptId, state);
       break;
     case 2:
-      return new Attribute(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE, txService);
+      return new Attribute(conceptId, state);
       break;
     case 3:
-      return new EntityType(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.ENTITY_TYPE, txService);
+      return new EntityType(conceptId, state);
       break;
     case 4:
-      return new RelationshipType(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP_TYPE, txService);
+      return new RelationshipType(conceptId, state);
       break;
     case 5:
-      return new AttributeType(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE_TYPE, txService);
+      return new AttributeType(conceptId, state);
       break;
     case 6:
-      return new Role(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.ROLE, txService);
+      return new Role(conceptId, state);
       break;
     case 7:
-      return new Rule(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.RULE, txService);
+      return new Rule(conceptId, state);
       break;
     case 8:
-      return new MetaType(conceptId, communicator);
+      state = _buildState(conceptId, ConceptMethods.META_TYPE, txService);
+      return new MetaSchemaConcept(conceptId, state);
       break;
     default:
       throw "BaseType not recognised.";
   }
 }
 
-function _buildState(conceptId, communicator) {
+function _buildState(conceptId, baseType, txService) {
   return {
     id: { value: conceptId },
-    communicator: { value: communicator }
+    baseType: { value: baseType },
+    txService: { value: txService }
   };
 }
 
 // Each new object gets created by composing all the methods of super types
 
-function AttributeType(conceptId, communicator) {
+function AttributeType(conceptId, state) {
   // Compose methods of super types: Concept , SchemaConcept andType
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.THING),
+    ConceptMethods.get(),
     TypeMethods.get(),
     SchemaConceptMethods.get(),
     AttributeTypeMethods.get()
   );
-  return Object.create(methods, _buildState(conceptId, communicator));
+  return Object.create(methods, state);
 }
 
-function RelationshipType(conceptId, communicator) {
+function RelationshipType(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.RELATIONSHIP_TYPE),
+    ConceptMethods.get(),
     SchemaConceptMethods.get(),
     TypeMethods.get(),
     RelationshipTypeMethods.get()
   );
-  return Object.create(methods, _buildState(conceptId, communicator));
+  return Object.create(methods, state);
 }
 
-function EntityType(conceptId, communicator) {
+function EntityType(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.ENTITY_TYPE),
+    ConceptMethods.get(),
     SchemaConceptMethods.get(),
     TypeMethods.get(),
     EntityTypeMethods.get()
   );
-  return Object.create(methods, _buildState(conceptId, communicator));
+  return Object.create(methods, state);
 }
 
-function Relationship(conceptId, communicator) {
+function Relationship(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.RELATIONSHIP),
+    ConceptMethods.get(),
     ThingMethods.get(),
     RelationshipMethods.get()
   );
-  return Object.create(methods, _buildState(conceptId, communicator));
+  return Object.create(methods, state);
 }
 
-function Attribute(conceptId, communicator) {
+function Attribute(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.ATTRIBUTE),
+    ConceptMethods.get(),
     ThingMethods.get(),
     AttributeMethods.get()
   );
-  return Object.create(methods, _buildState(conceptId, communicator));
+  return Object.create(methods, state);
 }
 
-function Entity(conceptId, communicator) {
+function Entity(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.ENTITY),
-    ThingMethods.get()
-    // There are no specific methods for Entity instance
+    ConceptMethods.get(),
+    ThingMethods.get(),
+    EntityMethods.get()
   );
-  return Object.create(methods, _buildState(conceptId, communicator));
+  return Object.create(methods, state);
 }
 
-function Role(conceptId, communicator) {
+function Role(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.ROLE),
+    ConceptMethods.get(),
     SchemaConceptMethods.get(),
     RoleMethods.get()
   );
-  return Object.create(methods, _buildState(conceptId, communicator));
+  return Object.create(methods, state);
 }
 
-function Rule(conceptId, communicator) {
+function Rule(conceptId, state) {
   const methods = Object.assign(
-    ConceptMethods.get(ConceptMethods.RULE),
+    ConceptMethods.get(),
     SchemaConceptMethods.get(),
     RuleMethods.get()
   );
-  return Object.create(methods, _buildState(conceptId, communicator));
+  return Object.create(methods, state);
 }
 
-function MetaType(conceptId, communicator) {
-  const methods = ConceptMethods.get(ConceptMethods.THING);
-  return Object.create(methods, _buildState(conceptId, communicator));
+function MetaSchemaConcept(conceptId, state) {
+  const methods = Object.assign(
+    ConceptMethods.get(),
+    SchemaConceptMethods.get(),
+  );
+  return Object.create(methods, state);
 }
 
-module.exports = { createConcept };
+module.exports = ConceptFactory;

@@ -1,24 +1,18 @@
-const MethodBuilder = require("../util/MethodBuilder");
-const GrpcIterator = require("../util/GrpcIterator");
 
 const methods = {
-  getRelatedRoles: function() {
-    const getRelatedRolesMethod = MethodBuilder.getRelatedRoles(this.id);
-    return this.communicator.send(getRelatedRolesMethod).then(async result => {
-      const iterator = new GrpcIterator.GrpcConceptIterator(
-        result.getConceptresponse().getIteratorid(),
-        this.communicator
-      );
-      const role = await iterator.nextResult();
-      return result;
-    });
+  addRelationship: function () { return this.txService.addRelationship(this.id); },
+  relates: function (role) {
+    if (role) {
+      return this.txService.getRelatedRoles(this.id);
+    } else {
+      return this.txService.setRelatedRole(this.id, role);
+    }
   },
-  setRelatedRole: function() {},
-  unsetRelatedRole: function() {}
+  deleteRelates: function (role) { return this.txService.unsetRelatedRole(this.id, role); }
 };
 
 module.exports = {
-  get: function() {
+  get: function () {
     return methods;
   }
 };
