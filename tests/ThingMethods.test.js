@@ -6,7 +6,7 @@ const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
 
 test("Thing methods", async (done) => {
     try {
-        let client = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
+        let client = new gc(DEFAULT_URI, "gene");
         const tx = await client.open(client.txType.WRITE);
         // await tx.execute(
         //     "define teaching sub relationship, relates teacher, relates student;" +
@@ -49,10 +49,8 @@ test("Thing methods", async (done) => {
                         expect(o.isThing()).toBeTruthy();
                     });
                     const datatype = await a.dataType();
-                    console.log("stop");
                 });
                 // const filteredRelationships = await person.relationships(...roles);
-                console.log("yolo");
             }
         }
         done();
@@ -83,7 +81,6 @@ test("Relationship methods", async (done) => {
                 rolePlayersArray.forEach(role => {
                     expect(role.isRole()).toBeTruthy();
                 });
-                console.log("yolo");
             }
         }
         done();
