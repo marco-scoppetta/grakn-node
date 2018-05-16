@@ -19,13 +19,13 @@ You will also need access to a Grakn database. Head [here](https://grakn.ai/page
 Begin by importing the Grakn graph:
 
 ```
->>> const GraknGraph = require('grakn');
+>>> const GraknClient = require('grakn');
 ```
 
 Now you can connect to a graph:
 
 ```
->>> const graph = new GraknGraph('http://localhost:4567', 'keyspace');
+>>> const graph = new GraknClient('http://localhost:4567', 'keyspace');
 ```
 
 You can write to the graph:
@@ -52,28 +52,143 @@ Or read from it:
 
 
 # API Reference
+Execute Graql query (inside an `async` function):
 
-#### `GraknGraph([uri],[keyspace])`
+```
+const tx = await graph.open(client.txType.WRITE);
+const result = await tx.execute("match $x isa person; limit 10; get;");
+    for (let map of result) {
+        for (let [key, concept] of map) {
+            //concept is an Entity object
+        }
+    }
+```
 
-Constructor function that accepts two optional parameters:
+**Concepts hierarchy** 
 
-- **uri**: default `http://localhost:4567`. URI of running graph.
-- **keyspace**: default `grakn`. Keyspace name.
+```
+                                         Concept
+                                        /       \
+                                      /           \
+                                    /               \
+                                  /                   \
+                          SchemaConcept                    Thing
+                          /     |    \                    /   |  \
+                        /      Rule  Role               /     |    \
+                      /                               /       |      \
+                     Type                        Entity    Attribute   Relationship
+                /     |     \
+               /      |       \
+             /        |         \
+    EntityType     AttributeType  RelationshipType
+```
+**GraknClient**
+  `GraknClient(String URI, String keyspace, {username: String, password: String})`
+  **e.g.** `let client = new gc("localhost:48555", "grakn", {username: "Marco", password: "Secret"})`
+  
+  
+ `open(client.txType)` - **Returns:** `GraknTx` object (Tx will be already open)
+ **N.I. --**`delete(String keyspace)` - **Returns:** void
+ 
+ **GraknTx**
+ 
+  `execute(String)` - **Returns:** Array of `Map<String, Concept>` (String represents the graql variable)
+  **N.I. --**`commit()` - **Returns:** void
+  **N.I. --**`getConcept(String conceptId)` - **Returns:** `Concept` object
+  **N.I. --**`putEntityType()`
+  **N.I. --**`putRelationshipType()`
+  **N.I. --**`putAttributeType()`
+  **N.I. --**`putRole()`
+  **N.I. --**`putRule()`
 
----
+**Concept**
 
-#### `execute(query, [params])`
-
-It executes query against the running graph. It returns a Promise.
-
-- **params** is an object which contains optional parameters to apply to the current transaction:
-    - **infer**: Determine if inference must be used for the current query [default is **true**]. 
-    - **multi**: Allow multiple queries to be executed in one single request/transaction [default is **false**].
-    - **defineAllVars**: Define all anonymous variables in the query [default is **false**]. 
-            E.g. `match ($x,$y); get;` would also return the anonymous relationship variable.
-    - **loading**: Used to check if serialisation of results is needed. When set to `true`, the endpoint will not return a formatted response. [default is **false**]
-    - **txType**: Transaction type. The following are valid value: 
-        `graph.txType.WRITE` - Type of transaction that allows reading and writing on the graph. It also performs all the consistency checks and validations.  [This is the **default** value.]
-        `graph.txType.READ` - Type of transaction that only allows reading from the graph. It also performs all the consistency checks and validations.
-        `graph.txType.BATCH` - Type of transaction that allows reading and writing on the graph. It skips some consistency checks to allow faster writes to graph. Useful for for batch loading.
----
+  `delete()` - **Returns:** void (not tested)
+  `isSchemaConcept()` - **Returns:** boolean
+   `isType()` - **Returns:** boolean
+   `isThing()` - **Returns:** boolean
+   `isAttributeType()` - **Returns:** boolean
+   `isEntityType()` - **Returns:** boolean
+   `isRelationshipType()` - **Returns:** boolean
+   `isRole()` - **Returns:** boolean
+   `isRule()` - **Returns:** boolean
+   `isAttribute()` - **Returns:** boolean
+   `isEntity()` - **Returns:** boolean
+   `isRelationship()` - **Returns:** boolean
+  
+  **Schema concept**
+  
+   `getLabel()` - **Returns:** string
+   `setLabel()` - **Returns:** void  (not tested)
+   `isImplicit()` - **Returns:** `boolean`
+   `sup()` - **Returns:** `null` or `SchemaConcept` object
+   `subs()` - **Returns:** Array of `SchemaConcept` objects
+   `sups()`- **Returns:** Array of `SchemaConcept` objects
+   
+  **Thing**
+  
+   `isInferred()` - **Returns:** `boolean`
+   `type()` - **Returns:** `SchemaConcept` object
+   `relationships()` - **Returns:** Array of `Relationship` objects
+   `attributes()` - **Returns:** Array of `Attribute` objects
+   `plays()` - **Returns:** Array of `Role` objects
+    **N.I. --**`relationships(...Role)` - **Returns:** Array of `Relationship` objects
+    **N.I. --**`keys()` - **Returns:** Array of `Attribute` objects
+    **N.I. --**`keys(...Attributetype)` - **Returns:** Array of `Attribute` objects
+    **N.I. --**`attribute(Attribute)` - **Returns:** void
+    **N.I. --**`deleteAttribute(Attribute)` - **Returns** void
+   
+  **Attribute**
+   
+   `dataType()` - **Returns:** `String`
+   `getValue()` - **Returns:** `String` or `Number`
+   `ownerInstances()` - **Returns:** Array of `Thing` objects
+   
+  **Relationship**
+  
+  `allRolePlayers()` - **Returns:** `Map<Role, Set<Thing>>`
+  `rolePlayers()` - **Returns:** Array of `Role` objects
+   **N.I. --**`rolePlayers(...Role)` - **Returns:** Array of `Role` objects
+   **N.I. --**`addRolePlayer(Role, Thing)` - **Returns:**  `Relationship` object
+   **N.I. --**`removeRolePlayer(Role, Thing)` - **Returns:**  void
+  
+  **Type**
+  
+   **N.I. --**`setAbstract()` - **Returns:** void
+  `isAbstract()` - **Returns:** `boolean`
+  `plays()` - **Returns:** Array of `Role` objects
+  `attributes()` - **Returns:** Array of `AttributeType` objects
+  `instances()` - **Returns:** Array of `Thing` objects
+  **N.I. --**`keys()` - **Returns:** 
+  **N.I. --**`keys(AttributeType)` - **Returns:** 
+  **N.I. --**`attribute(AttributeType)` - **Returns:** 
+  **N.I. --**`deletePlays(Role)` - **Returns:** 
+  **N.I. --**`deleteAttribute(AttributeType)` - **Returns:** 
+  **N.I. --**`deleteKey(AttributeType)` - **Returns:** 
+  
+  **AttributeType**
+  
+  **N.I. --**`putAttribute()` - **Returns:** 
+  **N.I. --**`getAttribute(Value)` - **Returns:** 
+  **N.I. --**`getDataType()` - **Returns:** 
+  **N.I. --**`getRegex()` - **Returns:** 
+  **N.I. --**`setRegex()` - **Returns:** 
+   
+  **RelationshipType**
+  **N.I. --**`addRelationship()` - **Returns:** 
+  **N.I. --**`relates()` - **Returns:**  - returns roles
+  **N.I. --**`relates(Role)` - **Returns:**  - add new role
+  **N.I. --**`deleteRelates(Role)` - **Returns:** 
+  
+  **EntityType**
+  **N.I. --**`addEntity()` - **Returns:** new `Entity` object - creates new entity instance
+  
+  **Role**
+  
+  **N.I. --**`relationshipTypes()` - **Returns:**
+  **N.I. --**`playedByTypes()` - **Returns:**
+  
+  **Rule**
+  
+   **N.I. --**`getWhen()` - **Returns:**
+   **N.I. --**`getThen()` - **Returns:**
