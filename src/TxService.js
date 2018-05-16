@@ -345,8 +345,10 @@ TxService.prototype.openTx = async function (keyspace, txType, credentials) {
 
     openRequest.setKeyspace(messageKeyspace);
     openRequest.setTxtype(messages.TxType.WRITE);
-    openRequest.setUsername(credentials.username);
-    openRequest.setPassword(credentials.password);
+    if (credentials) {
+        openRequest.setUsername(credentials.username);
+        openRequest.setPassword(credentials.password);
+    }
     txRequest.setOpen(openRequest);
 
     await this.communicator.send(txRequest)
