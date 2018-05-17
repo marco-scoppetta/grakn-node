@@ -63,9 +63,9 @@ ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, txS
 
 function _buildState(conceptId, baseType, txService) {
   return {
-    id: { value: conceptId },
-    baseType: { value: baseType },
-    txService: { value: txService }
+    id: conceptId,
+    baseType: baseType,
+    txService: txService
   };
 }
 
@@ -79,7 +79,8 @@ function AttributeType(conceptId, state) {
     SchemaConceptMethods.get(),
     AttributeTypeMethods.get()
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 function RelationshipType(conceptId, state) {
@@ -89,7 +90,8 @@ function RelationshipType(conceptId, state) {
     TypeMethods.get(),
     RelationshipTypeMethods.get()
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 function EntityType(conceptId, state) {
@@ -99,7 +101,8 @@ function EntityType(conceptId, state) {
     TypeMethods.get(),
     EntityTypeMethods.get()
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 function Relationship(conceptId, state) {
@@ -108,7 +111,8 @@ function Relationship(conceptId, state) {
     ThingMethods.get(),
     RelationshipMethods.get()
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 function Attribute(conceptId, state) {
@@ -117,7 +121,8 @@ function Attribute(conceptId, state) {
     ThingMethods.get(),
     AttributeMethods.get()
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 function Entity(conceptId, state) {
@@ -126,7 +131,8 @@ function Entity(conceptId, state) {
     ThingMethods.get(),
     EntityMethods.get()
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 function Role(conceptId, state) {
@@ -135,7 +141,8 @@ function Role(conceptId, state) {
     SchemaConceptMethods.get(),
     RoleMethods.get()
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 function Rule(conceptId, state) {
@@ -144,7 +151,8 @@ function Rule(conceptId, state) {
     SchemaConceptMethods.get(),
     RuleMethods.get()
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 function MetaSchemaConcept(conceptId, state) {
@@ -152,7 +160,8 @@ function MetaSchemaConcept(conceptId, state) {
     ConceptMethods.get(),
     SchemaConceptMethods.get(),
   );
-  return Object.create(methods, state);
+  const superObj = Object.create(methods);
+  return Object.assign(superObj, state);
 }
 
 module.exports = ConceptFactory;
