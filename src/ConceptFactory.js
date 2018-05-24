@@ -10,50 +10,56 @@ const RoleMethods = require("./methods/Role");
 const AttributeTypeMethods = require("./methods/AttributeType");
 const EntityTypeMethods = require("./methods/EntityType");
 const EntityMethods = require("./methods/Entity");
+const TxService = require("./TxService");
 
 
 // Empty constructor for now so that we create object and inject/mock
-function ConceptFactory() {
+function ConceptFactory(stub) {
+  this.txService = new TxService(stub, this);
 }
 
-ConceptFactory.prototype.createConcept = function createConcept(grpcConcept, txService) {
+ConceptFactory.prototype.init = function init(keyspace, txType, credentials) {
+  return this.txService.openTx(keyspace, txType, credentials);
+}
+
+ConceptFactory.prototype.createConcept = function createConcept(grpcConcept) {
   const conceptId = grpcConcept.getId().getValue();
   let state;
   switch (grpcConcept.getBasetype()) {
     case 0:
-      state = _buildState(conceptId, ConceptMethods.ENTITY, txService);
+      state = _buildState(conceptId, ConceptMethods.ENTITY, this.txService);
       return new Entity(conceptId, state);
       break;
     case 1:
-      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP, txService);
+      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP, this.txService);
       return new Relationship(conceptId, state);
       break;
     case 2:
-      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE, txService);
+      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE, this.txService);
       return new Attribute(conceptId, state);
       break;
     case 3:
-      state = _buildState(conceptId, ConceptMethods.ENTITY_TYPE, txService);
+      state = _buildState(conceptId, ConceptMethods.ENTITY_TYPE, this.txService);
       return new EntityType(conceptId, state);
       break;
     case 4:
-      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP_TYPE, txService);
+      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP_TYPE, this.txService);
       return new RelationshipType(conceptId, state);
       break;
     case 5:
-      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE_TYPE, txService);
+      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE_TYPE, this.txService);
       return new AttributeType(conceptId, state);
       break;
     case 6:
-      state = _buildState(conceptId, ConceptMethods.ROLE, txService);
+      state = _buildState(conceptId, ConceptMethods.ROLE, this.txService);
       return new Role(conceptId, state);
       break;
     case 7:
-      state = _buildState(conceptId, ConceptMethods.RULE, txService);
+      state = _buildState(conceptId, ConceptMethods.RULE, this.txService);
       return new Rule(conceptId, state);
       break;
     case 8:
-      state = _buildState(conceptId, ConceptMethods.META_TYPE, txService);
+      state = _buildState(conceptId, ConceptMethods.META_TYPE, this.txService);
       return new MetaSchemaConcept(conceptId, state);
       break;
     default:

@@ -41,7 +41,13 @@ test("Thing methods", async (done) => {
                 roles.forEach(role => {
                     expect(role.isRole()).toBeTruthy();
                 });
+                person.attributes().then(attributes => {
+                    attributes.forEach(a => {
+                        expect(a.isAttribute()).toBeTruthy();
+                    });
+                });
                 const attributes = await person.attributes();
+
                 attributes.forEach(async a => {
                     const value = await a.getValue()
                     const owners = await a.ownerInstances();

@@ -7,11 +7,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Jest Tests",
+            "name": "CommitTx tests",
             "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
             "args": [
-        "-i"
-    ],
+                "-i",
+                "CommitTx.test.js"
+            ],
+            "console": "integratedTerminal"
         }
     ]
 }
