@@ -61,7 +61,7 @@ case $1 in
 
         if [ -f "${GRAKN_DIR}/bin/grakn.sh" ]; then
             "${GRAKN_DIR}/bin/grakn.sh" start
-            sleep 10  # TODO: remove this when `grakn.sh start` blocks
+            sleep 5  # TODO: remove this when `grakn.sh start` blocks
         else 
             "${GRAKN_DIR}/grakn" server start
         fi

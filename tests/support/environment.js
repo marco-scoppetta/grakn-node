@@ -3,29 +3,17 @@ var { StringDecoder } = require('string_decoder');
 var decoder = new StringDecoder('utf8');
 var version = require('../../package.json').graknVersion;
 
-var scriptPath = './env.sh';
+var scriptPath = './tests/support/env.sh';
 
 module.exports = {
     beforeAll: function () {
-        var ps = spawn(scriptPath, ['start', version]);
-        return new Promise((resolve, reject) => {
-            ps.stdout.on('data', (data) => {
-                console.log(`From env.sh: ${data}`);
-            });
-
-            ps.stderr.on('data', (data) => {
-                console.log(`ps stderr: ${data}`);
-            });
-
-            ps.on('close', (code) => {
-                if (code !== 0) {
-                    console.log(`ps process exited with code ${code}`);
-                    reject();
-                } else {
-                    resolve();
-                }
-            });
-        });
+        var process = spawnSync(scriptPath, ['start', version]);
+        if (process.status != 0) {
+            var err = Buffer.from(process.output[2]);
+            console.log('Failed to start test environment: ' + decoder.write(err));
+        } else {
+            console.log('Grakn environment ready.');
+        }
 
     },
     afterAll: function () {
@@ -33,6 +21,8 @@ module.exports = {
         if (process.status != 0) {
             var err = Buffer.from(process.output[2]);
             console.log('Failed to stop test environment: ' + decoder.write(err));
+        } else {
+            console.log('Grakn environment stopped.');
         }
     },
     newKeyspace: function () {

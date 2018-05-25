@@ -2,9 +2,16 @@ const gc = require("../src/GraknClient");
 const DEFAULT_URI = "localhost:48555";
 const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
+// const environment = require('./support/environment');
 
 
-test("Thing methods", async (done) => {
+// beforeAll(environment.beforeAll);
+
+// afterAll(() => {
+//     environment.afterAll();
+// });
+
+test.only("Thing methods", async (done) => {
     try {
         let client = new gc(DEFAULT_URI, "gene");
         const tx = await client.open(client.txType.WRITE);
@@ -20,7 +27,9 @@ test("Thing methods", async (done) => {
         //     " $y has name 'Luigi' isa person;" +
         //     " (teacher: $x, student: $y) isa teaching;"
         // );
-
+        const tx1 = await client.open(client.txType.WRITE);
+        await tx1.execute("define person sub entity;");
+        await tx1.commit();
         const result = await tx.execute("match $x isa person; limit 1; get;");
         for (let map of result) {
             for (let [key, person] of map) {
