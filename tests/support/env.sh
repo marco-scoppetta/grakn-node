@@ -77,43 +77,4 @@ case $1 in
         fi
         rm -rf "$GRAKN_DIR"
         ;;
-    keyspace)
-        KEYSPACE=$(<$KEYSPACE_FILE)
-        KEYSPACE=$((KEYSPACE+1))
-        echo $KEYSPACE > $KEYSPACE_FILE
-        echo "k$KEYSPACE"
-        ;;
-    insert)
-        KEYSPACE=$(<$KEYSPACE_FILE)
-        graql -k "k$KEYSPACE" -e "insert $2"
-        ;;
-    define)
-        KEYSPACE=$(<$KEYSPACE_FILE)
-        graql -k "k$KEYSPACE" -e "define $2"
-        ;;
-    check)
-        KEYSPACE=$(<$KEYSPACE_FILE)
-        case $2 in
-            type)
-                QUERY="match \$x label $3; aggregate ask;"
-                ;;
-            instance)
-                QUERY="match \$x has $3 '$4'; aggregate ask;"
-                ;;
-            *)
-                >&2 echo 'Valid commands are `type` and `instance`'
-                exit 1
-                ;;
-        esac
-        RESPONSE=`graql -k "k$KEYSPACE" -o json -e "$QUERY"`
-        if [ "$RESPONSE" = 'true' ]; then
-            exit 0
-        else
-            exit 1
-        fi
-        ;;
-    *)
-        >&2 echo 'Valid commands are `start` and `stop`'
-        exit 1
-        ;;
 esac

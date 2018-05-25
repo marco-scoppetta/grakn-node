@@ -1,13 +1,9 @@
 const gc = require("../src/GraknClient");
-const environment = require('./support/environment');
+const environment = require('./support/GraknTestEnvironment');
 
 const DEFAULT_URI = "localhost:48555";
 const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
-
-function randomUUID() {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
 
 describe('Integration test', () => {
 
@@ -20,8 +16,7 @@ describe('Integration test', () => {
 
     test("Commit Tx", async (done) => {
         try {
-            const ks = 'a' + randomUUID();
-            console.log("Working on keyspace " + ks);
+            const ks = environment.newKeyspace();
             let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
             const tx = await client.open(client.txType.WRITE);
 
@@ -45,17 +40,16 @@ describe('Integration test', () => {
 
     test.only("If tx does not commit, different Tx won't see changes", async (done) => {
         try {
-            const ks = 'a' + randomUUID();
-            console.log("Working on keyspace " + ks);
+            const ks = environment.newKeyspace();
             let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
             const tx = await client.open(client.txType.WRITE);
 
             const result = await tx.execute("define person sub entity;");
             const newTx = await client.open(client.txType.WRITE);
-            // const executionPromise = newTx.execute("match $x sub person; get;");
             await expect(newTx.execute("match $x sub person; get;"))
                 .rejects
                 .toThrow();
+            client.close();
             done();
         } catch (err) {
             console.log(err)

@@ -15,7 +15,6 @@ function GraknClient(uri, keyspace, credentials) {
   );
 }
 
-
 /**
  * Create new GraknTx, executes query and closes transaction
  * @param {*} query Graql query string
@@ -54,5 +53,9 @@ GraknClient.prototype.txType = {
   WRITE: messages.TxType.WRITE,
   BATCH: messages.TxType.BATCH
 };
+
+GraknClient.prototype.close = function close() {
+  this.stub.close();
+}
 
 module.exports = GraknClient;

@@ -226,7 +226,11 @@ TxService.prototype.getKeysByTypes = function (id) {
         .catch(e => { throw e; });
 };
 TxService.prototype.setAttribute = function (id) { };
-TxService.prototype.unsetAttribute = function (id) { };
+TxService.prototype.unsetAttribute = function (id, attribute) {
+    const txRequest = TxRequestBuilder.unsetAttribute(id, attribute);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 
 // Relationship
 

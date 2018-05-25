@@ -11,7 +11,8 @@
             "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
             "args": [
                 "${file}",
-                "--runInBand"
+                "--runInBand",
+                "--detectOpenHandles"
             ],
             "console": "integratedTerminal",
             "sourceMaps": true,

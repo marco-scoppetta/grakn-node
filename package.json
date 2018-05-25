@@ -12,16 +12,13 @@
     "url": "https://github.com/graknlabs/grakn-node"
   },
   "scripts": {
-    "test": "./node_modules/.bin/cucumber.js --tags \"not @skip\"",
-    "unit-test": "./node_modules/jest/bin/jest.js"
+    "test": "./node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "google-protobuf": "^3.0.0",
-    "grpc": "^1.11.3"
+    "grpc": "^1.12.2"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "cucumber": "^3.2.0",
-    "jest": "^22.4.3"
+    "jest": "^23.0.0"
   }
 }

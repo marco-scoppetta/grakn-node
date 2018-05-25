@@ -299,9 +299,9 @@ const methods = {
     conceptMethod.setSetattribute(); // Pass a Concept
     return TxRequest(conceptId, conceptMethod);
   },
-  unsetAttribute: function () {
+  unsetAttribute: function (conceptId, attribute) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setUnsetattribute(); // Pass a Concept
+    conceptMethod.setUnsetattribute(toGrpcConcept(attribute));
     return TxRequest(conceptId, conceptMethod);
   },
 

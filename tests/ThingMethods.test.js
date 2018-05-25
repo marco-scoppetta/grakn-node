@@ -2,7 +2,7 @@ const gc = require("../src/GraknClient");
 const DEFAULT_URI = "localhost:48555";
 const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
-// const environment = require('./support/environment');
+const environment = require('./support/GraknTestEnvironment');
 
 
 // beforeAll(environment.beforeAll);
@@ -11,9 +11,14 @@ const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
 //     environment.afterAll();
 // });
 
-test.only("Thing methods", async (done) => {
+function randomUUID() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+test("Thing methods", async (done) => {
+    const ks = environment.newKeyspace();
+    let client = new gc(DEFAULT_URI, ks);
     try {
-        let client = new gc(DEFAULT_URI, "gene");
         const tx = await client.open(client.txType.WRITE);
         // await tx.execute(
         //     "define teaching sub relationship, relates teacher, relates student;" +
@@ -68,16 +73,19 @@ test.only("Thing methods", async (done) => {
                 // const filteredRelationships = await person.relationships(...roles);
             }
         }
+        client.close();
         done();
     } catch (err) {
+        client.close();
         done.fail(err);
     }
-});
+}, 30000);
 
 
 test("Relationship methods", async (done) => {
     try {
-        let client = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
+        const ks = environment.newKeyspace();
+        let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
         const tx = await client.open(client.txType.WRITE);
 
         const result = await tx.execute("match $x id V4176; limit 1; get;");
@@ -103,3 +111,28 @@ test("Relationship methods", async (done) => {
         done.fail(err);
     }
 });
+
+
+test.only("Delete attribute from thing", async (done) => {
+    try {
+        const ks = environment.newKeyspace();
+        let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
+        const tx = await client.open(client.txType.WRITE);
+        await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
+        const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
+        await tx.commit();
+        const tx2 = await client.open(client.txType.WRITE);
+        const concepts = insertionResult.map(map => Array.from(map.values())).flatMap(x => x);
+        expect(concepts.length).toBe(1);
+        const person = concepts[0];
+        const attributes = await person.attributes();
+        expect(attributes.length).toBe(2);
+        await person.deleteAttribute(attributes[0]);
+        const lessAttributes = await person.attributes();
+        expect(attributes.length).toBe(1);
+        done();
+    } catch (err) {
+        console.log(err);
+        done.fail(err);
+    }
+}, 20000)
