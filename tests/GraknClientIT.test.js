@@ -63,3 +63,35 @@ test("Retrieve schema concept by label", async (done) => {
   }
 }, 10000);
 
+test("Put entity type by label", async (done) => {
+  try {
+    const client = new gc(DEFAULT_URI, environment.newKeyspace());
+    const tx = await client.open(client.txType.WRITE);
+    const personType = await tx.putEntityType("person");
+
+    expect(personType.isSchemaConcept()).toBeTruthy();
+    expect(personType.isEntityType()).toBeTruthy();
+
+    done();
+  } catch (err) {
+    console.error(err);
+    done.fail(err);
+  }
+}, 10000);
+
+test.only("Put relationship type by label", async (done) => {
+  try {
+    const client = new gc(DEFAULT_URI, environment.newKeyspace());
+    const tx = await client.open(client.txType.WRITE);
+    const marriage = await tx.putRelationshipType("marriage");
+
+    expect(marriage.isSchemaConcept()).toBeTruthy();
+    expect(marriage.isRelationshipType()).toBeTruthy();
+
+    done();
+  } catch (err) {
+    console.error(err);
+    done.fail(err);
+  }
+}, 10000);
+

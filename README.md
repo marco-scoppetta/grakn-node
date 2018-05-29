@@ -96,8 +96,9 @@ const result = await tx.execute("match $x isa person; limit 10; get;");
   `commit()` - **Returns:** void
   `getConcept(String conceptId)` - **Returns:** `Concept` object or `null` 
   `getSchemaConcept(String label)` - **Returns:** `Concept` object or `null`
-  **N.I. --**`putEntityType()`
-  **N.I. --**`putRelationshipType()`
+  **N.I. --**`getAttributesByValue(attributeValue)` - **Returns:** Array of `Attribute` objects
+  `putEntityType(String label)` - **Returns:** `EntityType` object 
+  `putRelationshipType(String label)`- **Returns:** `RelationshipType` object 
   **N.I. --**`putAttributeType()`
   **N.I. --**`putRole()`
   **N.I. --**`putRule()`
@@ -182,8 +183,8 @@ const result = await tx.execute("match $x isa person; limit 10; get;");
   **N.I. --**`deleteRelates(Role)` - **Returns:** 
   
   **EntityType**
-  **N.I. --**`addEntity()` - **Returns:** new `Entity` object - creates new entity instance
-  
+  **N.I. --**`addEntity()` - **Returns:** new `Entity` object
+
   **Role**
   
   **N.I. --**`relationshipTypes()` - **Returns:**
