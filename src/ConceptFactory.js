@@ -14,8 +14,8 @@ const TxService = require("./TxService");
 
 
 // Empty constructor for now so that we create object and inject/mock
-function ConceptFactory(stub) {
-  this.txService = new TxService(stub, this);
+function ConceptFactory(txService) {
+  this.txService = txService;
 }
 
 ConceptFactory.prototype.init = function init(keyspace, txType, credentials) {

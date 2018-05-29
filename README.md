@@ -93,8 +93,9 @@ const result = await tx.execute("match $x isa person; limit 10; get;");
  **GraknTx**
  
   `execute(String)` - **Returns:** Array of `Map<String, Concept>` (String represents the graql variable)
-  **N.I. --**`commit()` - **Returns:** void
-  **N.I. --**`getConcept(String conceptId)` - **Returns:** `Concept` object
+  `commit()` - **Returns:** void
+  `getConcept(String conceptId)` - **Returns:** `Concept` object or `null` 
+  `getSchemaConcept(String label)` - **Returns:** `Concept` object or `null`
   **N.I. --**`putEntityType()`
   **N.I. --**`putRelationshipType()`
   **N.I. --**`putAttributeType()`
@@ -136,7 +137,7 @@ const result = await tx.execute("match $x isa person; limit 10; get;");
     **N.I. --**`keys()` - **Returns:** Array of `Attribute` objects
     **N.I. --**`keys(...Attributetype)` - **Returns:** Array of `Attribute` objects
     **N.I. --**`attribute(Attribute)` - **Returns:** void
-    **N.I. --**`deleteAttribute(Attribute)` - **Returns** void
+    `deleteAttribute(Attribute)` - **Returns** void
    
   **Attribute**
    

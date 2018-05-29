@@ -116,23 +116,67 @@ test("Relationship methods", async (done) => {
 test.only("Delete attribute from thing", async (done) => {
     try {
         const ks = environment.newKeyspace();
+        console.log("working on keyspace " + ks);
         let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
         const tx = await client.open(client.txType.WRITE);
         await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
         const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
-        await tx.commit();
-        const tx2 = await client.open(client.txType.WRITE);
+
         const concepts = insertionResult.map(map => Array.from(map.values())).flatMap(x => x);
         expect(concepts.length).toBe(1);
         const person = concepts[0];
+        //Delete attribute from person 
         const attributes = await person.attributes();
         expect(attributes.length).toBe(2);
         await person.deleteAttribute(attributes[0]);
-        const lessAttributes = await person.attributes();
-        expect(attributes.length).toBe(1);
+        await tx.commit();
+
+        // Check from another transaction that the person has only 1 attribute
+
+        const tx2 = await client.open(client.txType.WRITE);
+        const result = await tx2.execute("match $x isa person; get;");
+        const newConcepts = result.map(map => Array.from(map.values())).flatMap(x => x);
+        const samePerson = newConcepts[0];
+        const lessAttributes = await samePerson.attributes();
+        expect(lessAttributes.length).toBe(1);
         done();
     } catch (err) {
         console.log(err);
         done.fail(err);
     }
 }, 20000)
+
+
+
+// test.only("Add attribute to thing", async (done) => {
+//     try {
+//         const ks = environment.newKeyspace();
+//         console.log("working on keyspace " + ks);
+//         let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
+//         const tx = await client.open(client.txType.WRITE);
+//         await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
+//         const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
+
+//         const concepts = insertionResult.map(map => Array.from(map.values())).flatMap(x => x);
+//         expect(concepts.length).toBe(1);
+//         const person = concepts[0];
+//         //Delete attribute from person 
+//         const attributes = await person.attributes();
+//         expect(attributes.length).toBe(2);
+//         await person.deleteAttribute(attributes[0]);
+//         await tx.commit();
+
+//         // Check from another transaction that the person has only 1 attribute
+
+//         const tx2 = await client.open(client.txType.WRITE);
+//         const result = await tx2.execute("match $x isa person; get;");
+//         const newConcepts = result.map(map => Array.from(map.values())).flatMap(x => x);
+//         const samePerson = newConcepts[0];
+//         const lessAttributes = await samePerson.attributes();
+//         expect(lessAttributes.length).toBe(1);
+//         done();
+//     } catch (err) {
+//         console.log(err);
+//         done.fail(err);
+//     }
+// }, 20000)
