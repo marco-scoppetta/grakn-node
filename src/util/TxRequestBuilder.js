@@ -294,9 +294,9 @@ const methods = {
     conceptMethod.setGetkeysbytypes(); // Pass Concepts
     return TxRequest(conceptId, conceptMethod);
   },
-  setAttribute: function () {
+  setAttribute: function (conceptId, attribute) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetattribute(); // Pass a Concept
+    conceptMethod.setSetattribute(toGrpcConcept(attribute)); // Pass a Concept
     return TxRequest(conceptId, conceptMethod);
   },
   unsetAttribute: function (conceptId, attribute) {

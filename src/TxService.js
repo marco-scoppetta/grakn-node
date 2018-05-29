@@ -139,7 +139,8 @@ TxService.prototype.unsetRolePlayedByType = function (id) { };
 TxService.prototype.addEntity = function (id) {
     const txRequest = TxRequestBuilder.addEntity(id);
     return this.communicator.send(txRequest)
-        .then(response)
+        .then(response => this.conceptFactory.createConcept(response.getConceptresponse().getConcept()))
+        .catch(e => { throw e; });
 };
 
 // Relationship Type
@@ -227,7 +228,11 @@ TxService.prototype.getKeysByTypes = function (id) {
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setAttribute = function (id) { };
+TxService.prototype.setAttribute = function (id, attribute) {
+    const txRequest = TxRequestBuilder.setAttribute(id, attribute);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 TxService.prototype.unsetAttribute = function (id, attribute) {
     const txRequest = TxRequestBuilder.unsetAttribute(id, attribute);
     return this.communicator.send(txRequest)
@@ -401,6 +406,22 @@ TxService.prototype.putRelationshipType = function (label) {
     const labelMessage = new messages.Label();
     labelMessage.setValue(label);
     txRequest.setPutrelationshiptype(labelMessage);
+    return this.communicator
+        .send(txRequest)
+        .then(response => this.conceptFactory.createConcept(response.getConcept()))
+        .catch((e) => {
+            throw e;
+        });;
+}
+
+TxService.prototype.putAttributeType = function (label, dataType) {
+    const txRequest = new messages.TxRequest();
+    const putMessage = new messages.PutAttributeType();
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    putMessage.setLabel(labelMessage);
+    putMessage.setDatatype(dataType);
+    txRequest.setPutattributetype(putMessage);
     return this.communicator
         .send(txRequest)
         .then(response => this.conceptFactory.createConcept(response.getConcept()))

@@ -1,41 +1,38 @@
-// const gc = require("../src/GraknClient");
-// const DEFAULT_URI = "localhost:48555";
-// const DEFAULT_KEYSPACE = "grakn";
-// const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
+const gc = require("../src/GraknClient");
+const DEFAULT_URI = "localhost:48555";
+const DEFAULT_KEYSPACE = "grakn";
+const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
+const environment = require('./support/GraknTestEnvironment');
 
 
-// test.only("Entity methods", async (done) => {
-//     try {
-//         let client = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
-//         const tx = await client.open(client.txType.WRITE);
+// AttributeType test
+test.only("Create entity instance", async (done) => {
+    try {
+        const client = new gc(DEFAULT_URI, environment.newKeyspace());
+        const tx = await client.open(client.txType.WRITE);
+        const attributeType = await tx.putAttributeType("firstname", client.dataType.STRING);
+        const attribute = await attributeType.putAttribute();
+        expect(attribute.isAttribute()).toBeTruthy();
+        done();
+    } catch (err) {
+        console.error(err);
+        done.fail(err);
+    }
+}, 10000);
 
-//         const result = await tx.execute("match $x sub person; limit 1; get;");
-//         for (let map of result) {
-//             for (let [key, subEntity] of map) {
-//                 expect(subEntity.isType()).toBeTruthy();
-//                 const roles = await subEntity.plays();
-//                 roles.forEach(role => {
-//                     expect(role.isRole()).toBeTruthy();
-//                 })
-//                 const attrTypes = await subEntity.attributes();
-//                 attrTypes.forEach(att => {
-//                     expect(att.isAttributeType()).toBeTruthy();
-//                 })
-//                 const instances = await subEntity.instances();
-//                 instances.forEach(instance => {
-//                     expect(instance.isThing()).toBeTruthy();
-//                 });
-//             }
-//         }
-//         done();
-//     } catch (err) {
-//         done.fail(err);
-//     }
-// });
+// RelationshipType test
 
-
-// // AttributeType test
-
-// // RelationshipType test
-
-// // EntityType test
+// EntityType test
+test("Create entity instance", async (done) => {
+    try {
+        const client = new gc(DEFAULT_URI, environment.newKeyspace());
+        const tx = await client.open(client.txType.WRITE);
+        const personType = await tx.putEntityType("person");
+        const person = await personType.addEntity();
+        expect(person.isEntity()).toBeTruthy();
+        done();
+    } catch (err) {
+        console.error(err);
+        done.fail(err);
+    }
+}, 10000);

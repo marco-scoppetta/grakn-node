@@ -79,7 +79,7 @@ test("Put entity type by label", async (done) => {
   }
 }, 10000);
 
-test.only("Put relationship type by label", async (done) => {
+test("Put relationship type by label", async (done) => {
   try {
     const client = new gc(DEFAULT_URI, environment.newKeyspace());
     const tx = await client.open(client.txType.WRITE);
@@ -88,6 +88,19 @@ test.only("Put relationship type by label", async (done) => {
     expect(marriage.isSchemaConcept()).toBeTruthy();
     expect(marriage.isRelationshipType()).toBeTruthy();
 
+    done();
+  } catch (err) {
+    console.error(err);
+    done.fail(err);
+  }
+}, 10000);
+
+test.only("Put attribute type", async (done) => {
+  try {
+    const client = new gc(DEFAULT_URI, environment.newKeyspace());
+    const tx = await client.open(client.txType.WRITE);
+    const attributeType = await tx.putAttributeType("firstname", client.dataType.STRING);
+    expect(attributeType.isAttributeType()).toBeTruthy();
     done();
   } catch (err) {
     console.error(err);

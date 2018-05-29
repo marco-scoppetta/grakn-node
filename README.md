@@ -92,14 +92,14 @@ const result = await tx.execute("match $x isa person; limit 10; get;");
  
  **GraknTx**
  
-  `execute(String)` - **Returns:** Array of `Map<String, Concept>` (String represents the graql variable)
+  `execute(String graqlQuery)` - **Returns:** Array of `Map<String, Concept>` (String represents the graql variable)
   `commit()` - **Returns:** void
   `getConcept(String conceptId)` - **Returns:** `Concept` object or `null` 
   `getSchemaConcept(String label)` - **Returns:** `Concept` object or `null`
   **N.I. --**`getAttributesByValue(attributeValue)` - **Returns:** Array of `Attribute` objects
   `putEntityType(String label)` - **Returns:** `EntityType` object 
   `putRelationshipType(String label)`- **Returns:** `RelationshipType` object 
-  **N.I. --**`putAttributeType()`
+  `putAttributeType()`- **Returns:** `AttributeType` object 
   **N.I. --**`putRole()`
   **N.I. --**`putRule()`
 
@@ -137,7 +137,7 @@ const result = await tx.execute("match $x isa person; limit 10; get;");
     **N.I. --**`relationships(...Role)` - **Returns:** Array of `Relationship` objects
     **N.I. --**`keys()` - **Returns:** Array of `Attribute` objects
     **N.I. --**`keys(...Attributetype)` - **Returns:** Array of `Attribute` objects
-    **N.I. --**`attribute(Attribute)` - **Returns:** void
+    `attribute(Attribute)` - **Returns:** void (Test needed)
     `deleteAttribute(Attribute)` - **Returns** void
    
   **Attribute**
@@ -183,7 +183,7 @@ const result = await tx.execute("match $x isa person; limit 10; get;");
   **N.I. --**`deleteRelates(Role)` - **Returns:** 
   
   **EntityType**
-  **N.I. --**`addEntity()` - **Returns:** new `Entity` object
+  `addEntity()` - **Returns:** new `Entity` object
 
   **Role**
   

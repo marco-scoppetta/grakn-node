@@ -33,6 +33,16 @@ GraknClient.prototype.txType = {
   BATCH: messages.TxType.BATCH
 };
 
+GraknClient.prototype.dataType = {
+  STRING: messages.DataType.STRING,
+  BOOLEAN: messages.DataType.BOOLEAN,
+  INTEGER: messages.DataType.INTEGER,
+  LONG: messages.DataType.LONG,
+  FLOAT: messages.DataType.FLOAT,
+  DOUBLE: messages.DataType.DOUBLE,
+  DATE: messages.DataType.DATE
+};
+
 GraknClient.prototype.close = function close() {
   this.stub.close();
 }
