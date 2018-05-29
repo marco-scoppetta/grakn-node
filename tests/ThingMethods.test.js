@@ -11,10 +11,6 @@ const environment = require('./support/GraknTestEnvironment');
 //     environment.afterAll();
 // });
 
-function randomUUID() {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-}
-
 test("Thing methods", async (done) => {
     const ks = environment.newKeyspace();
     let client = new gc(DEFAULT_URI, ks);
