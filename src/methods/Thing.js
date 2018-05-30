@@ -27,7 +27,7 @@ const methods = {
   // because the `attribute` method has a behaviour that does not apply to JS.
   // So in here we just have `attribute`.
   attribute: function (attribute) { return this.txService.setAttribute(this.id); },
-  deleteAttribute: function () { return this.txService.unsetAttribute(this.id); }
+  deleteAttribute: function (attribute) { return this.txService.unsetAttribute(this.id, attribute); }
 };
 
 module.exports = {
