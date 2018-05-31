@@ -1,4 +1,4 @@
-const gc = require("../src/GraknClient");
+const gc = require("../src/GraknSession");
 const environment = require('./support/GraknTestEnvironment');
 
 const DEFAULT_URI = "localhost:48555";
@@ -36,9 +36,9 @@ describe('Integration test', () => {
             console.log(err)
             done.fail(err);
         }
-    });
+    }, environment.integrationTestsTimeout());
 
-    test.only("If tx does not commit, different Tx won't see changes", async (done) => {
+    test("If tx does not commit, different Tx won't see changes", async (done) => {
         try {
             const ks = environment.newKeyspace();
             let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
@@ -55,7 +55,7 @@ describe('Integration test', () => {
             console.log(err)
             done.fail(err);
         }
-    }, 10000);
+    }, environment.integrationTestsTimeout());
 
 
 });

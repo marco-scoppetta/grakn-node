@@ -1,4 +1,4 @@
-const gc = require("../src/GraknClient");
+const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
 const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
@@ -10,7 +10,7 @@ test("Retrieve concept by id", async (done) => {
     const tx = await client.open(client.txType.WRITE);
     await tx.execute("define person sub entity;");
     const insertionResult = await tx.execute("insert $x isa person;");
-    const concepts = insertionResult.map(map => Array.from(map.values())).flatMap(x => x);
+    const concepts = insertionResult.map(map => Array.from(map.values()));
     const person = concepts[0];
     const personId = person.id;
 
@@ -34,7 +34,7 @@ test("Retrieve concept by id", async (done) => {
     console.error(err);
     done.fail(err);
   }
-}, 10000);
+}, environment.integrationTestsTimeout());
 
 test("Retrieve schema concept by label", async (done) => {
   try {
@@ -61,7 +61,7 @@ test("Retrieve schema concept by label", async (done) => {
     console.error(err);
     done.fail(err);
   }
-}, 10000);
+}, environment.integrationTestsTimeout());
 
 test("Put entity type by label", async (done) => {
   try {
@@ -77,7 +77,7 @@ test("Put entity type by label", async (done) => {
     console.error(err);
     done.fail(err);
   }
-}, 10000);
+}, environment.integrationTestsTimeout());
 
 test("Put relationship type by label", async (done) => {
   try {
@@ -93,9 +93,9 @@ test("Put relationship type by label", async (done) => {
     console.error(err);
     done.fail(err);
   }
-}, 10000);
+}, environment.integrationTestsTimeout());
 
-test.only("Put attribute type", async (done) => {
+test("Put attribute type", async (done) => {
   try {
     const client = new gc(DEFAULT_URI, environment.newKeyspace());
     const tx = await client.open(client.txType.WRITE);
@@ -106,5 +106,29 @@ test.only("Put attribute type", async (done) => {
     console.error(err);
     done.fail(err);
   }
-}, 10000);
+}, environment.integrationTestsTimeout());
+
+// test.only("Exception on query leaves tx usable", async (done) => {
+//   try {
+//     const ks = environment.newKeyspace();
+//     let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
+//     const tx = await client.open(client.txType.WRITE);
+
+//     const result = await tx.execute("match $x sub entity; get;");
+//     const concepts = result.map(map => Array.from(map.values()));
+//     expect(concepts[0].isEntityType()).toBeTruthy();
+//     await expect(tx.execute("match $x sub person; net;"))
+//       .rejects
+//       .toThrow();
+
+//     const result2 = await tx.execute("match $x sub entity; get;");
+//     const concepts2 = result2.map(map => Array.from(map.values()));
+//     expect(concepts2[0].isEntityType()).toBeTruthy();
+//     client.close();
+//     done();
+//   } catch (err) {
+//     console.log(err)
+//     done.fail(err);
+//   }
+// }, 200000);
 

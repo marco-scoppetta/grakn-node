@@ -1,4 +1,4 @@
-const gc = require("../src/GraknClient");
+const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
 const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
@@ -11,73 +11,64 @@ const environment = require('./support/GraknTestEnvironment');
 //     environment.afterAll();
 // });
 
+
+//TODO: UPDATE THIS TEST AS IT RETURNS NOTHING
+
 test("Thing methods", async (done) => {
     const ks = environment.newKeyspace();
     let client = new gc(DEFAULT_URI, ks);
     try {
         const tx = await client.open(client.txType.WRITE);
-        // await tx.execute(
-        //     "define teaching sub relationship, relates teacher, relates student;" +
-        //     " teacher sub role; student sub role;");
-        // await tx.execute(
-        //     "define person sub entity, has name, plays teacher, plays student;" +
-        //     " name sub attribute, datatype string;"
-        // );
-        // await tx.execute(
-        //     "insert $x has name 'Stefano' isa person;" +
-        //     " $y has name 'Luigi' isa person;" +
-        //     " (teacher: $x, student: $y) isa teaching;"
-        // );
         const tx1 = await client.open(client.txType.WRITE);
         await tx1.execute("define person sub entity;");
         await tx1.commit();
         const result = await tx.execute("match $x isa person; limit 1; get;");
-        for (let map of result) {
-            for (let [key, person] of map) {
-                expect(person.isThing()).toBeTruthy();
-                const type = await person.type();
-                const typeLabel = await type.getLabel();
-                const relationships = await person.relationships();
-                relationships.forEach(async rel => {
-                    const rolesMap = await rel.rolePlayers();
-                    expect(rel.isRelationship()).toBeTruthy();
-                    expect(rel.isThing()).toBeTruthy();
-                    expect(rel.isSchemaConcept()).toBeFalsy();
-                    expect(rel.isAttribute()).toBeFalsy();
-                    expect(rel.isEntity()).toBeFalsy();
-                    expect(rel.isType()).toBeFalsy();
+        const concepts = result.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
+        await Promise.all(concepts.map(async (person) => {
+            expect(person.isThing()).toBeTruthy();
+            const type = await person.type();
+            const typeLabel = await type.getLabel();
+            const relationships = await person.relationships();
+            relationships.forEach(async rel => {
+                const rolesMap = await rel.rolePlayers();
+                expect(rel.isRelationship()).toBeTruthy();
+                expect(rel.isThing()).toBeTruthy();
+                expect(rel.isSchemaConcept()).toBeFalsy();
+                expect(rel.isAttribute()).toBeFalsy();
+                expect(rel.isEntity()).toBeFalsy();
+                expect(rel.isType()).toBeFalsy();
+            });
+            const roles = await person.plays();
+            roles.forEach(role => {
+                expect(role.isRole()).toBeTruthy();
+            });
+            person.attributes().then(attributes => {
+                attributes.forEach(a => {
+                    expect(a.isAttribute()).toBeTruthy();
                 });
-                const roles = await person.plays();
-                roles.forEach(role => {
-                    expect(role.isRole()).toBeTruthy();
-                });
-                person.attributes().then(attributes => {
-                    attributes.forEach(a => {
-                        expect(a.isAttribute()).toBeTruthy();
-                    });
-                });
-                const attributes = await person.attributes();
+            });
+            const attributes = await person.attributes();
 
-                attributes.forEach(async a => {
-                    const value = await a.getValue()
-                    const owners = await a.ownerInstances();
-                    owners.forEach(o => {
-                        expect(o.isThing()).toBeTruthy();
-                    });
-                    const datatype = await a.dataType();
+            attributes.forEach(async a => {
+                const value = await a.getValue()
+                const owners = await a.ownerInstances();
+                owners.forEach(o => {
+                    expect(o.isThing()).toBeTruthy();
                 });
-                // const filteredRelationships = await person.relationships(...roles);
-            }
-        }
+                const datatype = await a.dataType();
+            });
+        }));
+        // const filteredRelationships = await person.relationships(...roles);
         client.close();
         done();
     } catch (err) {
         client.close();
         done.fail(err);
     }
-}, 30000);
+}, environment.integrationTestsTimeout());
 
 
+//TODO: UPDATE THIS TEST AS IT RETURNS NOTHING
 test("Relationship methods", async (done) => {
     try {
         const ks = environment.newKeyspace();
@@ -106,10 +97,10 @@ test("Relationship methods", async (done) => {
     } catch (err) {
         done.fail(err);
     }
-});
+}, environment.integrationTestsTimeout());
 
 
-test.only("Delete attribute from thing", async (done) => {
+test("Delete attribute from thing", async (done) => {
     try {
         const ks = environment.newKeyspace();
         console.log("working on keyspace " + ks);
@@ -118,7 +109,7 @@ test.only("Delete attribute from thing", async (done) => {
         await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
         const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
 
-        const concepts = insertionResult.map(map => Array.from(map.values())).flatMap(x => x);
+        const concepts = insertionResult.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
         expect(concepts.length).toBe(1);
         const person = concepts[0];
         //Delete attribute from person 
@@ -131,7 +122,7 @@ test.only("Delete attribute from thing", async (done) => {
 
         const tx2 = await client.open(client.txType.WRITE);
         const result = await tx2.execute("match $x isa person; get;");
-        const newConcepts = result.map(map => Array.from(map.values())).flatMap(x => x);
+        const newConcepts = result.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
         const samePerson = newConcepts[0];
         const lessAttributes = await samePerson.attributes();
         expect(lessAttributes.length).toBe(1);
@@ -140,7 +131,7 @@ test.only("Delete attribute from thing", async (done) => {
         console.log(err);
         done.fail(err);
     }
-}, 20000)
+}, environment.integrationTestsTimeout())
 
 
 
@@ -153,7 +144,7 @@ test.only("Delete attribute from thing", async (done) => {
 //         await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
 //         const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
 
-//         const concepts = insertionResult.map(map => Array.from(map.values())).flatMap(x => x);
+//         const concepts = insertionResult.map(map => Array.from(map.values()));
 //         expect(concepts.length).toBe(1);
 //         const person = concepts[0];
 //         //Delete attribute from person 
@@ -166,7 +157,7 @@ test.only("Delete attribute from thing", async (done) => {
 
 //         const tx2 = await client.open(client.txType.WRITE);
 //         const result = await tx2.execute("match $x isa person; get;");
-//         const newConcepts = result.map(map => Array.from(map.values())).flatMap(x => x);
+//         const newConcepts = result.map(map => Array.from(map.values()));
 //         const samePerson = newConcepts[0];
 //         const lessAttributes = await samePerson.attributes();
 //         expect(lessAttributes.length).toBe(1);

@@ -1,10 +1,10 @@
-const gc = require("../src/GraknClient");
+const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
 const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
 
 
-test.only("Entity methods", async (done) => {
+test("Entity methods", async (done) => {
     try {
         let client = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
         const tx = await client.open(client.txType.WRITE);
@@ -36,4 +36,4 @@ test.only("Entity methods", async (done) => {
     } catch (err) {
         done.fail(err);
     }
-});
+}, environment.integrationTestsTimeout());
