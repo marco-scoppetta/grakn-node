@@ -1,4 +1,4 @@
-const gc = require("../src/GraknClient");
+const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
 const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
@@ -6,7 +6,7 @@ const environment = require('./support/GraknTestEnvironment');
 
 
 // AttributeType test
-test.only("Create entity instance", async (done) => {
+test("Create entity instance", async (done) => {
     try {
         const client = new gc(DEFAULT_URI, environment.newKeyspace());
         const tx = await client.open(client.txType.WRITE);
@@ -18,7 +18,7 @@ test.only("Create entity instance", async (done) => {
         console.error(err);
         done.fail(err);
     }
-}, 10000);
+}, environment.integrationTestsTimeout());
 
 // RelationshipType test
 
@@ -35,4 +35,4 @@ test("Create entity instance", async (done) => {
         console.error(err);
         done.fail(err);
     }
-}, 10000);
+}, environment.integrationTestsTimeout());

@@ -5,10 +5,6 @@ var version = require('../../package.json').graknVersion;
 
 var scriptPath = './tests/support/env.sh';
 
-Array.prototype.flatMap = function flat(lambda) {
-    return Array.prototype.concat.apply([], this.map(lambda));
-};
-
 module.exports = {
     beforeAll: function () {
         var process = spawnSync(scriptPath, ['start', version]);
@@ -32,5 +28,6 @@ module.exports = {
     newKeyspace: function () {
         const randomName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         return 'a' + randomName;
-    }
+    },
+    integrationTestsTimeout: function () { return 10000 }
 }

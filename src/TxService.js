@@ -473,7 +473,6 @@ TxService.prototype.commit = function () {
  */
 
 TxService.prototype.execute = async function executeQuery(query) {
-    this.result = [];
     const txRequest = new messages.TxRequest();
     const executeQuery = new messages.ExecQuery();
     const queryRequest = new messages.Query();
