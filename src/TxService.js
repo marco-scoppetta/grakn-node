@@ -433,7 +433,7 @@ TxService.prototype.putAttributeType = function (label, dataType) {
 
 // OPEN TRANSACTION
 
-TxService.prototype.openTx = async function (keyspace, txType, credentials) {
+TxService.prototype.openTx = function (keyspace, txType, credentials) {
     const openRequest = new messages.Open();
     const txRequest = new messages.TxRequest();
     const messageKeyspace = new messages.Keyspace();
@@ -447,7 +447,7 @@ TxService.prototype.openTx = async function (keyspace, txType, credentials) {
     }
     txRequest.setOpen(openRequest);
 
-    await this.communicator.send(txRequest)
+    return this.communicator.send(txRequest)
         // Explicitly catch and re-throw exception otherwise it will be swallowed by promises
         .catch((e) => {
             throw e;
@@ -472,14 +472,14 @@ TxService.prototype.commit = function () {
  * returns Done.
  */
 
-TxService.prototype.execute = async function executeQuery(query) {
+TxService.prototype.execute = function executeQuery(query) {
     const txRequest = new messages.TxRequest();
     const executeQuery = new messages.ExecQuery();
     const queryRequest = new messages.Query();
     queryRequest.setValue(query);
     executeQuery.setQuery(queryRequest);
     txRequest.setExecquery(executeQuery);
-    return await this.communicator
+    return this.communicator
         .send(txRequest)
         .then(resp => this._parseResponse(resp))
         .catch((e) => {
@@ -516,10 +516,10 @@ TxService.prototype._parseResult = function parseResult(queryResult) {
         queryResult
             .getAnswer()
             .getAnswerMap()
-            .forEach((grpcConcenpt, key) => {
+            .forEach((grpcConcept, key) => {
                 answerMap.set(
                     key,
-                    this.conceptFactory.createConcept(grpcConcenpt));
+                    this.conceptFactory.createConcept(grpcConcept));
             });
         return answerMap;
     }
