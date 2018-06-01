@@ -10,7 +10,8 @@ test("Retrieve concept by id", async (done) => {
     const tx = await client.open(client.txType.WRITE);
     await tx.execute("define person sub entity;");
     const insertionResult = await tx.execute("insert $x isa person;");
-    const concepts = insertionResult.map(map => Array.from(map.values()));
+    const concepts = insertionResult.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
+    expect(concepts.length).toBe(1);
     const person = concepts[0];
     const personId = person.id;
 
@@ -29,6 +30,23 @@ test("Retrieve concept by id", async (done) => {
     const samePersonDifferentTx = await tx2.getConcept(personId);
     expect(samePersonDifferentTx.id).toBe(personId);
 
+    done();
+  } catch (err) {
+    console.error(err);
+    done.fail(err);
+  }
+}, environment.integrationTestsTimeout());
+
+test("Ensure no duplicates in metatypes", async (done) => {
+  try {
+    const client = new gc(DEFAULT_URI, environment.newKeyspace());
+    const tx = await client.open(client.txType.WRITE);
+    await tx.execute("define person sub entity;");
+    const result = await tx.execute("match $x sub entity; get;");
+    const concepts = result.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
+    expect(concepts.length).toBe(2);
+    const set = new Set(concepts.map(concept => concept.id));
+    expect(set.size).toBe(2);
     done();
   } catch (err) {
     console.error(err);
