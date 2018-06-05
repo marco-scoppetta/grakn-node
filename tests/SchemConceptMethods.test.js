@@ -2,6 +2,7 @@ const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
 const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
+const environment = require('./support/GraknTestEnvironment');
 
 
 test("Entity methods", async (done) => {

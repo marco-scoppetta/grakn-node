@@ -23,39 +23,39 @@ ConceptFactory.prototype.createConcept = function createConcept(grpcConcept) {
   switch (grpcConcept.getBasetype()) {
     case 0:
       state = _buildState(conceptId, ConceptMethods.ENTITY, this.txService);
-      return Object.assign(state, entityProto);
+      return Object.create(entityProto, state);
       break;
     case 1:
       state = _buildState(conceptId, ConceptMethods.RELATIONSHIP, this.txService);
-      return Object.assign(state, relationshipProto);
+      return Object.create(relationshipProto, state);
       break;
     case 2:
       state = _buildState(conceptId, ConceptMethods.ATTRIBUTE, this.txService);
-      return Object.assign(state, attributeProto);
+      return Object.create(attributeProto, state);
       break;
     case 3:
       state = _buildState(conceptId, ConceptMethods.ENTITY_TYPE, this.txService);
-      return Object.assign(state, entityTypeProto);
+      return Object.create(entityTypeProto, state);
       break;
     case 4:
       state = _buildState(conceptId, ConceptMethods.RELATIONSHIP_TYPE, this.txService);
-      return Object.assign(state, relationshipTypeProto);
+      return Object.create(relationshipTypeProto, state);
       break;
     case 5:
       state = _buildState(conceptId, ConceptMethods.ATTRIBUTE_TYPE, this.txService);
-      return Object.assign(state, attributeTypeProto);
+      return Object.create(attributeTypeProto, state);
       break;
     case 6:
       state = _buildState(conceptId, ConceptMethods.ROLE, this.txService);
-      return Object.assign(state, roleProto);
+      return Object.create(roleProto, state);
       break;
     case 7:
       state = _buildState(conceptId, ConceptMethods.RULE, this.txService);
-      return Object.assign(state, ruleProto);
+      return Object.create(ruleProto, state);
       break;
     case 8:
       state = _buildState(conceptId, ConceptMethods.META_TYPE, this.txService);
-      return Object.assign(state, metaschemaProto);
+      return Object.create(metaschemaProto, state);
       break;
     default:
       throw "BaseType not recognised.";
@@ -64,9 +64,9 @@ ConceptFactory.prototype.createConcept = function createConcept(grpcConcept) {
 
 function _buildState(conceptId, baseType, txService) {
   return {
-    id: conceptId,
-    baseType: baseType,
-    txService: txService
+    id: { value: conceptId, enumerable: true },
+    baseType: { value: baseType, enumerable: true },
+    txService: { value: txService, enumerable: true }
   };
 }
 
