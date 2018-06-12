@@ -1,25 +1,17 @@
 const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
-const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
 const environment = require('./support/GraknTestEnvironment');
 
 
-// beforeAll(environment.beforeAll);
-
-// afterAll(() => {
-//     environment.afterAll();
-// });
-
 
 //TODO: UPDATE THIS TEST AS IT RETURNS NOTHING
+const session = new gc(DEFAULT_URI, environment.newKeyspace(), DEFAULT_CREDENTIALS);
 
-test("Thing methods", async (done) => {
-    const ks = environment.newKeyspace();
-    let client = new gc(DEFAULT_URI, ks);
+test.only("Thing methods", async (done) => {
     try {
-        const tx = await client.open(client.txType.WRITE);
-        const tx1 = await client.open(client.txType.WRITE);
+        const tx = await session.open(session.txType.WRITE);
+        const tx1 = await session.open(session.txType.WRITE);
         await tx1.execute("define person sub entity;");
         await tx1.commit();
         const result = await tx.execute("match $x isa person; limit 1; get;");
@@ -59,10 +51,8 @@ test("Thing methods", async (done) => {
             });
         }));
         // const filteredRelationships = await person.relationships(...roles);
-        client.close();
         done();
     } catch (err) {
-        client.close();
         done.fail(err);
     }
 }, environment.integrationTestsTimeout());
@@ -71,9 +61,7 @@ test("Thing methods", async (done) => {
 //TODO: UPDATE THIS TEST AS IT RETURNS NOTHING
 test("Relationship methods", async (done) => {
     try {
-        const ks = environment.newKeyspace();
-        let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
-        const tx = await client.open(client.txType.WRITE);
+        const tx = await session.open(session.txType.WRITE);
 
         const result = await tx.execute("match $x id V4176; limit 1; get;");
         for (let map of result) {
@@ -102,10 +90,7 @@ test("Relationship methods", async (done) => {
 
 test("Delete attribute from thing", async (done) => {
     try {
-        const ks = environment.newKeyspace();
-        console.log("working on keyspace " + ks);
-        let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
-        const tx = await client.open(client.txType.WRITE);
+        const tx = await session.open(session.txType.WRITE);
         await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
         const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
 
@@ -120,7 +105,7 @@ test("Delete attribute from thing", async (done) => {
 
         // Check from another transaction that the person has only 1 attribute
 
-        const tx2 = await client.open(client.txType.WRITE);
+        const tx2 = await session.open(session.txType.WRITE);
         const result = await tx2.execute("match $x isa person; get;");
         const newConcepts = result.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
         const samePerson = newConcepts[0];
@@ -139,8 +124,8 @@ test("Delete attribute from thing", async (done) => {
 //     try {
 //         const ks = environment.newKeyspace();
 //         console.log("working on keyspace " + ks);
-//         let client = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
-//         const tx = await client.open(client.txType.WRITE);
+//         let session = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
+//         const tx = await session.open(session.txType.WRITE);
 //         await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
 //         const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
 
@@ -155,7 +140,7 @@ test("Delete attribute from thing", async (done) => {
 
 //         // Check from another transaction that the person has only 1 attribute
 
-//         const tx2 = await client.open(client.txType.WRITE);
+//         const tx2 = await session.open(session.txType.WRITE);
 //         const result = await tx2.execute("match $x isa person; get;");
 //         const newConcepts = result.map(map => Array.from(map.values()));
 //         const samePerson = newConcepts[0];

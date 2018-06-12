@@ -1,6 +1,6 @@
 
 const methods = {
-  setAbstract: function () { return this.txService.setAbstract(this.id); },
+  setAbstract: function (bool) { return this.txService.setAbstract(this.id, bool); },
   plays: function (role) {
     if (role) {
       return this.txService.setRolePlayedByType(this.id, role);

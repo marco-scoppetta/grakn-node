@@ -76,14 +76,14 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
  
  **GraknTx**  
  
-  `execute(String graqlQuery)` - **Returns:** Array of `Map<String, Concept>` (String represents the graql variable)  
+  `execute(String graqlQuery)` - **Returns:** Array of `Map<String, Concept>` (key of the map represents the graql variable)  
   `commit()` - **Returns:** void  
   `getConcept(String conceptId)` - **Returns:** `Concept` object or `null`  
   `getSchemaConcept(String label)` - **Returns:** `Concept` object or `null`  
   **N.I. --**`getAttributesByValue(attributeValue)` - **Returns:** Array of `Attribute` objects   
   `putEntityType(String label)` - **Returns:** `EntityType` object  
   `putRelationshipType(String label)`- **Returns:** `RelationshipType` object   
-  `putAttributeType()`- **Returns:** `AttributeType` object   
+  `putAttributeType(String label, session.dataType)`- **Returns:** `AttributeType` object   
   **N.I. --**`putRole()`  
   **N.I. --**`putRule()`  
 
@@ -140,7 +140,7 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   
   **Type**  
   
-   **N.I. --**`setAbstract()` - **Returns:** void   
+  `setAbstract(boolean)` - **Returns:** void   
   `isAbstract()` - **Returns:** `boolean`   
   `plays()` - **Returns:** Array of `Role` objects  
   `attributes()` - **Returns:** Array of `AttributeType` objects  
@@ -154,9 +154,9 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   
   **AttributeType**
   
-  **N.I. --**`putAttribute()` - **Returns:**  
+  `putAttribute(value)` - **Returns:**  new `Attribute` object
   **N.I. --**`getAttribute(Value)` - **Returns:**   
-  **N.I. --**`getDataType()` - **Returns:**   
+  `getDataType()` - **Returns:** `String`   
   **N.I. --**`getRegex()` - **Returns:**  
   **N.I. --**`setRegex()` - **Returns:**  
    
@@ -171,10 +171,10 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
 
   **Role**  
   
-  **N.I. --**`relationshipTypes()` - **Returns:**   
-  **N.I. --**`playedByTypes()` - **Returns:** 
+  `relationshipTypes()` - **Returns:** Array of `RelationshipType` objects  
+  `playedByTypes()` - **Returns:** Array of `Type` objects  
   
-  **Rule**  
+  **Rule**    
   
    **N.I. --**`getWhen()` - **Returns:**  
    **N.I. --**`getThen()` - **Returns:**  

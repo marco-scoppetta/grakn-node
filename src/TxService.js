@@ -123,8 +123,17 @@ TxService.prototype.getKeyTypes = function (id) {
 };
 TxService.prototype.setKeyType = function (id) { };
 TxService.prototype.unsetKeyType = function (id) { };
-TxService.prototype.isAbstract = function (id) { };
-TxService.prototype.setAbstract = function (id) { };
+TxService.prototype.isAbstract = function (id) {
+    const txRequest = TxRequestBuilder.isAbstract(id);
+    return this.communicator.send(txRequest)
+        .then(resp => resp.getConceptresponse().getBool())
+        .catch(e => { throw e; });
+};
+TxService.prototype.setAbstract = function (id, bool) {
+    const txRequest = TxRequestBuilder.setAbstract(id, bool);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 TxService.prototype.getRolesPlayedByType = function (id) {
     const txRequest = TxRequestBuilder.getRolesPlayedByType(id);
     return this.communicator.send(txRequest)
@@ -156,10 +165,28 @@ TxService.prototype.setRelatedRole = function (id) { };
 TxService.prototype.unsetRelatedRole = function (id) { };
 
 
+
 // Attribute type
-TxService.prototype.putAttribute = function (id) { };
+TxService.prototype.putAttribute = async function (id, value) {
+    const dataTypeTxRequest = TxRequestBuilder.getDataTypeOfType(id);
+    const resp = await this.communicator.send(dataTypeTxRequest);
+    const dataType = resp.getConceptresponse().getOptionaldatatype().getPresent();
+    const txRequest = TxRequestBuilder.putAttribute(id, dataType, value);
+    const response = await this.communicator.send(txRequest);
+    return this.communicator.send(txRequest)
+        .then(response => this.conceptFactory.createConcept(response.getConceptresponse().getConcept()))
+        .catch(e => { throw e; });
+};
 TxService.prototype.getAttribute = function (id) { };
-TxService.prototype.getDataTypeOfType = function (id) { };
+TxService.prototype.getDataTypeOfType = function (id) {
+    const txRequest = TxRequestBuilder.getDataTypeOfType(id);
+    return this.communicator.send(txRequest)
+        .then(response => {
+            const optionalDatatype = response.getConceptresponse().getOptionaldatatype();
+            return (optionalDatatype.hasPresent()) ? _dataTypeToString(optionalDatatype.getPresent()) : null;
+        })
+        .catch(e => { throw e; });
+};
 TxService.prototype.getRegex = function (id) { };
 TxService.prototype.setRegex = function (id) { };
 
@@ -285,23 +312,22 @@ TxService.prototype.getOwners = function (id) {
 };
 
 
-function _getDataType(resp) {
-    const dataType = resp.getConceptresponse().getDatatype();
+function _dataTypeToString(dataType) {
     switch (dataType) {
-        case 0: return "String"; break;
-        case 1: return "Boolean"; break;
-        case 2: return "Integer"; break;
-        case 3: return "Long"; break;
-        case 4: return "Float"; break;
-        case 5: return "Double"; break;
-        case 6: return "Date"; break;
+        case 0: return "String";
+        case 1: return "Boolean";
+        case 2: return "Integer";
+        case 3: return "Long";
+        case 4: return "Float";
+        case 5: return "Double";
+        case 6: return "Date";
     }
 }
 
 TxService.prototype.getDataTypeOfAttribute = function (id) {
     const txRequest = TxRequestBuilder.getDataTypeOfAttribute(id);
     return this.communicator.send(txRequest)
-        .then(response => _getDataType(response))
+        .then(response => _dataTypeToString(response.getConceptresponse().getDatatype()))
         .catch(e => { throw e; });
 };
 

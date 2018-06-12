@@ -161,9 +161,9 @@ const methods = {
     conceptMethod.setIsabstract(UNIT_MESSAGE);
     return TxRequest(conceptId, conceptMethod);
   },
-  setAbstract: function (conceptId) {
+  setAbstract: function (conceptId, bool) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetabstract(); // Pass a bool (probably param of method)
+    conceptMethod.setSetabstract(bool);
     return TxRequest(conceptId, conceptMethod);
   },
   getRolesPlayedByType: function (conceptId) {
@@ -212,9 +212,19 @@ const methods = {
 
   // Attribute type
 
-  putAttribute: function () {
+  putAttribute: function (conceptId, dataType, value) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setPutattribute(); // Pass a AttributeValue
+    const attributeValue = new messages.AttributeValue();
+    switch (dataType) {
+      case 0: attributeValue.setString(value); break;
+      case 1: attributeValue.setBoolean(value); break;
+      case 2: attributeValue.setInteger(value); break;
+      case 3: attributeValue.setLong(value); break;
+      case 4: attributeValue.setFloat(value); break;
+      case 5: attributeValue.setDouble(value); break;
+      case 6: attributeValue.setDate(value); break;
+    }
+    conceptMethod.setPutattribute(attributeValue);
     return TxRequest(conceptId, conceptMethod);
   },
   getAttribute: function () {

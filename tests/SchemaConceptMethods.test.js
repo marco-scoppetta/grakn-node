@@ -1,14 +1,13 @@
 const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
-const DEFAULT_KEYSPACE = "grakn";
 const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
 const environment = require('./support/GraknTestEnvironment');
 
 
 test("Entity methods", async (done) => {
     try {
-        let client = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
-        const tx = await client.open(client.txType.WRITE);
+        let session = new gc(DEFAULT_URI, "gene", DEFAULT_CREDENTIALS);
+        const tx = await session.open(session.txType.WRITE);
 
         const result = await tx.execute("match $x sub entity; limit 5; get;");
         for (let map of result) {
