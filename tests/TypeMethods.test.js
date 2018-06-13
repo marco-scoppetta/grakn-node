@@ -1,8 +1,5 @@
-const gc = require("../src/GraknSession");
-const DEFAULT_URI = "localhost:48555";
 const environment = require('./support/GraknTestEnvironment');
-
-const session = new gc(DEFAULT_URI, environment.newKeyspace());
+const session = environment.session();
 
 describe("Type methods", () => {
 

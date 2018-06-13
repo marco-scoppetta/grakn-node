@@ -25,7 +25,7 @@ Begin by importing the Grakn session:
 Now you can create a new session and open a new Grakn transaction:
 
 ```
->>> const session = new GraknSession('http://localhost:4567', 'keyspace');
+>>> const session = new GraknSession('localhost:48555', 'keyspace');
 >>> const graknTx = await session.open(session.txType.WRITE);
 ```
 
@@ -44,7 +44,7 @@ Execute Graql query (inside an `async` function):
 const tx = await session.open(client.txType.WRITE);
 const result = await tx.execute("match $x isa person; limit 10; get;");
 const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce((a, c) => a.concat(c), []);
-// `concepts` will be an array containing 10 Entity obbjects
+// `concepts` will be an array containing 10 Entity objects
 ```
 
 **Concepts hierarchy** 
@@ -67,11 +67,10 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
 ```
 **GraknSession**
 
-  `GraknSession(String URI, String keyspace, {username: String, password: String})` 
-  **e.g.** `const session = new GraknSession("localhost:48555", "grakn")`  
-  
-  
+  `GraknSession(String URI, String keyspace)`   
+    
  `open(session.txType)` - **Returns:** `GraknTx` object   
+ 
  **N.I. --**`delete(String keyspace)` - **Returns:** void 
  
  **GraknTx**  
