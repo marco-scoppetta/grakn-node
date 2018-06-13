@@ -122,3 +122,10 @@ test("Put attribute type and getDataType", async (done) => {
   }
 }, environment.integrationTestsTimeout());
 
+test("Put role", async () => {
+  const tx = await session.open(session.txType.WRITE);
+  const role = await tx.putRole("father");
+  expect(role.isRole()).toBeTruthy();
+  expect(role.baseType).toBe("ROLE");
+}, environment.integrationTestsTimeout());
+

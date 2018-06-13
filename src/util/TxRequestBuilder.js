@@ -18,15 +18,15 @@ function TxRequest(conceptId, conceptMethod) {
 
 function convertBaseType(baseType) {
   switch (baseType) {
-    case ConceptsBaseType.ATTRIBUTE: return messages.BaseType.ATTRIBUTE; break;
-    case ConceptsBaseType.ATTRIBUTE_TYPE: return messages.BaseType.ATTRIBUTE_TYPE; break;
-    case ConceptsBaseType.ENTITY: return messages.BaseType.ENTITY; break;
-    case ConceptsBaseType.ENTITY_TYPE: return messages.BaseType.ENTITY_TYPE; break;
-    case ConceptsBaseType.RELATIONSHIP: return messages.BaseType.RELATIONSHIP; break;
-    case ConceptsBaseType.RELATIONSHIP_TYPE: return messages.BaseType.RELATIONSHIP_TYPE; break;
-    case ConceptsBaseType.ROLE: return messages.BaseType.ROLE; break;
-    case ConceptsBaseType.RULE: return messages.BaseType.RULE; break;
-    case ConceptsBaseType.META_TYPE: return messages.BaseType.META_TYPE; break;
+    case ConceptsBaseType.ATTRIBUTE: return messages.BaseType.ATTRIBUTE;
+    case ConceptsBaseType.ATTRIBUTE_TYPE: return messages.BaseType.ATTRIBUTE_TYPE;
+    case ConceptsBaseType.ENTITY: return messages.BaseType.ENTITY;
+    case ConceptsBaseType.ENTITY_TYPE: return messages.BaseType.ENTITY_TYPE;
+    case ConceptsBaseType.RELATIONSHIP: return messages.BaseType.RELATIONSHIP;
+    case ConceptsBaseType.RELATIONSHIP_TYPE: return messages.BaseType.RELATIONSHIP_TYPE;
+    case ConceptsBaseType.ROLE: return messages.BaseType.ROLE;
+    case ConceptsBaseType.RULE: return messages.BaseType.RULE;
+    case ConceptsBaseType.META_TYPE: return messages.BaseType.META_TYPE;
   }
 }
 
@@ -131,14 +131,14 @@ const methods = {
     conceptMethod.setGetattributetypes(UNIT_MESSAGE);
     return TxRequest(conceptId, conceptMethod);
   },
-  setAttributeType: function (conceptId) {
+  setAttributeType: function (conceptId, type) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetattributetype(); // Pass a Concept
+    conceptMethod.setSetattributetype(toGrpcConcept(type));
     return TxRequest(conceptId, conceptMethod);
   },
-  unsetAttributeType: function (conceptId) {
+  unsetAttributeType: function (conceptId, type) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setUnsetattributetype(); // Pass a Concept
+    conceptMethod.setUnsetattributetype(toGrpcConcept(type));
     return TxRequest(conceptId, conceptMethod);
   },
   getKeyTypes: function (conceptId) {
@@ -146,14 +146,14 @@ const methods = {
     conceptMethod.setGetkeytypes(UNIT_MESSAGE);
     return TxRequest(conceptId, conceptMethod);
   },
-  setKeyType: function (conceptId) {
+  setKeyType: function (conceptId, keyType) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetkeytype(); // Pass a Concept
+    conceptMethod.setSetkeytype(toGrpcConcept(keyType));
     return TxRequest(conceptId, conceptMethod);
   },
-  unsetKeyType: function (conceptId) {
+  unsetKeyType: function (conceptId, keyType) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setUnsetkeytype(); // Pass a Concept
+    conceptMethod.setUnsetkeytype(toGrpcConcept(keyType));
     return TxRequest(conceptId, conceptMethod);
   },
   isAbstract: function (conceptId) {
@@ -171,14 +171,14 @@ const methods = {
     conceptMethod.setGetrolesplayedbytype(UNIT_MESSAGE);
     return TxRequest(conceptId, conceptMethod);
   },
-  setRolePlayedByType: function (conceptId) {
+  setRolePlayedByType: function (conceptId, role) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetroleplayedbytype(); // Pass a Concept
+    conceptMethod.setSetroleplayedbytype(toGrpcConcept(role));
     return TxRequest(conceptId, conceptMethod);
   },
-  unsetRolePlayedByType: function (conceptId) {
+  unsetRolePlayedByType: function (conceptId, role) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setUnsetroleplayedbytype(); // Pass a Concept
+    conceptMethod.setUnsetroleplayedbytype(toGrpcConcept(role));
     return TxRequest(conceptId, conceptMethod);
   },
 
@@ -227,9 +227,19 @@ const methods = {
     conceptMethod.setPutattribute(attributeValue);
     return TxRequest(conceptId, conceptMethod);
   },
-  getAttribute: function () {
+  getAttribute: function (conceptId, dataType, value) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setGetattribute(); // Pass a AttributeValue
+    const attributeValue = new messages.AttributeValue();
+    switch (dataType) {
+      case 0: attributeValue.setString(value); break;
+      case 1: attributeValue.setBoolean(value); break;
+      case 2: attributeValue.setInteger(value); break;
+      case 3: attributeValue.setLong(value); break;
+      case 4: attributeValue.setFloat(value); break;
+      case 5: attributeValue.setDouble(value); break;
+      case 6: attributeValue.setDate(value); break;
+    }
+    conceptMethod.setGetattribute(attributeValue);
     return TxRequest(conceptId, conceptMethod);
   },
   getDataTypeOfType: function (conceptId) {

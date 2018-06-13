@@ -84,7 +84,7 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   `putEntityType(String label)` - **Returns:** `EntityType` object  
   `putRelationshipType(String label)`- **Returns:** `RelationshipType` object   
   `putAttributeType(String label, session.dataType)`- **Returns:** `AttributeType` object   
-  **N.I. --**`putRole()`  
+  `putRole(String label)` - **Returns:** `Role` object   
   **N.I. --**`putRule()`  
 
 **Concept** 
@@ -144,19 +144,20 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   `setAbstract(boolean)` - **Returns:** void   
   `isAbstract()` - **Returns:** `boolean`   
   `plays()` - **Returns:** Array of `Role` objects  
+  `plays(Role)` - **Returns:** `void`   
   `attributes()` - **Returns:** Array of `AttributeType` objects  
-  `instances()` - **Returns:** Array of `Thing` objects 
-  **N.I. --**`keys()` - **Returns:**  
-  **N.I. --**`keys(AttributeType)` - **Returns:**   
-  **N.I. --**`attribute(AttributeType)` - **Returns:**   
-  **N.I. --**`deletePlays(Role)` - **Returns:**   
-  **N.I. --**`deleteAttribute(AttributeType)` - **Returns:**  
-  **N.I. --**`deleteKey(AttributeType)` - **Returns:**  
+  `instances()` - **Returns:** Array of `Thing` objects   
+  `keys()` - **Returns:** Array of `AttributeType` objects    
+  `key(AttributeType)` - **Returns:**  `void`  
+  `attribute(AttributeType)` - **Returns:** `void`  
+  `deletePlays(Role)` - **Returns:** `void`  
+  `deleteAttribute(AttributeType)` - **Returns:** `void`  
+  `deleteKey(AttributeType)` - **Returns:** `void`  
   
   **AttributeType**
   
   `putAttribute(value)` - **Returns:**  new `Attribute` object
-  **N.I. --**`getAttribute(Value)` - **Returns:**   
+  `getAttribute(Value)` - **Returns:**  `Attribute` object or `null`
   `getDataType()` - **Returns:** `String`   
   **N.I. --**`getRegex()` - **Returns:**  
   **N.I. --**`setRegex()` - **Returns:**  
