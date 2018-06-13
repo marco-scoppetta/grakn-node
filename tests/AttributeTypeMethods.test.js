@@ -5,6 +5,7 @@ const environment = require('./support/GraknTestEnvironment');
 const session = new gc(DEFAULT_URI, environment.newKeyspace());
 
 describe("Attribute type methods", () => {
+
     test("putAttribute", async () => {
         const tx = await session.open(session.txType.WRITE);
         const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);

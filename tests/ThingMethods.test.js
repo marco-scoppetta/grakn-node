@@ -1,154 +1,95 @@
 const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
-const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
 const environment = require('./support/GraknTestEnvironment');
 
+const session = new gc(DEFAULT_URI, environment.newKeyspace());
 
+describe("Thing methods", () => {
 
-//TODO: UPDATE THIS TEST AS IT RETURNS NOTHING
-const session = new gc(DEFAULT_URI, environment.newKeyspace(), DEFAULT_CREDENTIALS);
-
-test.only("Thing methods", async (done) => {
-    try {
+    test("isInferred", async () => {
         const tx = await session.open(session.txType.WRITE);
-        const tx1 = await session.open(session.txType.WRITE);
-        await tx1.execute("define person sub entity;");
-        await tx1.commit();
-        const result = await tx.execute("match $x isa person; limit 1; get;");
-        const concepts = result.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
-        await Promise.all(concepts.map(async (person) => {
-            expect(person.isThing()).toBeTruthy();
-            const type = await person.type();
-            const typeLabel = await type.getLabel();
-            const relationships = await person.relationships();
-            relationships.forEach(async rel => {
-                const rolesMap = await rel.rolePlayers();
-                expect(rel.isRelationship()).toBeTruthy();
-                expect(rel.isThing()).toBeTruthy();
-                expect(rel.isSchemaConcept()).toBeFalsy();
-                expect(rel.isAttribute()).toBeFalsy();
-                expect(rel.isEntity()).toBeFalsy();
-                expect(rel.isType()).toBeFalsy();
-            });
-            const roles = await person.plays();
-            roles.forEach(role => {
-                expect(role.isRole()).toBeTruthy();
-            });
-            person.attributes().then(attributes => {
-                attributes.forEach(a => {
-                    expect(a.isAttribute()).toBeTruthy();
-                });
-            });
-            const attributes = await person.attributes();
+        const personType = await tx.putEntityType('person');
+        const thing = await personType.addEntity();
+        expect(await thing.isInferred()).toBeFalsy();
+    }, environment.integrationTestsTimeout());
 
-            attributes.forEach(async a => {
-                const value = await a.getValue()
-                const owners = await a.ownerInstances();
-                owners.forEach(o => {
-                    expect(o.isThing()).toBeTruthy();
-                });
-                const datatype = await a.dataType();
-            });
-        }));
-        // const filteredRelationships = await person.relationships(...roles);
-        done();
-    } catch (err) {
-        done.fail(err);
-    }
-}, environment.integrationTestsTimeout());
+    test("type", async () => {
+        const tx = await session.open(session.txType.WRITE);
+        const personType = await tx.putEntityType('person');
+        const thing = await personType.addEntity();
+        const type = await thing.type();
+        expect(type.id).toBe(personType.id);
+    }, environment.integrationTestsTimeout());
 
+    test("relationships", async () => {
+        const tx = await session.open(session.txType.WRITE);
+        const relationshipType = await tx.putRelationshipType('parenthood');
+        const relationship = await relationshipType.addRelationship();
+        const parentRole = await tx.putRole('parent');
+        const personType = await tx.putEntityType('person');
+        const parent = await personType.addEntity();
+        await relationship.addRolePlayer(parentRole, parent);
+        const rels = await parent.relationships();
+        expect(rels.length).toBe(1);
+        expect(rels[0].id).toBe(relationship.id);
+    }, environment.integrationTestsTimeout());
 
-//TODO: UPDATE THIS TEST AS IT RETURNS NOTHING
-test("Relationship methods", async (done) => {
-    try {
+    test("relationships(...Role)", async () => {
         const tx = await session.open(session.txType.WRITE);
 
-        const result = await tx.execute("match $x id V4176; limit 1; get;");
-        for (let map of result) {
-            for (let [key, marriage] of map) {
-                expect(marriage.isThing()).toBeTruthy();
-                expect(marriage.isRelationship()).toBeTruthy();
-                const rolePlayersMap = await marriage.allRolePlayers();
-                rolePlayersMap.forEach((setValue, key) => {
-                    expect(key.isRole()).toBeTruthy();
-                    setValue.forEach(thing => {
-                        expect(thing.isThing()).toBeTruthy();
-                    })
-                });
-                const rolePlayersArray = await marriage.rolePlayers();
-                rolePlayersArray.forEach(role => {
-                    expect(role.isRole()).toBeTruthy();
-                });
-            }
-        }
-        done();
-    } catch (err) {
-        done.fail(err);
-    }
-}, environment.integrationTestsTimeout());
+        const personType = await tx.putEntityType('person');
+        const person = await personType.addEntity();
+
+        //First relationship type
+        const relationshipType = await tx.putRelationshipType('parenthood');
+        const parenthoodRel1 = await relationshipType.addRelationship();
+        const parentRole = await tx.putRole('parent');
+        await parenthoodRel1.addRolePlayer(parentRole, person);
+
+        const parenthoodRel2 = await relationshipType.addRelationship();
+        await parenthoodRel2.addRolePlayer(parentRole, person);
+
+        const parentRelationships = await person.relationships(parentRole);
+        expect(parentRelationships.length).toBe(2);
+
+        //Second relationship type
+        const relationshipType2 = await tx.putRelationshipType('employment');
+        const employmentRel = await relationshipType2.addRelationship();
+        const employerRole = await tx.putRole('employer');
+        await employmentRel.addRolePlayer(employerRole, person);
 
 
-test("Delete attribute from thing", async (done) => {
-    try {
+        const employerRelationships = await person.relationships(employerRole);
+        expect(employerRelationships.length).toBe(1);
+        expect(employerRelationships[0].id).toBe(employmentRel.id);
+    }, environment.integrationTestsTimeout());
+
+    test("plays", async () => {
         const tx = await session.open(session.txType.WRITE);
-        await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
-        const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
+        const relationshipType = await tx.putRelationshipType('parenthood');
+        const relationship = await relationshipType.addRelationship();
+        const parentRole = await tx.putRole('parent');
+        const personType = await tx.putEntityType('person');
+        const parent = await personType.addEntity();
+        await relationship.addRolePlayer(parentRole, parent);
+        const plays = await parent.plays();
+        expect(plays.length).toBe(1);
+        expect(plays[0].id).toBe(parentRole.id);
+    }, environment.integrationTestsTimeout());
 
-        const concepts = insertionResult.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
-        expect(concepts.length).toBe(1);
-        const person = concepts[0];
-        //Delete attribute from person 
-        const attributes = await person.attributes();
-        expect(attributes.length).toBe(2);
-        await person.deleteAttribute(attributes[0]);
-        await tx.commit();
-
-        // Check from another transaction that the person has only 1 attribute
-
-        const tx2 = await session.open(session.txType.WRITE);
-        const result = await tx2.execute("match $x isa person; get;");
-        const newConcepts = result.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
-        const samePerson = newConcepts[0];
-        const lessAttributes = await samePerson.attributes();
-        expect(lessAttributes.length).toBe(1);
-        done();
-    } catch (err) {
-        console.log(err);
-        done.fail(err);
-    }
-}, environment.integrationTestsTimeout())
-
-
-
-// test.only("Add attribute to thing", async (done) => {
-//     try {
-//         const ks = environment.newKeyspace();
-//         console.log("working on keyspace " + ks);
-//         let session = new gc(DEFAULT_URI, ks, DEFAULT_CREDENTIALS);
-//         const tx = await session.open(session.txType.WRITE);
-//         await tx.execute("define person sub entity, has name; name sub attribute, datatype string;");
-//         const insertionResult = await tx.execute("insert $x isa person has name 'Andrea', has name 'Maria';");
-
-//         const concepts = insertionResult.map(map => Array.from(map.values()));
-//         expect(concepts.length).toBe(1);
-//         const person = concepts[0];
-//         //Delete attribute from person 
-//         const attributes = await person.attributes();
-//         expect(attributes.length).toBe(2);
-//         await person.deleteAttribute(attributes[0]);
-//         await tx.commit();
-
-//         // Check from another transaction that the person has only 1 attribute
-
-//         const tx2 = await session.open(session.txType.WRITE);
-//         const result = await tx2.execute("match $x isa person; get;");
-//         const newConcepts = result.map(map => Array.from(map.values()));
-//         const samePerson = newConcepts[0];
-//         const lessAttributes = await samePerson.attributes();
-//         expect(lessAttributes.length).toBe(1);
-//         done();
-//     } catch (err) {
-//         console.log(err);
-//         done.fail(err);
-//     }
-// }, 20000)
+    test("set/delete/get attributes", async () => {
+        const tx = await session.open(session.txType.WRITE);
+        const personType = await tx.putEntityType('person');
+        const attrType = await tx.putAttributeType('name', session.dataType.STRING);
+        await personType.attribute(attrType);
+        const person = await personType.addEntity();
+        const name = await attrType.putAttribute('Marco');
+        await person.attribute(name);
+        const attrs = await person.attributes();
+        expect(attrs.length).toBe(1);
+        expect(attrs[0].id).toBe(name.id);
+        await person.deleteAttribute(name);
+        const emptyAttrs = await person.attributes();
+        expect(emptyAttrs.length).toBe(0);
+    }, environment.integrationTestsTimeout());
+});

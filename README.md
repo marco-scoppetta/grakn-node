@@ -119,10 +119,10 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
    `relationships()` - **Returns:** Array of `Relationship` objects   
    `attributes()` - **Returns:** Array of `Attribute` objects   
    `plays()` - **Returns:** Array of `Role` objects   
-    **N.I. --**`relationships(...Role)` - **Returns:** Array of `Relationship` objects  
+   `relationships(...Role)` - **Returns:** Array of `Relationship` objects  
     **N.I. --**`keys()` - **Returns:** Array of `Attribute` objects   
     **N.I. --**`keys(...Attributetype)` - **Returns:** Array of `Attribute` objects   
-    `attribute(Attribute)` - **Returns:** void (Test needed)   
+    `attribute(Attribute)` - **Returns:** void 
     `deleteAttribute(Attribute)` - **Returns** void 
    
   **Attribute** 
@@ -134,10 +134,10 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   **Relationship**  
   
   `allRolePlayers()` - **Returns:** `Map<Role, Set<Thing>>`   
-  `rolePlayers()` - **Returns:** Array of `Role` objects   
-   **N.I. --**`rolePlayers(...Role)` - **Returns:** Array of `Role` objects   
-   **N.I. --**`addRolePlayer(Role, Thing)` - **Returns:**  `Relationship` object   
-   **N.I. --**`removeRolePlayer(Role, Thing)` - **Returns:**  void  
+  `rolePlayers()` - **Returns:** Array of `Thing` objects   
+  `rolePlayers(...Role)` - **Returns:** Array of `Thing` objects, filtered by `Role`  
+  `addRolePlayer(Role, Thing)` - **Returns:**  `void`      
+  `removeRolePlayer(Role, Thing)` - **Returns:**  `void`    
   
   **Type**  
   

@@ -23,11 +23,11 @@ const methods = {
       return this.txService.getRolePlayersByRoles(this.id, roles);
     } else {
       const rolePlayers = await this.txService.getRolePlayers(this.id);
-      const rolesArray = rolePlayers.map(entry => entry.role);
-      //Heper array to remove duplicates
-      const idsArray = rolePlayers.map(entry => entry.role.id);
-      //Filter out duplicates from rolesArray
-      return rolesArray.filter((value, i) => i === idsArray.indexOf(value.id));
+      const playersArray = rolePlayers.map(entry => entry.player);
+      //Helper array to remove duplicates
+      const idsArray = rolePlayers.map(entry => entry.player.id);
+      //Filter out duplicates from playersArray
+      return playersArray.filter((value, i) => i === idsArray.indexOf(value.id));
     }
   },
   addRolePlayer: function (role, thing) { return this.txService.setRolePlayer(this.id, role, thing); },

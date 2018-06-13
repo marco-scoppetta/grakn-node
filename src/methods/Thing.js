@@ -3,7 +3,7 @@ const methods = {
   type: function () { return this.txService.getDirectType(this.id); },
   relationships: function (...roles) {
     if (roles.length > 0) {
-      return this.txService.getRelationshipsByRoles(this.id, roles); //TODO investigate on why this one does not work
+      return this.txService.getRelationshipsByRoles(this.id, roles);
     } else {
       return this.txService.getRelationships(this.id);
     }
@@ -26,7 +26,7 @@ const methods = {
   // Note: in Java Core API this method is called `attributeRelationship`
   // because the `attribute` method has a behaviour that does not apply to JS.
   // So in here we just have `attribute`.
-  attribute: function (attribute) { return this.txService.setAttribute(this.id); },
+  attribute: function (attribute) { return this.txService.setAttribute(this.id, attribute); },
   deleteAttribute: function (attribute) { return this.txService.unsetAttribute(this.id, attribute); }
 };
 

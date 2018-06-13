@@ -249,7 +249,7 @@ TxService.prototype.setRegex = function (id) { };
 TxService.prototype.isInferred = function (id) {
     const txRequest = TxRequestBuilder.isInferred(id);
     return this.communicator.send(txRequest)
-        .then(response => _consumeConceptIterator(response, this))
+        .then(resp => resp.getConceptresponse().getBool())
         .catch(e => { throw e; });
 }
 
@@ -290,8 +290,8 @@ TxService.prototype.getAttributes = function (id) {
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getAttributesByTypes = function (id) {
-    const txRequest = TxRequestBuilder.getAttributesByTypes(id);
+TxService.prototype.getAttributesByTypes = function (id, types) {
+    const txRequest = TxRequestBuilder.getAttributesByTypes(id, types);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
@@ -328,15 +328,21 @@ TxService.prototype.getRolePlayers = function (id) {
         .catch(e => { throw e; });
 };
 TxService.prototype.getRolePlayersByRoles = function (id, roles) {
-    const txRequest = TxRequestBuilder.getRolePlayersByRoles(id);
+    const txRequest = TxRequestBuilder.getRolePlayersByRoles(id, roles);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setRolePlayer = function (id) { };
-TxService.prototype.unsetRolePlayer = function (id) { };
-
-
+TxService.prototype.setRolePlayer = function (id, role, thing) {
+    const txRequest = TxRequestBuilder.setRolePlayer(id, role, thing);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+TxService.prototype.unsetRolePlayer = function (id, role, thing) {
+    const txRequest = TxRequestBuilder.unsetRolePlayer(id, role, thing);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 // Attribute
 
 function _getAttributeValue(resp) {
@@ -506,6 +512,7 @@ TxService.prototype.putRole = function (label) {
 }
 
 TxService.prototype.putAttributeType = function (label, dataType) {
+    if (dataType == null) throw new Error('Datatype of AttributeType not specified.');
     const txRequest = new messages.TxRequest();
     const putMessage = new messages.PutAttributeType();
     const labelMessage = new messages.Label();

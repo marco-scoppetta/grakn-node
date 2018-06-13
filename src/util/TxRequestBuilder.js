@@ -31,6 +31,9 @@ function convertBaseType(baseType) {
 }
 
 function toGrpcConcept(conceptObject) {
+  if (!conceptObject.id) throw new Error("Provided Concept without Id field.");
+  if (!conceptObject.baseType) throw new Error("Provided Concept without baseType field.");
+
   const conceptMessage = new messages.Concept();
   const conceptIdMessage = new messages.ConceptId();
   conceptIdMessage.setValue(conceptObject.id);
@@ -88,7 +91,8 @@ const methods = {
 
   setDirectSuperConcept: function (conceptId, superConcept) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetdirectsuperconcept(toGrpcConcept(superConcept));
+    const grpcConcept = toGrpcConcept(superConcept);
+    conceptMethod.setSetdirectsuperconcept(grpcConcept);
     return TxRequest(conceptId, conceptMethod);
   },
 
@@ -219,6 +223,7 @@ const methods = {
   // Attribute type
 
   putAttribute: function (conceptId, dataType, value) {
+    if (dataType == null) throw new Error('Datatype of AttributeType not specified.');
     const conceptMethod = new messages.ConceptMethod();
     const attributeValue = new messages.AttributeValue();
     switch (dataType) {
@@ -229,11 +234,13 @@ const methods = {
       case 4: attributeValue.setFloat(value); break;
       case 5: attributeValue.setDouble(value); break;
       case 6: attributeValue.setDate(value); break;
+      default: throw new Error('DataType of attribute not recognised.');
     }
     conceptMethod.setPutattribute(attributeValue);
     return TxRequest(conceptId, conceptMethod);
   },
   getAttribute: function (conceptId, dataType, value) {
+    if (dataType == null) throw new Error('Datatype of AttributeType not specified.');
     const conceptMethod = new messages.ConceptMethod();
     const attributeValue = new messages.AttributeValue();
     switch (dataType) {
@@ -244,6 +251,7 @@ const methods = {
       case 4: attributeValue.setFloat(value); break;
       case 5: attributeValue.setDouble(value); break;
       case 6: attributeValue.setDate(value); break;
+      default: throw new Error('DataType of attribute not recognised.');
     }
     conceptMethod.setGetattribute(attributeValue);
     return TxRequest(conceptId, conceptMethod);
@@ -337,19 +345,28 @@ const methods = {
     conceptMethod.setGetroleplayers(UNIT_MESSAGE);
     return TxRequest(conceptId, conceptMethod);
   },
-  getRolePlayersByRoles: function () {
+  getRolePlayersByRoles: function (conceptId, roles) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setGetroleplayersbyroles(); // Pass Concepts
+    const conceptsMessage = new messages.Concepts();
+    const grpcConcepts = roles.map(role => toGrpcConcept(role))
+    conceptsMessage.setConceptList(grpcConcepts);
+    conceptMethod.setGetroleplayersbyroles(conceptsMessage);
     return TxRequest(conceptId, conceptMethod);
   },
-  setRolePlayer: function () {
+  setRolePlayer: function (conceptId, role, thing) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetroleplayer(); // Pass a RolePlayer
+    const rolePlayerMessage = new messages.RolePlayer();
+    rolePlayerMessage.setRole(toGrpcConcept(role));
+    rolePlayerMessage.setPlayer(toGrpcConcept(thing));
+    conceptMethod.setSetroleplayer(rolePlayerMessage);
     return TxRequest(conceptId, conceptMethod);
   },
-  unsetRolePlayer: function () {
+  unsetRolePlayer: function (conceptId, role, thing) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setUnsetroleplayer(); // Pass a RolePlayer
+    const rolePlayerMessage = new messages.RolePlayer();
+    rolePlayerMessage.setRole(toGrpcConcept(role));
+    rolePlayerMessage.setPlayer(toGrpcConcept(thing));
+    conceptMethod.setUnsetroleplayer(rolePlayerMessage);
     return TxRequest(conceptId, conceptMethod);
   },
 
