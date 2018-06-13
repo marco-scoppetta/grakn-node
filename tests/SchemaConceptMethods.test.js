@@ -1,9 +1,8 @@
 const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
-const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
 const environment = require('./support/GraknTestEnvironment');
 
-let session = new gc(DEFAULT_URI, environment.newKeyspace(), DEFAULT_CREDENTIALS);
+let session = new gc(DEFAULT_URI, environment.newKeyspace());
 
 describe("Schema concept methods", () => {
 

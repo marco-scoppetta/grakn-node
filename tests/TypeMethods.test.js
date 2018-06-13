@@ -4,7 +4,6 @@ const environment = require('./support/GraknTestEnvironment');
 
 const session = new gc(DEFAULT_URI, environment.newKeyspace());
 
-
 describe("Type methods", () => {
 
     test("setAbstract && isAbstract", async () => {

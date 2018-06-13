@@ -192,21 +192,27 @@ const methods = {
 
   // Relationship Type
 
+
+  addRelationship: function (conceptId) {
+    const conceptMethod = new messages.ConceptMethod();
+    conceptMethod.setAddrelationship(UNIT_MESSAGE);
+    return TxRequest(conceptId, conceptMethod);
+  },
   getRelatedRoles: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setGetrelatedroles(UNIT_MESSAGE);
     return TxRequest(conceptId, conceptMethod);
   },
 
-  setRelatedRole: function (conceptId) {
+  setRelatedRole: function (conceptId, role) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetrelatedrole(); // Pass a Concept
+    conceptMethod.setSetrelatedrole(toGrpcConcept(role));
     return TxRequest(conceptId, conceptMethod);
   },
 
-  unsetRelatedRole: function (conceptId) {
+  unsetRelatedRole: function (conceptId, role) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setGetrelatedroles(); // Pass a Concept
+    conceptMethod.setUnsetrelatedrole(toGrpcConcept(role));
     return TxRequest(conceptId, conceptMethod);
   },
 
@@ -326,12 +332,6 @@ const methods = {
   },
 
   // Relationship
-
-  addRelationship: function (conceptId) {
-    const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setAddrelationship(UNIT_MESSAGE);
-    return TxRequest(conceptId, conceptMethod);
-  },
   getRolePlayers: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setGetroleplayers(UNIT_MESSAGE);

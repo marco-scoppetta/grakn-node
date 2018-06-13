@@ -179,7 +179,12 @@ TxService.prototype.addEntity = function (id) {
 };
 
 // Relationship Type
-
+TxService.prototype.addRelationship = function (id) {
+    const txRequest = TxRequestBuilder.addRelationship(id);
+    return this.communicator.send(txRequest)
+        .then(response => this.conceptFactory.createConcept(response.getConceptresponse().getConcept()))
+        .catch(e => { throw e; });
+};
 TxService.prototype.getRelatedRoles = function (id) {
     const txRequest = TxRequestBuilder.getRelatedRoles(id);
     return this.communicator.send(txRequest)
@@ -187,8 +192,16 @@ TxService.prototype.getRelatedRoles = function (id) {
         .catch(e => { throw e; });
 }
 
-TxService.prototype.setRelatedRole = function (id) { };
-TxService.prototype.unsetRelatedRole = function (id) { };
+TxService.prototype.setRelatedRole = function (id, role) {
+    const txRequest = TxRequestBuilder.setRelatedRole(id, role);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+TxService.prototype.unsetRelatedRole = function (id, role) {
+    const txRequest = TxRequestBuilder.unsetRelatedRole(id, role);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 
 
 
@@ -308,7 +321,6 @@ TxService.prototype.unsetAttribute = function (id, attribute) {
 
 // Relationship
 
-TxService.prototype.addRelationship = function (id) { };
 TxService.prototype.getRolePlayers = function (id) {
     const txRequest = TxRequestBuilder.getRolePlayers(id);
     return this.communicator.send(txRequest)

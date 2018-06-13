@@ -68,7 +68,7 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
 **GraknSession**
 
   `GraknSession(String URI, String keyspace, {username: String, password: String})` 
-  **e.g.** `const session = new GraknSession("localhost:48555", "grakn", {username: "Marco", password: "Secret"})`  
+  **e.g.** `const session = new GraknSession("localhost:48555", "grakn")`  
   
   
  `open(session.txType)` - **Returns:** `GraknTx` object   
@@ -163,10 +163,10 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   **N.I. --**`setRegex()` - **Returns:**  
    
   **RelationshipType**  
-  **N.I. --**`addRelationship()` - **Returns:**   
-  **N.I. --**`relates()` - **Returns:**  - returns roles  
-  **N.I. --**`relates(Role)` - **Returns:**  - add new role   
-  **N.I. --**`deleteRelates(Role)` - **Returns:**   
+  `addRelationship()` - **Returns:** `Relationship` object   
+  `relates()` - **Returns:**  - Array of `Role` objects     
+  `relates(Role)` - **Returns:**  - `void`    
+  `deleteRelates(Role)` - **Returns:** `void`  
   
   **EntityType**  
   `addEntity()` - **Returns:** new `Entity` object  
