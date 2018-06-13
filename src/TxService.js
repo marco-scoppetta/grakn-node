@@ -62,8 +62,8 @@ TxService.prototype.getSuperConcepts = function (id) {
         .catch(e => { throw e; });
 };
 TxService.prototype.getDirectSuperConcept = function (id) {
-    const TxRequest = TxRequestBuilder.getDirectSuperConcept(id);
-    return this.communicator.send(TxRequest)
+    const txRequest = TxRequestBuilder.getDirectSuperConcept(id);
+    return this.communicator.send(txRequest)
         .then(grpcConceptResponse => {
             const optionalConcept = grpcConceptResponse.getConceptresponse().getOptionalconcept();
             if (optionalConcept.hasPresent()) {
@@ -75,8 +75,10 @@ TxService.prototype.getDirectSuperConcept = function (id) {
         })
         .catch(e => { throw e; });
 };
-TxService.prototype.setDirectSuperConcept = function (id) {
-
+TxService.prototype.setDirectSuperConcept = function (id, superConcept) {
+    const txRequest = TxRequestBuilder.setDirectSuperConcept(id, superConcept);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });;
 };
 
 // Rule 

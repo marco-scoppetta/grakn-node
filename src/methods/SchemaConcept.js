@@ -11,8 +11,7 @@ const methods = {
     } else {
       return this.txService.getDirectSuperConcept(this.id);
     }
-  },
-  sub: function (type) { return this.txService.setDirectSuperConcept(this.id, type); }
+  }
 };
 
 module.exports = {

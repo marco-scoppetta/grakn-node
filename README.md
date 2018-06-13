@@ -105,8 +105,9 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   **Schema concept**  
   
    `getLabel()` - **Returns:** string   
-   `setLabel()` - **Returns:** void  (not tested)   
+   `setLabel()` - **Returns:** void   
    `isImplicit()` - **Returns:** `boolean`  
+   `sup(Type)` - (setter) **Returns:** `null` object  
    `sup()` - **Returns:** `null` or `SchemaConcept` object  
    `subs()` - **Returns:** Array of `SchemaConcept` objects   
    `sups()`- **Returns:** Array of `SchemaConcept` objects  

@@ -86,9 +86,9 @@ const methods = {
     return TxRequest(conceptId, conceptMethod);
   },
 
-  setDirectSuperConcept: function (conceptId) {
+  setDirectSuperConcept: function (conceptId, superConcept) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetdirectsuperconcept(); // Pass a Concept
+    conceptMethod.setSetdirectsuperconcept(toGrpcConcept(superConcept));
     return TxRequest(conceptId, conceptMethod);
   },
 
@@ -273,7 +273,7 @@ const methods = {
     const conceptMethod = new messages.ConceptMethod();
     const grpcConcepts = roles.map(role => toGrpcConcept(role))
     conceptsMessage.setConceptList(grpcConcepts);
-    conceptMethod.setGetrelationshipsbyroles(conceptsMessage); // Pass Concepts
+    conceptMethod.setGetrelationshipsbyroles(conceptsMessage);
     return TxRequest(conceptId, conceptMethod);
   },
 
@@ -306,7 +306,7 @@ const methods = {
   },
   setAttribute: function (conceptId, attribute) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setSetattribute(toGrpcConcept(attribute)); // Pass a Concept
+    conceptMethod.setSetattribute(toGrpcConcept(attribute));
     return TxRequest(conceptId, conceptMethod);
   },
   unsetAttribute: function (conceptId, attribute) {
