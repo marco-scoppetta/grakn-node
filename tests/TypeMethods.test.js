@@ -1,38 +1,77 @@
 const gc = require("../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
-const DEFAULT_KEYSPACE = "grakn";
-const DEFAULT_CREDENTIALS = { username: "cassandra", password: "cassandra" };
 const environment = require('./support/GraknTestEnvironment');
 
+const session = new gc(DEFAULT_URI, environment.newKeyspace());
 
-// AttributeType test
-test("Create entity instance", async (done) => {
-    try {
-        const client = new gc(DEFAULT_URI, environment.newKeyspace());
-        const tx = await client.open(client.txType.WRITE);
-        const attributeType = await tx.putAttributeType("firstname", client.dataType.STRING);
-        const attribute = await attributeType.putAttribute();
-        expect(attribute.isAttribute()).toBeTruthy();
-        done();
-    } catch (err) {
-        console.error(err);
-        done.fail(err);
-    }
-}, environment.integrationTestsTimeout());
+describe("Type methods", () => {
 
-// RelationshipType test
+    test("setAbstract && isAbstract", async () => {
+        const tx = await session.open(session.txType.WRITE);
+        const dogType = await tx.putEntityType("dog");
+        let isAbstract = await dogType.isAbstract();
+        expect(isAbstract).toBeFalsy();
+        await dogType.setAbstract(true);
+        isAbstract = await dogType.isAbstract();
+        expect(isAbstract).toBeTruthy();
+        await dogType.setAbstract(false);
+        isAbstract = await dogType.isAbstract();
+        expect(isAbstract).toBeFalsy();
+    }, environment.integrationTestsTimeout());
 
-// EntityType test
-test("Create entity instance", async (done) => {
-    try {
-        const client = new gc(DEFAULT_URI, environment.newKeyspace());
-        const tx = await client.open(client.txType.WRITE);
+    test("get/set/delete plays", async () => {
+        const tx = await session.open(session.txType.WRITE);
+        const role = await tx.putRole('father');
+        const type = await tx.putEntityType('person');
+        const plays = await type.plays();
+        expect(plays.length).toBe(0);
+        await type.plays(role);
+        const playsWithRole = await type.plays();
+        expect(playsWithRole.length).toBe(1);
+        expect(playsWithRole[0].baseType).toBe('ROLE');
+        await type.deletePlays(role);
+        const playsRemoved = await type.plays();
+        expect(playsRemoved.length).toBe(0);
+    }, environment.integrationTestsTimeout());
+
+    test("get/set/delete attributes", async () => {
+        const tx = await session.open(session.txType.WRITE);
+        const type = await tx.putEntityType('person');
+        const nameType = await tx.putAttributeType('name', session.dataType.STRING);
+        const attrs = await type.attributes();
+        expect(attrs.length).toBe(0);
+        await type.attribute(nameType);
+        const attrsWithName = await type.attributes();
+        expect(attrsWithName.length).toBe(1);
+        expect(attrsWithName[0].baseType).toBe('ATTRIBUTE_TYPE');
+        await type.deleteAttribute(nameType);
+        const attrsRemoved = await type.attributes();
+        expect(attrsRemoved.length).toBe(0);
+    }, environment.integrationTestsTimeout());
+
+    test("instances", async () => {
+        const tx = await session.open(session.txType.WRITE);
         const personType = await tx.putEntityType("person");
-        const person = await personType.addEntity();
-        expect(person.isEntity()).toBeTruthy();
-        done();
-    } catch (err) {
-        console.error(err);
-        done.fail(err);
-    }
-}, environment.integrationTestsTimeout());
+        const instances = await personType.instances();
+        expect(instances.length).toBe(0);
+        await personType.addEntity();
+        const instancesWithPerson = await personType.instances();
+        expect(instancesWithPerson.length).toBe(1);
+    }, environment.integrationTestsTimeout());
+
+    test("Get/set/delete key", async () => {
+        const tx = await session.open(session.txType.WRITE);
+        const type = await tx.putEntityType('person');
+        const nameType = await tx.putAttributeType('name', session.dataType.STRING);
+        const keys = await type.keys();
+        expect(keys.length).toBe(0);
+        await type.key(nameType);
+        const keysWithName = await type.keys();
+        expect(keysWithName.length).toBe(1);
+        expect(keysWithName[0].baseType).toBe('ATTRIBUTE_TYPE');
+        await type.deleteKey(nameType);
+        const keysRemoved = await type.keys();
+        expect(keysRemoved.length).toBe(0);
+    }, environment.integrationTestsTimeout());
+});
+

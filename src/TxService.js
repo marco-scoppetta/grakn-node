@@ -62,8 +62,8 @@ TxService.prototype.getSuperConcepts = function (id) {
         .catch(e => { throw e; });
 };
 TxService.prototype.getDirectSuperConcept = function (id) {
-    const TxRequest = TxRequestBuilder.getDirectSuperConcept(id);
-    return this.communicator.send(TxRequest)
+    const txRequest = TxRequestBuilder.getDirectSuperConcept(id);
+    return this.communicator.send(txRequest)
         .then(grpcConceptResponse => {
             const optionalConcept = grpcConceptResponse.getConceptresponse().getOptionalconcept();
             if (optionalConcept.hasPresent()) {
@@ -75,8 +75,10 @@ TxService.prototype.getDirectSuperConcept = function (id) {
         })
         .catch(e => { throw e; });
 };
-TxService.prototype.setDirectSuperConcept = function (id) {
-
+TxService.prototype.setDirectSuperConcept = function (id, superConcept) {
+    const txRequest = TxRequestBuilder.setDirectSuperConcept(id, superConcept);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
 };
 
 // Rule 
@@ -113,26 +115,59 @@ TxService.prototype.getAttributeTypes = function (id) {
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setAttributeType = function (id) { };
-TxService.prototype.unsetAttributeType = function (id) { };
+TxService.prototype.setAttributeType = function (id, type) {
+    const txRequest = TxRequestBuilder.setAttributeType(id, type);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+TxService.prototype.unsetAttributeType = function (id, type) {
+    const txRequest = TxRequestBuilder.unsetAttributeType(id, type);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 TxService.prototype.getKeyTypes = function (id) {
     const txRequest = TxRequestBuilder.getKeyTypes(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setKeyType = function (id) { };
-TxService.prototype.unsetKeyType = function (id) { };
-TxService.prototype.isAbstract = function (id) { };
-TxService.prototype.setAbstract = function (id) { };
+TxService.prototype.setKeyType = function (id, keyType) {
+    const txRequest = TxRequestBuilder.setKeyType(id, keyType);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+TxService.prototype.unsetKeyType = function (id, keyType) {
+    const txRequest = TxRequestBuilder.unsetKeyType(id, keyType);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+TxService.prototype.isAbstract = function (id) {
+    const txRequest = TxRequestBuilder.isAbstract(id);
+    return this.communicator.send(txRequest)
+        .then(resp => resp.getConceptresponse().getBool())
+        .catch(e => { throw e; });
+};
+TxService.prototype.setAbstract = function (id, bool) {
+    const txRequest = TxRequestBuilder.setAbstract(id, bool);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 TxService.prototype.getRolesPlayedByType = function (id) {
     const txRequest = TxRequestBuilder.getRolesPlayedByType(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setRolePlayedByType = function (id) { };
-TxService.prototype.unsetRolePlayedByType = function (id) { };
+TxService.prototype.setRolePlayedByType = function (id, role) {
+    const txRequest = TxRequestBuilder.setRolePlayedByType(id, role);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+TxService.prototype.unsetRolePlayedByType = function (id, role) {
+    const txRequest = TxRequestBuilder.unsetRolePlayedByType(id, role);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 
 // Entity type
 
@@ -144,7 +179,12 @@ TxService.prototype.addEntity = function (id) {
 };
 
 // Relationship Type
-
+TxService.prototype.addRelationship = function (id) {
+    const txRequest = TxRequestBuilder.addRelationship(id);
+    return this.communicator.send(txRequest)
+        .then(response => this.conceptFactory.createConcept(response.getConceptresponse().getConcept()))
+        .catch(e => { throw e; });
+};
 TxService.prototype.getRelatedRoles = function (id) {
     const txRequest = TxRequestBuilder.getRelatedRoles(id);
     return this.communicator.send(txRequest)
@@ -152,14 +192,54 @@ TxService.prototype.getRelatedRoles = function (id) {
         .catch(e => { throw e; });
 }
 
-TxService.prototype.setRelatedRole = function (id) { };
-TxService.prototype.unsetRelatedRole = function (id) { };
+TxService.prototype.setRelatedRole = function (id, role) {
+    const txRequest = TxRequestBuilder.setRelatedRole(id, role);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+TxService.prototype.unsetRelatedRole = function (id, role) {
+    const txRequest = TxRequestBuilder.unsetRelatedRole(id, role);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+
 
 
 // Attribute type
-TxService.prototype.putAttribute = function (id) { };
-TxService.prototype.getAttribute = function (id) { };
-TxService.prototype.getDataTypeOfType = function (id) { };
+TxService.prototype.putAttribute = async function (id, value) {
+    const dataTypeTxRequest = TxRequestBuilder.getDataTypeOfType(id);
+    const resp = await this.communicator.send(dataTypeTxRequest);
+    const dataType = resp.getConceptresponse().getOptionaldatatype().getPresent();
+    const txRequest = TxRequestBuilder.putAttribute(id, dataType, value);
+    return this.communicator.send(txRequest)
+        .then(response => this.conceptFactory.createConcept(response.getConceptresponse().getConcept()))
+        .catch(e => { throw e; });
+};
+TxService.prototype.getAttribute = async function (id, value) {
+    const dataTypeTxRequest = TxRequestBuilder.getDataTypeOfType(id);
+    const resp = await this.communicator.send(dataTypeTxRequest);
+    const dataType = resp.getConceptresponse().getOptionaldatatype().getPresent();
+    const txRequest = TxRequestBuilder.getAttribute(id, dataType, value);
+    return this.communicator
+        .send(txRequest)
+        .then((response) => {
+            const optionalConcept = response.getConceptresponse().getOptionalconcept();
+            if (optionalConcept.hasPresent())
+                return this.conceptFactory.createConcept(optionalConcept.getPresent());
+            else
+                return null;
+        })
+        .catch((e) => { throw e; });
+};
+TxService.prototype.getDataTypeOfType = function (id) {
+    const txRequest = TxRequestBuilder.getDataTypeOfType(id);
+    return this.communicator.send(txRequest)
+        .then(response => {
+            const optionalDatatype = response.getConceptresponse().getOptionaldatatype();
+            return (optionalDatatype.hasPresent()) ? _dataTypeToString(optionalDatatype.getPresent()) : null;
+        })
+        .catch(e => { throw e; });
+};
 TxService.prototype.getRegex = function (id) { };
 TxService.prototype.setRegex = function (id) { };
 
@@ -169,7 +249,7 @@ TxService.prototype.setRegex = function (id) { };
 TxService.prototype.isInferred = function (id) {
     const txRequest = TxRequestBuilder.isInferred(id);
     return this.communicator.send(txRequest)
-        .then(response => _consumeConceptIterator(response, this))
+        .then(resp => resp.getConceptresponse().getBool())
         .catch(e => { throw e; });
 }
 
@@ -210,8 +290,8 @@ TxService.prototype.getAttributes = function (id) {
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getAttributesByTypes = function (id) {
-    const txRequest = TxRequestBuilder.getAttributesByTypes(id);
+TxService.prototype.getAttributesByTypes = function (id, types) {
+    const txRequest = TxRequestBuilder.getAttributesByTypes(id, types);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
@@ -241,7 +321,6 @@ TxService.prototype.unsetAttribute = function (id, attribute) {
 
 // Relationship
 
-TxService.prototype.addRelationship = function (id) { };
 TxService.prototype.getRolePlayers = function (id) {
     const txRequest = TxRequestBuilder.getRolePlayers(id);
     return this.communicator.send(txRequest)
@@ -249,15 +328,21 @@ TxService.prototype.getRolePlayers = function (id) {
         .catch(e => { throw e; });
 };
 TxService.prototype.getRolePlayersByRoles = function (id, roles) {
-    const txRequest = TxRequestBuilder.getRolePlayersByRoles(id);
+    const txRequest = TxRequestBuilder.getRolePlayersByRoles(id, roles);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setRolePlayer = function (id) { };
-TxService.prototype.unsetRolePlayer = function (id) { };
-
-
+TxService.prototype.setRolePlayer = function (id, role, thing) {
+    const txRequest = TxRequestBuilder.setRolePlayer(id, role, thing);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
+TxService.prototype.unsetRolePlayer = function (id, role, thing) {
+    const txRequest = TxRequestBuilder.unsetRolePlayer(id, role, thing);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 // Attribute
 
 function _getAttributeValue(resp) {
@@ -285,23 +370,22 @@ TxService.prototype.getOwners = function (id) {
 };
 
 
-function _getDataType(resp) {
-    const dataType = resp.getConceptresponse().getDatatype();
+function _dataTypeToString(dataType) {
     switch (dataType) {
-        case 0: return "String"; break;
-        case 1: return "Boolean"; break;
-        case 2: return "Integer"; break;
-        case 3: return "Long"; break;
-        case 4: return "Float"; break;
-        case 5: return "Double"; break;
-        case 6: return "Date"; break;
+        case 0: return "String";
+        case 1: return "Boolean";
+        case 2: return "Integer";
+        case 3: return "Long";
+        case 4: return "Float";
+        case 5: return "Double";
+        case 6: return "Date";
     }
 }
 
 TxService.prototype.getDataTypeOfAttribute = function (id) {
     const txRequest = TxRequestBuilder.getDataTypeOfAttribute(id);
     return this.communicator.send(txRequest)
-        .then(response => _getDataType(response))
+        .then(response => _dataTypeToString(response.getConceptresponse().getDatatype()))
         .catch(e => { throw e; });
 };
 
@@ -363,10 +447,7 @@ TxService.prototype.getConcept = function (conceptId) {
             else
                 return null;
         })
-        .catch((e) => {
-            throw e;
-        });;
-
+        .catch((e) => { throw e; });
 }
 
 TxService.prototype.getSchemaConcept = function (label) {
@@ -383,9 +464,7 @@ TxService.prototype.getSchemaConcept = function (label) {
             else
                 return null;
         })
-        .catch((e) => {
-            throw e;
-        });;
+        .catch((e) => { throw e; });
 }
 
 TxService.prototype.putEntityType = function (label) {
@@ -396,9 +475,7 @@ TxService.prototype.putEntityType = function (label) {
     return this.communicator
         .send(txRequest)
         .then(response => this.conceptFactory.createConcept(response.getConcept()))
-        .catch((e) => {
-            throw e;
-        });;
+        .catch((e) => { throw e; });
 }
 
 TxService.prototype.putRelationshipType = function (label) {
@@ -409,12 +486,33 @@ TxService.prototype.putRelationshipType = function (label) {
     return this.communicator
         .send(txRequest)
         .then(response => this.conceptFactory.createConcept(response.getConcept()))
-        .catch((e) => {
-            throw e;
-        });;
+        .catch((e) => { throw e; });
+}
+
+TxService.prototype.putRelationshipType = function (label) {
+    const txRequest = new messages.TxRequest();
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    txRequest.setPutrelationshiptype(labelMessage);
+    return this.communicator
+        .send(txRequest)
+        .then(response => this.conceptFactory.createConcept(response.getConcept()))
+        .catch((e) => { throw e; });
+}
+
+TxService.prototype.putRole = function (label) {
+    const txRequest = new messages.TxRequest();
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    txRequest.setPutrole(labelMessage);
+    return this.communicator
+        .send(txRequest)
+        .then(response => this.conceptFactory.createConcept(response.getConcept()))
+        .catch((e) => { throw e; });
 }
 
 TxService.prototype.putAttributeType = function (label, dataType) {
+    if (dataType == null) throw new Error('Datatype of AttributeType not specified.');
     const txRequest = new messages.TxRequest();
     const putMessage = new messages.PutAttributeType();
     const labelMessage = new messages.Label();
@@ -427,7 +525,7 @@ TxService.prototype.putAttributeType = function (label, dataType) {
         .then(response => this.conceptFactory.createConcept(response.getConcept()))
         .catch((e) => {
             throw e;
-        });;
+        });
 }
 
 
@@ -449,9 +547,7 @@ TxService.prototype.openTx = function (keyspace, txType, credentials) {
 
     return this.communicator.send(txRequest)
         // Explicitly catch and re-throw exception otherwise it will be swallowed by promises
-        .catch((e) => {
-            throw e;
-        });
+        .catch((e) => { throw e; });
 };
 
 // COMMIT TRANSACTION
@@ -460,9 +556,7 @@ TxService.prototype.commit = function () {
     const commitRequest = new messages.Commit();
     const txRequest = new messages.TxRequest();
     txRequest.setCommit(commitRequest);
-    return this.communicator.send(txRequest).catch((e) => {
-        throw e;
-    });
+    return this.communicator.send(txRequest).catch((e) => { throw e; });
 }
 
 
@@ -482,9 +576,7 @@ TxService.prototype.execute = function executeQuery(query) {
     return this.communicator
         .send(txRequest)
         .then(resp => this._parseResponse(resp))
-        .catch((e) => {
-            throw e;
-        });
+        .catch((e) => { throw e; });
 };
 
 TxService.prototype._parseResponse = async function parseResponse(resp) {

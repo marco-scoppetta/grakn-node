@@ -68,7 +68,7 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
 **GraknSession**
 
   `GraknSession(String URI, String keyspace, {username: String, password: String})` 
-  **e.g.** `const session = new GraknSession("localhost:48555", "grakn", {username: "Marco", password: "Secret"})`  
+  **e.g.** `const session = new GraknSession("localhost:48555", "grakn")`  
   
   
  `open(session.txType)` - **Returns:** `GraknTx` object   
@@ -76,15 +76,15 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
  
  **GraknTx**  
  
-  `execute(String graqlQuery)` - **Returns:** Array of `Map<String, Concept>` (String represents the graql variable)  
+  `execute(String graqlQuery)` - **Returns:** Array of `Map<String, Concept>` (key of the map represents the graql variable)  
   `commit()` - **Returns:** void  
   `getConcept(String conceptId)` - **Returns:** `Concept` object or `null`  
   `getSchemaConcept(String label)` - **Returns:** `Concept` object or `null`  
   **N.I. --**`getAttributesByValue(attributeValue)` - **Returns:** Array of `Attribute` objects   
   `putEntityType(String label)` - **Returns:** `EntityType` object  
   `putRelationshipType(String label)`- **Returns:** `RelationshipType` object   
-  `putAttributeType()`- **Returns:** `AttributeType` object   
-  **N.I. --**`putRole()`  
+  `putAttributeType(String label, session.dataType)`- **Returns:** `AttributeType` object   
+  `putRole(String label)` - **Returns:** `Role` object   
   **N.I. --**`putRule()`  
 
 **Concept** 
@@ -105,8 +105,9 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   **Schema concept**  
   
    `getLabel()` - **Returns:** string   
-   `setLabel()` - **Returns:** void  (not tested)   
+   `setLabel()` - **Returns:** void   
    `isImplicit()` - **Returns:** `boolean`  
+   `sup(Type)` - (setter) **Returns:** `null` object  
    `sup()` - **Returns:** `null` or `SchemaConcept` object  
    `subs()` - **Returns:** Array of `SchemaConcept` objects   
    `sups()`- **Returns:** Array of `SchemaConcept` objects  
@@ -118,10 +119,10 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
    `relationships()` - **Returns:** Array of `Relationship` objects   
    `attributes()` - **Returns:** Array of `Attribute` objects   
    `plays()` - **Returns:** Array of `Role` objects   
-    **N.I. --**`relationships(...Role)` - **Returns:** Array of `Relationship` objects  
+   `relationships(...Role)` - **Returns:** Array of `Relationship` objects  
     **N.I. --**`keys()` - **Returns:** Array of `Attribute` objects   
     **N.I. --**`keys(...Attributetype)` - **Returns:** Array of `Attribute` objects   
-    `attribute(Attribute)` - **Returns:** void (Test needed)   
+    `attribute(Attribute)` - **Returns:** void 
     `deleteAttribute(Attribute)` - **Returns** void 
    
   **Attribute** 
@@ -133,48 +134,49 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
   **Relationship**  
   
   `allRolePlayers()` - **Returns:** `Map<Role, Set<Thing>>`   
-  `rolePlayers()` - **Returns:** Array of `Role` objects   
-   **N.I. --**`rolePlayers(...Role)` - **Returns:** Array of `Role` objects   
-   **N.I. --**`addRolePlayer(Role, Thing)` - **Returns:**  `Relationship` object   
-   **N.I. --**`removeRolePlayer(Role, Thing)` - **Returns:**  void  
+  `rolePlayers()` - **Returns:** Array of `Thing` objects   
+  `rolePlayers(...Role)` - **Returns:** Array of `Thing` objects, filtered by `Role`  
+  `addRolePlayer(Role, Thing)` - **Returns:**  `void`      
+  `removeRolePlayer(Role, Thing)` - **Returns:**  `void`    
   
   **Type**  
   
-   **N.I. --**`setAbstract()` - **Returns:** void   
+  `setAbstract(boolean)` - **Returns:** void   
   `isAbstract()` - **Returns:** `boolean`   
   `plays()` - **Returns:** Array of `Role` objects  
+  `plays(Role)` - **Returns:** `void`   
   `attributes()` - **Returns:** Array of `AttributeType` objects  
-  `instances()` - **Returns:** Array of `Thing` objects 
-  **N.I. --**`keys()` - **Returns:**  
-  **N.I. --**`keys(AttributeType)` - **Returns:**   
-  **N.I. --**`attribute(AttributeType)` - **Returns:**   
-  **N.I. --**`deletePlays(Role)` - **Returns:**   
-  **N.I. --**`deleteAttribute(AttributeType)` - **Returns:**  
-  **N.I. --**`deleteKey(AttributeType)` - **Returns:**  
+  `instances()` - **Returns:** Array of `Thing` objects   
+  `keys()` - **Returns:** Array of `AttributeType` objects    
+  `key(AttributeType)` - **Returns:**  `void`  
+  `attribute(AttributeType)` - **Returns:** `void`  
+  `deletePlays(Role)` - **Returns:** `void`  
+  `deleteAttribute(AttributeType)` - **Returns:** `void`  
+  `deleteKey(AttributeType)` - **Returns:** `void`  
   
   **AttributeType**
   
-  **N.I. --**`putAttribute()` - **Returns:**  
-  **N.I. --**`getAttribute(Value)` - **Returns:**   
-  **N.I. --**`getDataType()` - **Returns:**   
+  `putAttribute(value)` - **Returns:**  new `Attribute` object
+  `getAttribute(Value)` - **Returns:**  `Attribute` object or `null`
+  `getDataType()` - **Returns:** `String`   
   **N.I. --**`getRegex()` - **Returns:**  
   **N.I. --**`setRegex()` - **Returns:**  
    
   **RelationshipType**  
-  **N.I. --**`addRelationship()` - **Returns:**   
-  **N.I. --**`relates()` - **Returns:**  - returns roles  
-  **N.I. --**`relates(Role)` - **Returns:**  - add new role   
-  **N.I. --**`deleteRelates(Role)` - **Returns:**   
+  `addRelationship()` - **Returns:** `Relationship` object   
+  `relates()` - **Returns:**  - Array of `Role` objects     
+  `relates(Role)` - **Returns:**  - `void`    
+  `deleteRelates(Role)` - **Returns:** `void`  
   
   **EntityType**  
   `addEntity()` - **Returns:** new `Entity` object  
 
   **Role**  
   
-  **N.I. --**`relationshipTypes()` - **Returns:**   
-  **N.I. --**`playedByTypes()` - **Returns:** 
+  `relationshipTypes()` - **Returns:** Array of `RelationshipType` objects  
+  `playedByTypes()` - **Returns:** Array of `Type` objects  
   
-  **Rule**  
+  **Rule**    
   
    **N.I. --**`getWhen()` - **Returns:**  
    **N.I. --**`getThen()` - **Returns:**  

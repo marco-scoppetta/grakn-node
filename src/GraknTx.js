@@ -25,8 +25,8 @@ GraknTx.prototype.putEntityType = async function (label) {
 GraknTx.prototype.putRelationshipType = async function (label) {
     return this.txService.putRelationshipType(label);
 }
-GraknTx.prototype.putAttributeType = async function (attributeType) {
-    return this.txService.putAttributeType(attributeType);
+GraknTx.prototype.putAttributeType = async function (value, type) {
+    return this.txService.putAttributeType(value, type);
 }
 GraknTx.prototype.putRole = async function (label) {
     return this.txService.putRole(label);
