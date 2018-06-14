@@ -1,41 +1,24 @@
-const gc = require("../src/GraknSession");
-const DEFAULT_URI = "localhost:48555";
 const environment = require('./support/GraknTestEnvironment');
-
-const session = new gc(DEFAULT_URI, environment.newKeyspace());
+const session = environment.session();
 
 describe("GraknTx methods", () => {
 
-  test("getConcept", async (done) => {
-    try {
-      const tx = await session.open(session.txType.WRITE);
-      await tx.execute("define person sub entity;");
-      const insertionResult = await tx.execute("insert $x isa person;");
-      const concepts = insertionResult.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
-      expect(concepts.length).toBe(1);
-      const person = concepts[0];
-      const personId = person.id;
+  test("getConcept", async () => {
+    const tx = await session.open(session.txType.WRITE);
+    await tx.execute("define person sub entity;");
+    const insertionResult = await tx.execute("insert $x isa person;");
+    const concepts = insertionResult.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
+    expect(concepts.length).toBe(1);
+    const person = concepts[0];
+    const personId = person.id;
 
-      // retrieve person in same transaction before committing
-      const samePerson = await tx.getConcept(personId);
-      expect(samePerson.isThing()).toBeTruthy();
-      expect(samePerson.id).toBe(personId);
+    const samePerson = await tx.getConcept(personId);
+    expect(samePerson.isThing()).toBeTruthy();
+    expect(samePerson.id).toBe(personId);
 
-      // retrieve non existing id should return null
-      const nonPerson = await tx.getConcept("not-existing-id");
-      expect(nonPerson).toBe(null);
-      await tx.commit();
-
-      // retrieve the same person from different transaction after commit
-      const tx2 = await session.open(session.txType.WRITE);
-      const samePersonDifferentTx = await tx2.getConcept(personId);
-      expect(samePersonDifferentTx.id).toBe(personId);
-
-      done();
-    } catch (err) {
-      console.error(err);
-      done.fail(err);
-    }
+    // retrieve non existing id should return null
+    const nonPerson = await tx.getConcept("not-existing-id");
+    expect(nonPerson).toBe(null);
   }, environment.integrationTestsTimeout());
 
   // Bug regression test
@@ -53,19 +36,12 @@ describe("GraknTx methods", () => {
     const tx = await session.open(session.txType.WRITE);
     await tx.execute("define person sub entity;");
 
-    // retrieve type in same transaction before committing
     const personType = await tx.getSchemaConcept("person");
     expect(personType.isSchemaConcept()).toBeTruthy();
 
-    // retrieve non existing label should return null
     const nonPerson = await tx.getSchemaConcept("not-existing-label");
     expect(nonPerson).toBe(null);
-    await tx.commit();
 
-    // retrieve the same type from different transaction after commit
-    const tx2 = await session.open(session.txType.WRITE);
-    const personType2 = await tx2.getSchemaConcept("person");
-    expect(personType2.isSchemaConcept()).toBeTruthy();
   }, environment.integrationTestsTimeout());
 
   test("putEntityType", async () => {
@@ -94,5 +70,4 @@ describe("GraknTx methods", () => {
     expect(role.isRole()).toBeTruthy();
     expect(role.baseType).toBe("ROLE");
   }, environment.integrationTestsTimeout());
-
 });

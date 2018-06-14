@@ -1,8 +1,5 @@
-const gc = require("../src/GraknSession");
-const DEFAULT_URI = "localhost:48555";
 const environment = require('./support/GraknTestEnvironment');
-
-const session = new gc(DEFAULT_URI, environment.newKeyspace());
+const session = environment.session();
 
 describe("Thing methods", () => {
 
@@ -19,6 +16,7 @@ describe("Thing methods", () => {
         const thing = await personType.addEntity();
         const type = await thing.type();
         expect(type.id).toBe(personType.id);
+        expect(type.isType()).toBeTruthy();
     }, environment.integrationTestsTimeout());
 
     test("relationships", async () => {
