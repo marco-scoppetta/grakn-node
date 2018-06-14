@@ -56,6 +56,7 @@ const session = new GraknSession(String URI, String keyspace)
 on the returned session you will then be able to call the following methods:
 
 **GraknSession**
+
 | Method Name            | Return type | Description                                                            |
 | ---------------------- | ----------- | ---------------------------------------------------------------------- |
 | `open(session.txType)` | *GraknTx*   | Return a new or existing GraknTx bound to the keyspace of this session |
