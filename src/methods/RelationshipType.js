@@ -1,14 +1,14 @@
 
 const methods = {
-  addRelationship: function () { return this.txService.addRelationship(this.id); },
+  addRelationship: function () { return this.graknGrpcService.addRelationship(this.id); },
   relates: function (role) {
     if (role) {
-      return this.txService.setRelatedRole(this.id, role);
+      return this.graknGrpcService.setRelatedRole(this.id, role);
     } else {
-      return this.txService.getRelatedRoles(this.id);
+      return this.graknGrpcService.getRelatedRoles(this.id);
     }
   },
-  deleteRelates: function (role) { return this.txService.unsetRelatedRole(this.id, role); }
+  deleteRelates: function (role) { return this.graknGrpcService.unsetRelatedRole(this.id, role); }
 };
 
 module.exports = {

@@ -10,11 +10,9 @@ const RoleMethods = require("./methods/Role");
 const AttributeTypeMethods = require("./methods/AttributeType");
 const EntityTypeMethods = require("./methods/EntityType");
 const EntityMethods = require("./methods/Entity");
-const TxService = require("./TxService");
 
-// Empty constructor for now so that we create object and inject/mock
-function ConceptFactory(txService) {
-  this.txService = txService;
+function ConceptFactory(graknGrpcService) {
+  this.graknGrpcService = graknGrpcService;
 }
 
 ConceptFactory.prototype.createConcept = function createConcept(grpcConcept) {
@@ -22,39 +20,39 @@ ConceptFactory.prototype.createConcept = function createConcept(grpcConcept) {
   let state;
   switch (grpcConcept.getBasetype()) {
     case 0:
-      state = _buildState(conceptId, ConceptMethods.ENTITY, this.txService);
+      state = _buildState(conceptId, ConceptMethods.ENTITY, this.graknGrpcService);
       return Object.create(entityProto, state);
       break;
     case 1:
-      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP, this.txService);
+      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP, this.graknGrpcService);
       return Object.create(relationshipProto, state);
       break;
     case 2:
-      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE, this.txService);
+      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE, this.graknGrpcService);
       return Object.create(attributeProto, state);
       break;
     case 3:
-      state = _buildState(conceptId, ConceptMethods.ENTITY_TYPE, this.txService);
+      state = _buildState(conceptId, ConceptMethods.ENTITY_TYPE, this.graknGrpcService);
       return Object.create(entityTypeProto, state);
       break;
     case 4:
-      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP_TYPE, this.txService);
+      state = _buildState(conceptId, ConceptMethods.RELATIONSHIP_TYPE, this.graknGrpcService);
       return Object.create(relationshipTypeProto, state);
       break;
     case 5:
-      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE_TYPE, this.txService);
+      state = _buildState(conceptId, ConceptMethods.ATTRIBUTE_TYPE, this.graknGrpcService);
       return Object.create(attributeTypeProto, state);
       break;
     case 6:
-      state = _buildState(conceptId, ConceptMethods.ROLE, this.txService);
+      state = _buildState(conceptId, ConceptMethods.ROLE, this.graknGrpcService);
       return Object.create(roleProto, state);
       break;
     case 7:
-      state = _buildState(conceptId, ConceptMethods.RULE, this.txService);
+      state = _buildState(conceptId, ConceptMethods.RULE, this.graknGrpcService);
       return Object.create(ruleProto, state);
       break;
     case 8:
-      state = _buildState(conceptId, ConceptMethods.META_TYPE, this.txService);
+      state = _buildState(conceptId, ConceptMethods.META_TYPE, this.graknGrpcService);
       return Object.create(metaschemaProto, state);
       break;
     default:
@@ -62,11 +60,11 @@ ConceptFactory.prototype.createConcept = function createConcept(grpcConcept) {
   }
 }
 
-function _buildState(conceptId, baseType, txService) {
+function _buildState(conceptId, baseType, graknGrpcService) {
   return {
     id: { value: conceptId, enumerable: true },
     baseType: { value: baseType, enumerable: true },
-    txService: { value: txService, enumerable: true }
+    graknGrpcService: { value: graknGrpcService, enumerable: true }
   };
 }
 

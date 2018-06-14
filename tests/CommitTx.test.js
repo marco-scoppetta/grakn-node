@@ -2,11 +2,36 @@ const gc = require("../src/GraknSession");
 const environment = require('./support/GraknTestEnvironment');
 const DEFAULT_URI = "localhost:48555";
 
-let session = new gc(DEFAULT_URI, environment.newKeyspace());
+
+let session;
+
+beforeAll(() => {
+    session = new gc(DEFAULT_URI, environment.newKeyspace());
+});
+
+afterAll(async () => {
+    await session.deleteKeyspace();
+    session.close();
+});
+
 describe('Integration test', () => {
 
     test("Commit Tx", async () => {
         const tx = await session.open(session.txType.WRITE);
+        await tx.execute("define person sub entity;");
+        await tx.commit();
+        const newTx = await session.open(session.txType.WRITE);
+        const result2 = await newTx.execute("match $x sub person; get;");
+        for (let map of result2) {
+            for (let [key, subEntity] of map) {
+                const label = await subEntity.getLabel();
+                expect(label).toBe('person');
+            }
+        }
+    }, environment.integrationTestsTimeout());
+
+    test("Commit Tx", async () => {
+        const tx = await session.open(session.txType.READ);
         await tx.execute("define person sub entity;");
         await tx.commit();
         const newTx = await session.open(session.txType.WRITE);

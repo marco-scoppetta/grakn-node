@@ -1,5 +1,13 @@
 const environment = require('./support/GraknTestEnvironment');
-const session = environment.session();
+let session;
+
+beforeAll(() => {
+    session = environment.session();
+});
+
+afterAll(async () => {
+    await environment.tearDown();
+});
 
 describe("Relationsihp methods", () => {
 

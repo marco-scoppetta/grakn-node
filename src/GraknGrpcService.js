@@ -13,21 +13,22 @@ const ConceptFactory = require("./ConceptFactory");
  *  - a factory to build {Concept} objects from gRPC responses 
  */
 
-function TxService(stub) {
+function GraknGrpcService(stub) {
     this.communicator = new GrpcCommunicator(stub.tx());
     this.conceptFactory = new ConceptFactory(this);
+    this.stub = stub;
 }
 
 // Concept
 
-TxService.prototype.delete = function (id) {
+GraknGrpcService.prototype.delete = function (id) {
     const deleteTxRequest = TxRequestBuilder.delete(this.id);
     return this.communicator.send(deleteTxRequest)
         .catch(e => { throw e; });
 };
 
 // Schema concept
-TxService.prototype.getLabel = function (id) {
+GraknGrpcService.prototype.getLabel = function (id) {
     const getLabelTxRequest = TxRequestBuilder.getLabel(id);
     return this.communicator
         .send(getLabelTxRequest)
@@ -35,13 +36,13 @@ TxService.prototype.getLabel = function (id) {
         ).catch(e => { throw e; });
 }
 
-TxService.prototype.setLabel = function (id, label) {
+GraknGrpcService.prototype.setLabel = function (id, label) {
     const setLabelTxRequest = TxRequestBuilder.setLabel(id, label);
     return this.communicator.send(setLabelTxRequest)
         .catch(e => { throw e; });
 };
 
-TxService.prototype.isImplicit = function (id) {
+GraknGrpcService.prototype.isImplicit = function (id) {
     const isImplicitTxRequest = TxRequestBuilder.isImplicit(id);
     return this.communicator
         .send(isImplicitTxRequest)
@@ -49,19 +50,19 @@ TxService.prototype.isImplicit = function (id) {
         .catch(e => { throw e; });
 }
 
-TxService.prototype.getSubConcepts = function (id) {
+GraknGrpcService.prototype.getSubConcepts = function (id) {
     const getSubConceptsTxRequest = TxRequestBuilder.getSubConcepts(id);
     return this.communicator.send(getSubConceptsTxRequest)
         .then(grpcConceptResponse => _consumeConceptIterator(grpcConceptResponse, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getSuperConcepts = function (id) {
+GraknGrpcService.prototype.getSuperConcepts = function (id) {
     const getSuperConceptsTxRequest = TxRequestBuilder.getSuperConcepts(id);
     return this.communicator.send(getSuperConceptsTxRequest)
         .then(grpcConceptResponse => _consumeConceptIterator(grpcConceptResponse, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getDirectSuperConcept = function (id) {
+GraknGrpcService.prototype.getDirectSuperConcept = function (id) {
     const txRequest = TxRequestBuilder.getDirectSuperConcept(id);
     return this.communicator.send(txRequest)
         .then(grpcConceptResponse => {
@@ -75,7 +76,7 @@ TxService.prototype.getDirectSuperConcept = function (id) {
         })
         .catch(e => { throw e; });
 };
-TxService.prototype.setDirectSuperConcept = function (id, superConcept) {
+GraknGrpcService.prototype.setDirectSuperConcept = function (id, superConcept) {
     const txRequest = TxRequestBuilder.setDirectSuperConcept(id, superConcept);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
@@ -83,18 +84,18 @@ TxService.prototype.setDirectSuperConcept = function (id, superConcept) {
 
 // Rule 
 
-TxService.prototype.getWhen = function (id) { };
-TxService.prototype.getThen = function (id) { };
+GraknGrpcService.prototype.getWhen = function (id) { };
+GraknGrpcService.prototype.getThen = function (id) { };
 
 // Role
 
-TxService.prototype.getRelationshipTypesThatRelateRole = function (id) {
+GraknGrpcService.prototype.getRelationshipTypesThatRelateRole = function (id) {
     const txRequest = TxRequestBuilder.getRelationshipTypesThatRelateRole(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 }
-TxService.prototype.getTypesThatPlayRole = function (id) {
+GraknGrpcService.prototype.getTypesThatPlayRole = function (id) {
     const txRequest = TxRequestBuilder.getTypesThatPlayRole(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
@@ -103,67 +104,67 @@ TxService.prototype.getTypesThatPlayRole = function (id) {
 
 // Type
 
-TxService.prototype.getInstances = function (id) {
+GraknGrpcService.prototype.getInstances = function (id) {
     const txRequest = TxRequestBuilder.getInstances(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getAttributeTypes = function (id) {
+GraknGrpcService.prototype.getAttributeTypes = function (id) {
     const txRequest = TxRequestBuilder.getAttributeTypes(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setAttributeType = function (id, type) {
+GraknGrpcService.prototype.setAttributeType = function (id, type) {
     const txRequest = TxRequestBuilder.setAttributeType(id, type);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.unsetAttributeType = function (id, type) {
+GraknGrpcService.prototype.unsetAttributeType = function (id, type) {
     const txRequest = TxRequestBuilder.unsetAttributeType(id, type);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.getKeyTypes = function (id) {
+GraknGrpcService.prototype.getKeyTypes = function (id) {
     const txRequest = TxRequestBuilder.getKeyTypes(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setKeyType = function (id, keyType) {
+GraknGrpcService.prototype.setKeyType = function (id, keyType) {
     const txRequest = TxRequestBuilder.setKeyType(id, keyType);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.unsetKeyType = function (id, keyType) {
+GraknGrpcService.prototype.unsetKeyType = function (id, keyType) {
     const txRequest = TxRequestBuilder.unsetKeyType(id, keyType);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.isAbstract = function (id) {
+GraknGrpcService.prototype.isAbstract = function (id) {
     const txRequest = TxRequestBuilder.isAbstract(id);
     return this.communicator.send(txRequest)
         .then(resp => resp.getConceptresponse().getBool())
         .catch(e => { throw e; });
 };
-TxService.prototype.setAbstract = function (id, bool) {
+GraknGrpcService.prototype.setAbstract = function (id, bool) {
     const txRequest = TxRequestBuilder.setAbstract(id, bool);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.getRolesPlayedByType = function (id) {
+GraknGrpcService.prototype.getRolesPlayedByType = function (id) {
     const txRequest = TxRequestBuilder.getRolesPlayedByType(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setRolePlayedByType = function (id, role) {
+GraknGrpcService.prototype.setRolePlayedByType = function (id, role) {
     const txRequest = TxRequestBuilder.setRolePlayedByType(id, role);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.unsetRolePlayedByType = function (id, role) {
+GraknGrpcService.prototype.unsetRolePlayedByType = function (id, role) {
     const txRequest = TxRequestBuilder.unsetRolePlayedByType(id, role);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
@@ -171,7 +172,7 @@ TxService.prototype.unsetRolePlayedByType = function (id, role) {
 
 // Entity type
 
-TxService.prototype.addEntity = function (id) {
+GraknGrpcService.prototype.addEntity = function (id) {
     const txRequest = TxRequestBuilder.addEntity(id);
     return this.communicator.send(txRequest)
         .then(response => this.conceptFactory.createConcept(response.getConceptresponse().getConcept()))
@@ -179,25 +180,25 @@ TxService.prototype.addEntity = function (id) {
 };
 
 // Relationship Type
-TxService.prototype.addRelationship = function (id) {
+GraknGrpcService.prototype.addRelationship = function (id) {
     const txRequest = TxRequestBuilder.addRelationship(id);
     return this.communicator.send(txRequest)
         .then(response => this.conceptFactory.createConcept(response.getConceptresponse().getConcept()))
         .catch(e => { throw e; });
 };
-TxService.prototype.getRelatedRoles = function (id) {
+GraknGrpcService.prototype.getRelatedRoles = function (id) {
     const txRequest = TxRequestBuilder.getRelatedRoles(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 }
 
-TxService.prototype.setRelatedRole = function (id, role) {
+GraknGrpcService.prototype.setRelatedRole = function (id, role) {
     const txRequest = TxRequestBuilder.setRelatedRole(id, role);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.unsetRelatedRole = function (id, role) {
+GraknGrpcService.prototype.unsetRelatedRole = function (id, role) {
     const txRequest = TxRequestBuilder.unsetRelatedRole(id, role);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
@@ -206,7 +207,7 @@ TxService.prototype.unsetRelatedRole = function (id, role) {
 
 
 // Attribute type
-TxService.prototype.putAttribute = async function (id, value) {
+GraknGrpcService.prototype.putAttribute = async function (id, value) {
     const dataTypeTxRequest = TxRequestBuilder.getDataTypeOfType(id);
     const resp = await this.communicator.send(dataTypeTxRequest);
     const dataType = resp.getConceptresponse().getOptionaldatatype().getPresent();
@@ -215,7 +216,7 @@ TxService.prototype.putAttribute = async function (id, value) {
         .then(response => this.conceptFactory.createConcept(response.getConceptresponse().getConcept()))
         .catch(e => { throw e; });
 };
-TxService.prototype.getAttribute = async function (id, value) {
+GraknGrpcService.prototype.getAttribute = async function (id, value) {
     const dataTypeTxRequest = TxRequestBuilder.getDataTypeOfType(id);
     const resp = await this.communicator.send(dataTypeTxRequest);
     const dataType = resp.getConceptresponse().getOptionaldatatype().getPresent();
@@ -231,7 +232,7 @@ TxService.prototype.getAttribute = async function (id, value) {
         })
         .catch((e) => { throw e; });
 };
-TxService.prototype.getDataTypeOfType = function (id) {
+GraknGrpcService.prototype.getDataTypeOfType = function (id) {
     const txRequest = TxRequestBuilder.getDataTypeOfType(id);
     return this.communicator.send(txRequest)
         .then(response => {
@@ -240,20 +241,20 @@ TxService.prototype.getDataTypeOfType = function (id) {
         })
         .catch(e => { throw e; });
 };
-TxService.prototype.getRegex = function (id) { };
-TxService.prototype.setRegex = function (id) { };
+GraknGrpcService.prototype.getRegex = function (id) { };
+GraknGrpcService.prototype.setRegex = function (id) { };
 
 
 //Thing
 
-TxService.prototype.isInferred = function (id) {
+GraknGrpcService.prototype.isInferred = function (id) {
     const txRequest = TxRequestBuilder.isInferred(id);
     return this.communicator.send(txRequest)
         .then(resp => resp.getConceptresponse().getBool())
         .catch(e => { throw e; });
 }
 
-TxService.prototype.getDirectType = function (id) {
+GraknGrpcService.prototype.getDirectType = function (id) {
     const txRequest = TxRequestBuilder.getDirectType(id);
     return this.communicator.send(txRequest)
         .then(response => {
@@ -263,57 +264,57 @@ TxService.prototype.getDirectType = function (id) {
         .catch(e => { throw e; });
 };
 
-TxService.prototype.getRelationships = function (id) {
+GraknGrpcService.prototype.getRelationships = function (id) {
     const txRequest = TxRequestBuilder.getRelationships(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 }
 
-TxService.prototype.getRelationshipsByRoles = function (id, roles) {
+GraknGrpcService.prototype.getRelationshipsByRoles = function (id, roles) {
     const txRequest = TxRequestBuilder.getRelationshipsByRoles(id, roles);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
 
-TxService.prototype.getRolesPlayedByThing = function (id) {
+GraknGrpcService.prototype.getRolesPlayedByThing = function (id) {
     const txRequest = TxRequestBuilder.getRolesPlayedByThing(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 }
 
-TxService.prototype.getAttributes = function (id) {
+GraknGrpcService.prototype.getAttributes = function (id) {
     const txRequest = TxRequestBuilder.getAttributes(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getAttributesByTypes = function (id, types) {
+GraknGrpcService.prototype.getAttributesByTypes = function (id, types) {
     const txRequest = TxRequestBuilder.getAttributesByTypes(id, types);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getKeys = function (id) {
+GraknGrpcService.prototype.getKeys = function (id) {
     const txRequest = TxRequestBuilder.getAttributesByTypes(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getKeysByTypes = function (id) {
+GraknGrpcService.prototype.getKeysByTypes = function (id) {
     const txRequest = TxRequestBuilder.getAttributesByTypes(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setAttribute = function (id, attribute) {
+GraknGrpcService.prototype.setAttribute = function (id, attribute) {
     const txRequest = TxRequestBuilder.setAttribute(id, attribute);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.unsetAttribute = function (id, attribute) {
+GraknGrpcService.prototype.unsetAttribute = function (id, attribute) {
     const txRequest = TxRequestBuilder.unsetAttribute(id, attribute);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
@@ -321,24 +322,24 @@ TxService.prototype.unsetAttribute = function (id, attribute) {
 
 // Relationship
 
-TxService.prototype.getRolePlayers = function (id) {
+GraknGrpcService.prototype.getRolePlayers = function (id) {
     const txRequest = TxRequestBuilder.getRolePlayers(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeRolePlayerIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.getRolePlayersByRoles = function (id, roles) {
+GraknGrpcService.prototype.getRolePlayersByRoles = function (id, roles) {
     const txRequest = TxRequestBuilder.getRolePlayersByRoles(id, roles);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-TxService.prototype.setRolePlayer = function (id, role, thing) {
+GraknGrpcService.prototype.setRolePlayer = function (id, role, thing) {
     const txRequest = TxRequestBuilder.setRolePlayer(id, role, thing);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
 };
-TxService.prototype.unsetRolePlayer = function (id, role, thing) {
+GraknGrpcService.prototype.unsetRolePlayer = function (id, role, thing) {
     const txRequest = TxRequestBuilder.unsetRolePlayer(id, role, thing);
     return this.communicator.send(txRequest)
         .catch(e => { throw e; });
@@ -356,13 +357,13 @@ function _getAttributeValue(resp) {
     if (attrValue.hasDate()) return attrValue.getDate();
 }
 
-TxService.prototype.getValue = function (id) {
+GraknGrpcService.prototype.getValue = function (id) {
     const txRequest = TxRequestBuilder.getValue(id);
     return this.communicator.send(txRequest)
         .then(response => _getAttributeValue(response))
         .catch(e => { throw e; });
 };
-TxService.prototype.getOwners = function (id) {
+GraknGrpcService.prototype.getOwners = function (id) {
     const txRequest = TxRequestBuilder.getOwners(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
@@ -382,7 +383,7 @@ function _dataTypeToString(dataType) {
     }
 }
 
-TxService.prototype.getDataTypeOfAttribute = function (id) {
+GraknGrpcService.prototype.getDataTypeOfAttribute = function (id) {
     const txRequest = TxRequestBuilder.getDataTypeOfAttribute(id);
     return this.communicator.send(txRequest)
         .then(response => _dataTypeToString(response.getConceptresponse().getDatatype()))
@@ -397,33 +398,33 @@ TxService.prototype.getDataTypeOfAttribute = function (id) {
  * This method creates and consumes an iterator (until server returns Done) and build Concept object from
  * every response.
  * @param {*} grpcConceptResponse gRPC response that will contain iteratorId
- * @param {*} txService txService implementation needed to be injected to new concepts that will be built
+ * @param {*} graknGrpcService graknGrpcService implementation needed to be injected to new concepts that will be built
  */
-async function _consumeConceptIterator(grpcConceptResponse, txService) {
+async function _consumeConceptIterator(grpcConceptResponse, graknGrpcService) {
     const iterator = new GrpcIterator.GrpcConceptIterator(
         grpcConceptResponse.getConceptresponse().getIteratorid(),
-        txService.communicator
+        graknGrpcService.communicator
     );
     const concepts = [];
     let concept = await iterator.nextResult().catch(e => { throw e; });
     while (concept) {
-        concepts.push(txService.conceptFactory.createConcept(concept));
+        concepts.push(graknGrpcService.conceptFactory.createConcept(concept));
         concept = await iterator.nextResult().catch(e => { throw e; });
     }
     return concepts;
 }
 
-async function _consumeRolePlayerIterator(grpcConceptResponse, txService) {
+async function _consumeRolePlayerIterator(grpcConceptResponse, graknGrpcService) {
     const iterator = new GrpcIterator.GrpcRolePlayerIterator(
         grpcConceptResponse.getConceptresponse().getIteratorid(),
-        txService.communicator
+        graknGrpcService.communicator
     );
     const rolePlayers = [];
     let grpcRolePlayer = await iterator.nextResult().catch(e => { throw e; });
     while (grpcRolePlayer) {
         rolePlayers.push({
-            role: txService.conceptFactory.createConcept(grpcRolePlayer.getRole()),
-            player: txService.conceptFactory.createConcept(grpcRolePlayer.getPlayer())
+            role: graknGrpcService.conceptFactory.createConcept(grpcRolePlayer.getRole()),
+            player: graknGrpcService.conceptFactory.createConcept(grpcRolePlayer.getPlayer())
         });
         grpcRolePlayer = await iterator.nextResult().catch(e => { throw e; });
     }
@@ -433,7 +434,7 @@ async function _consumeRolePlayerIterator(grpcConceptResponse, txService) {
 // ======================= Grakn transaction methods ========================= //
 
 
-TxService.prototype.getConcept = function (conceptId) {
+GraknGrpcService.prototype.getConcept = function (conceptId) {
     const txRequest = new messages.TxRequest();
     const conceptIdMessage = new messages.ConceptId();
     conceptIdMessage.setValue(conceptId);
@@ -450,7 +451,7 @@ TxService.prototype.getConcept = function (conceptId) {
         .catch((e) => { throw e; });
 }
 
-TxService.prototype.getSchemaConcept = function (label) {
+GraknGrpcService.prototype.getSchemaConcept = function (label) {
     const txRequest = new messages.TxRequest();
     const labelMessage = new messages.Label();
     labelMessage.setValue(label);
@@ -467,7 +468,7 @@ TxService.prototype.getSchemaConcept = function (label) {
         .catch((e) => { throw e; });
 }
 
-TxService.prototype.putEntityType = function (label) {
+GraknGrpcService.prototype.putEntityType = function (label) {
     const txRequest = new messages.TxRequest();
     const labelMessage = new messages.Label();
     labelMessage.setValue(label);
@@ -478,7 +479,7 @@ TxService.prototype.putEntityType = function (label) {
         .catch((e) => { throw e; });
 }
 
-TxService.prototype.putRelationshipType = function (label) {
+GraknGrpcService.prototype.putRelationshipType = function (label) {
     const txRequest = new messages.TxRequest();
     const labelMessage = new messages.Label();
     labelMessage.setValue(label);
@@ -489,7 +490,7 @@ TxService.prototype.putRelationshipType = function (label) {
         .catch((e) => { throw e; });
 }
 
-TxService.prototype.putRelationshipType = function (label) {
+GraknGrpcService.prototype.putRelationshipType = function (label) {
     const txRequest = new messages.TxRequest();
     const labelMessage = new messages.Label();
     labelMessage.setValue(label);
@@ -500,7 +501,7 @@ TxService.prototype.putRelationshipType = function (label) {
         .catch((e) => { throw e; });
 }
 
-TxService.prototype.putRole = function (label) {
+GraknGrpcService.prototype.putRole = function (label) {
     const txRequest = new messages.TxRequest();
     const labelMessage = new messages.Label();
     labelMessage.setValue(label);
@@ -511,7 +512,7 @@ TxService.prototype.putRole = function (label) {
         .catch((e) => { throw e; });
 }
 
-TxService.prototype.putAttributeType = function (label, dataType) {
+GraknGrpcService.prototype.putAttributeType = function (label, dataType) {
     if (dataType == null) throw new Error('Datatype of AttributeType not specified.');
     const txRequest = new messages.TxRequest();
     const putMessage = new messages.PutAttributeType();
@@ -531,14 +532,14 @@ TxService.prototype.putAttributeType = function (label, dataType) {
 
 // OPEN TRANSACTION
 
-TxService.prototype.openTx = function (keyspace, txType, credentials) {
+GraknGrpcService.prototype.openTx = function (keyspace, txType, credentials) {
     const openRequest = new messages.Open();
     const txRequest = new messages.TxRequest();
     const messageKeyspace = new messages.Keyspace();
     messageKeyspace.setValue(keyspace);
 
     openRequest.setKeyspace(messageKeyspace);
-    openRequest.setTxtype(messages.TxType.WRITE);
+    openRequest.setTxtype(txType);
     if (credentials) {
         openRequest.setUsername(credentials.username);
         openRequest.setPassword(credentials.password);
@@ -552,7 +553,7 @@ TxService.prototype.openTx = function (keyspace, txType, credentials) {
 
 // COMMIT TRANSACTION
 
-TxService.prototype.commit = function () {
+GraknGrpcService.prototype.commit = function () {
     const commitRequest = new messages.Commit();
     const txRequest = new messages.TxRequest();
     txRequest.setCommit(commitRequest);
@@ -566,7 +567,7 @@ TxService.prototype.commit = function () {
  * returns Done.
  */
 
-TxService.prototype.execute = function executeQuery(query) {
+GraknGrpcService.prototype.execute = function executeQuery(query) {
     const txRequest = new messages.TxRequest();
     const executeQuery = new messages.ExecQuery();
     const queryRequest = new messages.Query();
@@ -579,7 +580,7 @@ TxService.prototype.execute = function executeQuery(query) {
         .catch((e) => { throw e; });
 };
 
-TxService.prototype._parseResponse = async function parseResponse(resp) {
+GraknGrpcService.prototype._parseResponse = async function parseResponse(resp) {
     if (resp.hasDone()) return [];
     if (resp.hasIteratorid()) {
         const iterator = new GrpcIterator.GrpcQueryIterator(
@@ -599,7 +600,7 @@ TxService.prototype._parseResponse = async function parseResponse(resp) {
     }
 };
 
-TxService.prototype._parseResult = function parseResult(queryResult) {
+GraknGrpcService.prototype._parseResult = function parseResult(queryResult) {
     if (queryResult.hasOtherresult()) {
         // compute or aggregate query
         return JSON.parse(queryResult.getOtherresult());
@@ -617,4 +618,22 @@ TxService.prototype._parseResult = function parseResult(queryResult) {
     }
 };
 
-module.exports = TxService;
+
+GraknGrpcService.prototype.deleteKeyspace = function deleteKeyspace(keyspace) {
+    const openRequest = new messages.Open();
+    const deleteRequest = new messages.DeleteRequest();
+    const messageKeyspace = new messages.Keyspace();
+    messageKeyspace.setValue(keyspace);
+    openRequest.setKeyspace(messageKeyspace);
+    openRequest.setTxtype(messages.TxType.WRITE);
+    deleteRequest.setOpen(openRequest);
+    return new Promise((resolve, reject) => {
+        this.stub.delete(deleteRequest, (err) => {
+            if (err) reject(err);
+            else resolve();
+        });
+    })
+
+}
+
+module.exports = GraknGrpcService;

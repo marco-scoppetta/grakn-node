@@ -1,7 +1,7 @@
 
 const methods = {
-  relationshipTypes: function () { return this.txService.getRelationshipTypesThatRelateRole(this.id); },
-  playedByTypes: function () { return this.txService.getTypesThatPlayRole(this.id); },
+  relationshipTypes: function () { return this.graknGrpcService.getRelationshipTypesThatRelateRole(this.id); },
+  playedByTypes: function () { return this.graknGrpcService.getTypesThatPlayRole(this.id); },
 };
 
 module.exports = {

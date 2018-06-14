@@ -38,4 +38,8 @@ module.exports = {
     newKeyspace,
     integrationTestsTimeout: function () { return 10000 },
     session: () => session,
+    tearDown: async () => {
+        await session.deleteKeyspace();
+        session.close();
+    }
 }

@@ -60,7 +60,7 @@ on the returned session you will then be able to call the following methods:
 | Method Name            | Return type | Description                                                            |
 | ---------------------- | ----------- | ---------------------------------------------------------------------- |
 | `open(session.txType)` | *GraknTx*   | Return a new or existing GraknTx bound to the keyspace of this session |
-| **N.I. --**`delete()`  | *void*      | Deletes keyspace of this session                                       |
+| `deleteKeyspace()`     | *void*      | Deletes keyspace of this session                                       |
  
 
 Once obtained a `GraknTx` you will be able to:

@@ -1,38 +1,38 @@
 
-function GraknTx(txService) {
-    this.txService = txService;
+function GraknTx(graknGrpcService) {
+    this.graknGrpcService = graknGrpcService;
 }
 
-GraknTx.prototype.execute = async function executeQuery(query) {
-    return await this.txService.execute(query);
+GraknTx.prototype.execute = function executeQuery(query) {
+    return this.graknGrpcService.execute(query);
 };
 
-GraknTx.prototype.commit = async function () {
-    return this.txService.commit();
+GraknTx.prototype.commit = function () {
+    return this.graknGrpcService.commit();
 }
-GraknTx.prototype.getConcept = async function (conceptId) {
-    return this.txService.getConcept(conceptId);
+GraknTx.prototype.getConcept = function (conceptId) {
+    return this.graknGrpcService.getConcept(conceptId);
 }
-GraknTx.prototype.getSchemaConcept = async function (label) {
-    return this.txService.getSchemaConcept(label);
+GraknTx.prototype.getSchemaConcept = function (label) {
+    return this.graknGrpcService.getSchemaConcept(label);
 }
-GraknTx.prototype.getAttributesByValue = async function (attributeValue) {
-    return this.txService.getAttributesByValue(attributeValue);
+GraknTx.prototype.getAttributesByValue = function (attributeValue) {
+    return this.graknGrpcService.getAttributesByValue(attributeValue);
 }
-GraknTx.prototype.putEntityType = async function (label) {
-    return this.txService.putEntityType(label);
+GraknTx.prototype.putEntityType = function (label) {
+    return this.graknGrpcService.putEntityType(label);
 }
-GraknTx.prototype.putRelationshipType = async function (label) {
-    return this.txService.putRelationshipType(label);
+GraknTx.prototype.putRelationshipType = function (label) {
+    return this.graknGrpcService.putRelationshipType(label);
 }
-GraknTx.prototype.putAttributeType = async function (value, type) {
-    return this.txService.putAttributeType(value, type);
+GraknTx.prototype.putAttributeType = function (value, type) {
+    return this.graknGrpcService.putAttributeType(value, type);
 }
-GraknTx.prototype.putRole = async function (label) {
-    return this.txService.putRole(label);
+GraknTx.prototype.putRole = function (label) {
+    return this.graknGrpcService.putRole(label);
 }
-GraknTx.prototype.putRule = async function (rule) {
-    return this.txService.putRule(rule);
+GraknTx.prototype.putRule = function (rule) {
+    return this.graknGrpcService.putRule(rule);
 }
 
 module.exports = GraknTx;

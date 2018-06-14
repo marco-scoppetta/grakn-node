@@ -1,7 +1,7 @@
 
 const methods = {
-  getWhen: function () { return this.txService.getWhen(this.id); },
-  getThen: function () { return this.txService.getThen(this.id); }
+  getWhen: function () { return this.graknGrpcService.getWhen(this.id); },
+  getThen: function () { return this.graknGrpcService.getThen(this.id); }
 };
 
 module.exports = {
