@@ -16,6 +16,7 @@ describe("Thing methods", () => {
         const thing = await personType.addEntity();
         const type = await thing.type();
         expect(type.id).toBe(personType.id);
+        expect(type.isType()).toBeTruthy();
     }, environment.integrationTestsTimeout());
 
     test("relationships", async () => {

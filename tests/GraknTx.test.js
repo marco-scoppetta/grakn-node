@@ -70,5 +70,4 @@ describe("GraknTx methods", () => {
     expect(role.isRole()).toBeTruthy();
     expect(role.baseType).toBe("ROLE");
   }, environment.integrationTestsTimeout());
-
 });
