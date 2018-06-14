@@ -8,21 +8,13 @@ const RELATIONSHIP = "RELATIONSHIP";
 const ROLE = "ROLE";
 const RULE = "RULE";
 
-const SCHEMA_CONCEPTS = new Set([
-  RULE,
-  ROLE,
-  ATTRIBUTE_TYPE,
-  RELATIONSHIP_TYPE,
-  ENTITY_TYPE
-]);
-
+const SCHEMA_CONCEPTS = new Set([RULE, ROLE, ATTRIBUTE_TYPE, RELATIONSHIP_TYPE, ENTITY_TYPE]);
 const TYPES = new Set([ATTRIBUTE_TYPE, RELATIONSHIP_TYPE, ENTITY_TYPE]);
-
 const THINGS = new Set([ATTRIBUTE, RELATIONSHIP, ATTRIBUTE, ENTITY]);
 
 const methods = function () {
   return {
-    delete: function () { return this.graknGrpcService.delete(this.id); },
+    delete: function () { return this.graknGrpcService.deleteConcept(this.id); },
     isSchemaConcept: function () { return SCHEMA_CONCEPTS.has(this.baseType); },
     isType: function () { return TYPES.has(this.baseType); },
     isThing: function () { return THINGS.has(this.baseType); },
@@ -38,9 +30,7 @@ const methods = function () {
 };
 
 module.exports = {
-  get: function (baseType) {
-    return methods(baseType);
-  },
+  get: function (baseType) { return methods(baseType); },
   META_TYPE,
   ATTRIBUTE,
   ATTRIBUTE_TYPE,

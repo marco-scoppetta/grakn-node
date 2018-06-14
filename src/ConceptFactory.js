@@ -9,7 +9,6 @@ const RuleMethods = require("./methods/Rule");
 const RoleMethods = require("./methods/Role");
 const AttributeTypeMethods = require("./methods/AttributeType");
 const EntityTypeMethods = require("./methods/EntityType");
-const EntityMethods = require("./methods/Entity");
 
 function ConceptFactory(graknGrpcService) {
   this.graknGrpcService = graknGrpcService;
@@ -71,8 +70,8 @@ function _buildState(conceptId, baseType, graknGrpcService) {
 // Each new object gets created by composing all the methods of super types
 const attributeTypeProto = Object.assign(
   ConceptMethods.get(),
-  TypeMethods.get(),
   SchemaConceptMethods.get(),
+  TypeMethods.get(),
   AttributeTypeMethods.get()
 );
 
@@ -84,7 +83,6 @@ const relationshipTypeProto = Object.assign(
 );
 
 const entityTypeProto = Object.assign(
-  ConceptMethods.get(),
   ConceptMethods.get(),
   SchemaConceptMethods.get(),
   TypeMethods.get(),
@@ -105,8 +103,7 @@ const attributeProto = Object.assign(
 
 const entityProto = Object.assign(
   ConceptMethods.get(),
-  ThingMethods.get(),
-  EntityMethods.get()
+  ThingMethods.get()
 );
 
 const roleProto = Object.assign(

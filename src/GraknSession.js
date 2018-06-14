@@ -24,8 +24,19 @@ GraknSession.prototype.open = async function (txType) {
 }
 
 GraknSession.prototype.deleteKeyspace = function () {
-  const graknGrpcService = new GraknGrpcService(this.stub);
-  return graknGrpcService.deleteKeyspace(this.keyspace);
+  const openRequest = new messages.Open();
+  const deleteRequest = new messages.DeleteRequest();
+  const messageKeyspace = new messages.Keyspace();
+  messageKeyspace.setValue(this.keyspace);
+  openRequest.setKeyspace(messageKeyspace);
+  openRequest.setTxtype(messages.TxType.WRITE);
+  deleteRequest.setOpen(openRequest);
+  return new Promise((resolve, reject) => {
+    this.stub.delete(deleteRequest, (err) => {
+      if (err) reject(err);
+      else resolve();
+    });
+  })
 }
 
 GraknSession.prototype.txType = {

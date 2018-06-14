@@ -16,13 +16,12 @@ const ConceptFactory = require("./ConceptFactory");
 function GraknGrpcService(stub) {
     this.communicator = new GrpcCommunicator(stub.tx());
     this.conceptFactory = new ConceptFactory(this);
-    this.stub = stub;
 }
 
 // Concept
 
-GraknGrpcService.prototype.delete = function (id) {
-    const deleteTxRequest = TxRequestBuilder.delete(this.id);
+GraknGrpcService.prototype.deleteConcept = function (id) {
+    const deleteTxRequest = TxRequestBuilder.deleteConcept(id);
     return this.communicator.send(deleteTxRequest)
         .catch(e => { throw e; });
 };
@@ -617,23 +616,5 @@ GraknGrpcService.prototype._parseResult = function parseResult(queryResult) {
         return answerMap;
     }
 };
-
-
-GraknGrpcService.prototype.deleteKeyspace = function deleteKeyspace(keyspace) {
-    const openRequest = new messages.Open();
-    const deleteRequest = new messages.DeleteRequest();
-    const messageKeyspace = new messages.Keyspace();
-    messageKeyspace.setValue(keyspace);
-    openRequest.setKeyspace(messageKeyspace);
-    openRequest.setTxtype(messages.TxType.WRITE);
-    deleteRequest.setOpen(openRequest);
-    return new Promise((resolve, reject) => {
-        this.stub.delete(deleteRequest, (err) => {
-            if (err) reject(err);
-            else resolve();
-        });
-    })
-
-}
 
 module.exports = GraknGrpcService;

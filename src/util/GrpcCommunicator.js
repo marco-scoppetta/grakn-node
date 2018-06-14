@@ -17,10 +17,6 @@ function GrpcCommunicator(stream) {
     this.rejectOnError(err)
   });
 
-  this.stream.on('end', () => {
-    // probably delete some iterators?
-  })
-
   this.stream.on('status', (e) => {
     this.rejectOnError(e)
   })
