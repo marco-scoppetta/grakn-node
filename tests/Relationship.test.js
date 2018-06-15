@@ -28,7 +28,7 @@ describe("Relationsihp methods", () => {
         Array.from(map.values()).forEach(set => { expect(Array.from(set).length).toBe(1); });
         const rolePlayers = await relationship.rolePlayers();
         expect(rolePlayers.length).toBe(2);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("allRolePlayers && rolePlayers with 1 role with 2 players", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -46,7 +46,7 @@ describe("Relationsihp methods", () => {
         Array.from(map.values()).forEach(set => { expect(Array.from(set).length).toBe(2); });
         const rolePlayers = await relationship.rolePlayers();
         expect(rolePlayers.length).toBe(2);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("allRolePlayers && rolePlayers with 2 roles with the same player", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -64,7 +64,7 @@ describe("Relationsihp methods", () => {
         Array.from(map.values()).forEach(set => { expect(Array.from(set).length).toBe(1); });
         const rolePlayers = await relationship.rolePlayers();
         expect(rolePlayers.length).toBe(1);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("addRolePlayer && removeRolePlayer && rolePlayers", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -84,7 +84,7 @@ describe("Relationsihp methods", () => {
         const rolePlayersRemoved = await relationship.rolePlayers();
         expect(rolePlayersRemoved.length).toBe(0);
 
-    }, environment.integrationTestsTimeout());
+    });
 
     test("rolePlayers(...Role)", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -105,5 +105,5 @@ describe("Relationsihp methods", () => {
         expect(player.id).toBe(child.id);
         const doubleRolePlayers = await relationship.rolePlayers(childRole, parentRole);
         expect(doubleRolePlayers.length).toBe(2);
-    }, environment.integrationTestsTimeout());
+    });
 });

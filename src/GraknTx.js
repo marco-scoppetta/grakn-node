@@ -34,5 +34,8 @@ GraknTx.prototype.putRole = function (label) {
 GraknTx.prototype.putRule = function (rule) {
     return this.graknGrpcService.putRule(rule);
 }
+GraknTx.prototype.close = function () {
+    return this.graknGrpcService.close();
+}
 
 module.exports = GraknTx;

@@ -16,5 +16,5 @@ describe("Entity type methods", () => {
         const personType = await tx.putEntityType("person");
         const person = await personType.addEntity();
         expect(person.isEntity()).toBeTruthy();
-    }, environment.integrationTestsTimeout());
+    });
 });

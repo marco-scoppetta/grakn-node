@@ -21,7 +21,7 @@ describe("Role methods", () => {
         const rels = await role.relationshipTypes();
         expect(rels[0].baseType).toBe('RELATIONSHIP_TYPE');
         expect(await rels[0].getLabel()).toBe('parentship');
-    }, environment.integrationTestsTimeout());
+    });
 
     test("playedByTypes", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -34,5 +34,5 @@ describe("Role methods", () => {
         const types = await role.playedByTypes();
         expect(types[0].baseType).toBe('ENTITY_TYPE');
         expect(await types[0].getLabel()).toBe('person');
-    }, environment.integrationTestsTimeout());
+    });
 });

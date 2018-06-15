@@ -13,9 +13,13 @@ const ConceptFactory = require("./ConceptFactory");
  *  - a factory to build {Concept} objects from gRPC responses 
  */
 
-function GraknGrpcService(stub) {
-    this.communicator = new GrpcCommunicator(stub.tx());
+function GraknGrpcService(txStream) {
+    this.communicator = new GrpcCommunicator(txStream);
     this.conceptFactory = new ConceptFactory(this);
+}
+
+GraknGrpcService.prototype.close = function () {
+    return this.communicator.end();
 }
 
 // Concept

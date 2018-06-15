@@ -16,7 +16,8 @@ describe("Thing methods", () => {
         const personType = await tx.putEntityType('person');
         const thing = await personType.addEntity();
         expect(await thing.isInferred()).toBeFalsy();
-    }, environment.integrationTestsTimeout());
+        tx.close();
+    });
 
     test("type", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -25,7 +26,8 @@ describe("Thing methods", () => {
         const type = await thing.type();
         expect(type.id).toBe(personType.id);
         expect(type.isType()).toBeTruthy();
-    }, environment.integrationTestsTimeout());
+        tx.close();
+    });
 
     test("relationships", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -38,7 +40,8 @@ describe("Thing methods", () => {
         const rels = await parent.relationships();
         expect(rels.length).toBe(1);
         expect(rels[0].id).toBe(relationship.id);
-    }, environment.integrationTestsTimeout());
+        tx.close();
+    });
 
     test("relationships(...Role)", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -68,7 +71,8 @@ describe("Thing methods", () => {
         const employerRelationships = await person.relationships(employerRole);
         expect(employerRelationships.length).toBe(1);
         expect(employerRelationships[0].id).toBe(employmentRel.id);
-    }, environment.integrationTestsTimeout());
+        tx.close();
+    });
 
     test("plays", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -81,7 +85,8 @@ describe("Thing methods", () => {
         const plays = await parent.plays();
         expect(plays.length).toBe(1);
         expect(plays[0].id).toBe(parentRole.id);
-    }, environment.integrationTestsTimeout());
+        tx.close();
+    });
 
     test("set/delete/get attributes", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -97,5 +102,26 @@ describe("Thing methods", () => {
         await person.deleteAttribute(name);
         const emptyAttrs = await person.attributes();
         expect(emptyAttrs.length).toBe(0);
-    }, environment.integrationTestsTimeout());
+        tx.close();
+    });
+
+    test("attributes(...AttributeType)", async () => {
+        const tx = await session.open(session.txType.WRITE);
+        const personType = await tx.putEntityType('person');
+        const attrType = await tx.putAttributeType('name', session.dataType.STRING);
+        const attrMarriedType = await tx.putAttributeType('married', session.dataType.BOOLEAN);
+        await personType.attribute(attrType);
+        await personType.attribute(attrMarriedType);
+        const person = await personType.addEntity();
+        const notMarried = await attrMarriedType.putAttribute(false);
+        const name = await attrType.putAttribute('Marco');
+        await person.attribute(name);
+        await person.attribute(notMarried);
+        const attrs = await person.attributes();
+        expect(attrs.length).toBe(2);
+        attrs.forEach(att => { expect(att.isAttribute()).toBeTruthy(); });
+        const filteredAttrs = await person.attributes(attrMarriedType);
+        expect(filteredAttrs.length).toBe(1);
+        tx.close();
+    });
 });

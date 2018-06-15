@@ -27,7 +27,7 @@ describe("GraknTx methods", () => {
     // retrieve non existing id should return null
     const nonPerson = await tx.getConcept("not-existing-id");
     expect(nonPerson).toBe(null);
-  }, environment.integrationTestsTimeout());
+  });
 
   // Bug regression test
   test("Ensure no duplicates in metatypes", async () => {
@@ -38,7 +38,7 @@ describe("GraknTx methods", () => {
     expect(concepts.length).toBe(2);
     const set = new Set(concepts.map(concept => concept.id));
     expect(set.size).toBe(2);
-  }, environment.integrationTestsTimeout());
+  });
 
   test("getSchemaConcept", async () => {
     const tx = await session.open(session.txType.WRITE);
@@ -50,32 +50,32 @@ describe("GraknTx methods", () => {
     const nonPerson = await tx.getSchemaConcept("not-existing-label");
     expect(nonPerson).toBe(null);
 
-  }, environment.integrationTestsTimeout());
+  });
 
   test("putEntityType", async () => {
     const tx = await session.open(session.txType.WRITE);
     const personType = await tx.putEntityType("person");
     expect(personType.isSchemaConcept()).toBeTruthy();
     expect(personType.isEntityType()).toBeTruthy();
-  }, environment.integrationTestsTimeout());
+  });
 
   test("putRelationshipType", async () => {
     const tx = await session.open(session.txType.WRITE);
     const marriage = await tx.putRelationshipType("marriage");
     expect(marriage.isSchemaConcept()).toBeTruthy();
     expect(marriage.isRelationshipType()).toBeTruthy();
-  }, environment.integrationTestsTimeout());
+  });
 
   test("putAttributeType", async () => {
     const tx = await session.open(session.txType.WRITE);
     const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
     expect(attributeType.isAttributeType()).toBeTruthy();
-  }, environment.integrationTestsTimeout());
+  });
 
   test("putRole", async () => {
     const tx = await session.open(session.txType.WRITE);
     const role = await tx.putRole("father");
     expect(role.isRole()).toBeTruthy();
     expect(role.baseType).toBe("ROLE");
-  }, environment.integrationTestsTimeout());
+  });
 });

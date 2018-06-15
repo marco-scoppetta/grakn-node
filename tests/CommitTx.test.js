@@ -28,13 +28,13 @@ describe('Integration test', () => {
                 expect(label).toBe('person');
             }
         }
-    }, environment.integrationTestsTimeout());
+    });
 
     test("Tx open in READ mode should throw when trying to define", async () => {
         const tx = await session.open(session.txType.READ);
         await expect(tx.execute("define person sub entity;")).rejects
             .toThrow();
-    }, environment.integrationTestsTimeout());
+    });
 
     test("If tx does not commit, different Tx won't see changes", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -43,7 +43,7 @@ describe('Integration test', () => {
         await expect(newTx.execute("match $x sub superman; get;"))
             .rejects
             .toThrow();
-    }, environment.integrationTestsTimeout());
+    });
 
 });
 

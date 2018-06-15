@@ -28,7 +28,7 @@ describe("Attribute type methods", () => {
         const doubleAttribute = await doubleAttributeType.putAttribute(11.58);
         expect(await doubleAttribute.getValue()).toBe(11.58);
         expect(await doubleAttribute.dataType()).toBe('Double');
-    }, environment.integrationTestsTimeout());
+    });
 
     test('getDataType', async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -40,7 +40,7 @@ describe("Attribute type methods", () => {
 
         const doubleAttributeType = await tx.putAttributeType("length", session.dataType.DOUBLE);
         expect(await doubleAttributeType.getDataType()).toBe('Double');
-    }, environment.integrationTestsTimeout());
+    });
 
     test('getAttribute', async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -50,5 +50,5 @@ describe("Attribute type methods", () => {
         expect(attribute.isAttribute()).toBeTruthy();
         const nullAttribute = await attributeType.getAttribute('Giangiovannino');
         expect(nullAttribute).toBeNull();
-    }, environment.integrationTestsTimeout());
+    });
 });

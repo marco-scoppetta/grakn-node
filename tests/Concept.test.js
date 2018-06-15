@@ -19,7 +19,7 @@ describe("Concept methods", () => {
         await personType.delete();
         const nullSchemaConcept = await tx.getSchemaConcept('person');
         expect(nullSchemaConcept).toBeNull();
-    }, environment.integrationTestsTimeout());
+    });
 
     test("delete instance", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -28,7 +28,7 @@ describe("Concept methods", () => {
         await person.delete();
         const nullConcept = await tx.getConcept(person.id);
         expect(nullConcept).toBeNull();
-    }, environment.integrationTestsTimeout());
+    });
 
     test("instance isEntity/isRelationship/isAttribute", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -49,5 +49,5 @@ describe("Concept methods", () => {
         expect(employed.isEntity()).toBeFalsy();
         expect(employed.isRelationship()).toBeFalsy();
         expect(employed.isAttribute()).toBeTruthy();
-    }, environment.integrationTestsTimeout());
+    });
 });

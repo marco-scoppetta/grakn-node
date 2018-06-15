@@ -16,7 +16,7 @@ describe("Relationship type methods", () => {
         const relationshipType = await tx.putRelationshipType("parenthood");
         const relationship = await relationshipType.addRelationship();
         expect(relationship.isRelationship()).toBeTruthy();
-    }, environment.integrationTestsTimeout());
+    });
 
     test('Get/set/delete relates', async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -33,5 +33,5 @@ describe("Relationship type methods", () => {
         const oneRole = await relationshipType.relates();
         expect(oneRole.length).toBe(1);
         expect(oneRole[0].baseType).toBe('ROLE');
-    }, environment.integrationTestsTimeout());
+    });
 });

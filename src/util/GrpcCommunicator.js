@@ -4,13 +4,10 @@ function GrpcCommunicator(stream) {
   this.stream = stream;
   this.response = new AsyncBlockingQueue();
   this.rejectOnError = null;
+  this.resolveOnEnd = null
 
   this.stream.on("data", resp => {
     this.response.add(resp);
-  });
-
-  this.stream.on("end", () => {
-    console.log("Stream from server terminated.");
   });
 
   this.stream.on("error", err => {
@@ -30,5 +27,12 @@ GrpcCommunicator.prototype.send = async function (request) {
     resolve(response);
   })
 };
+
+GrpcCommunicator.prototype.end = function end() {
+  this.stream.end();
+  return new Promise((resolve) => {
+    this.stream.on('end', resolve);
+  });
+}
 
 module.exports = GrpcCommunicator;

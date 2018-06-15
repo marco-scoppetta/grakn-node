@@ -1,23 +1,26 @@
-var { spawn, spawnSync } = require('child_process');
-var { StringDecoder } = require('string_decoder');
-var decoder = new StringDecoder('utf8');
-const gc = require("../../src/GraknSession");
+const { spawn, spawnSync } = require('child_process');
+const { StringDecoder } = require('string_decoder');
+const decoder = new StringDecoder('utf8');
+
+const GraknSession = require("../../src/GraknSession");
+
 const DEFAULT_URI = "localhost:48555";
-var version = require('../../package.json').graknVersion;
-
-var scriptPath = './tests/support/env.sh';
-
+const VERSION = require('../../package.json').graknVersion;
+const SCRIPT_PATH = './tests/support/env.sh';
+const INTEGRATION_TESTS_TIMEOUT = 20000;
 
 function newKeyspace() {
     const randomName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     return 'a' + randomName;
 }
 
-const session = new gc(DEFAULT_URI, newKeyspace());
+const session = new GraknSession(DEFAULT_URI, newKeyspace());
+
+jest.setTimeout(INTEGRATION_TESTS_TIMEOUT);
 
 module.exports = {
     beforeAll: function () {
-        var process = spawnSync(scriptPath, ['start', version]);
+        var process = spawnSync(SCRIPT_PATH, ['start', VERSION]);
         if (process.status != 0) {
             var err = Buffer.from(process.output[2]);
             console.log('Failed to start test environment: ' + decoder.write(err));
@@ -27,7 +30,7 @@ module.exports = {
 
     },
     afterAll: function () {
-        var process = spawnSync(scriptPath, ['stop']);
+        var process = spawnSync(SCRIPT_PATH, ['stop']);
         if (process.status != 0) {
             var err = Buffer.from(process.output[2]);
             console.log('Failed to stop test environment: ' + decoder.write(err));
@@ -36,7 +39,6 @@ module.exports = {
         }
     },
     newKeyspace,
-    integrationTestsTimeout: function () { return 10000 },
     session: () => session,
     tearDown: async () => {
         await session.deleteKeyspace();

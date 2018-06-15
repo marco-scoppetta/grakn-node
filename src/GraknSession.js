@@ -17,7 +17,7 @@ function GraknSession(uri, keyspace, credentials) {
  */
 
 GraknSession.prototype.open = async function (txType) {
-  const graknGrpcService = new GraknGrpcService(this.stub);
+  const graknGrpcService = new GraknGrpcService(this.stub.tx());
   await graknGrpcService.openTx(this.keyspace, txType, this.credentials);
   const tx = new GraknTx(graknGrpcService);
   return tx;
@@ -56,7 +56,7 @@ GraknSession.prototype.dataType = {
 };
 
 GraknSession.prototype.close = function close() {
-  this.stub.close();
+  grpc.closeClient(this.stub);
 }
 
 module.exports = GraknSession;

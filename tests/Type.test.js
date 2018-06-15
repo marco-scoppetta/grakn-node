@@ -22,7 +22,7 @@ describe("Type methods", () => {
         await dogType.setAbstract(false);
         isAbstract = await dogType.isAbstract();
         expect(isAbstract).toBeFalsy();
-    }, environment.integrationTestsTimeout());
+    });
 
     test("get/set/delete plays", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -37,7 +37,7 @@ describe("Type methods", () => {
         await type.deletePlays(role);
         const playsRemoved = await type.plays();
         expect(playsRemoved.length).toBe(0);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("get/set/delete attributes", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -52,7 +52,7 @@ describe("Type methods", () => {
         await type.deleteAttribute(nameType);
         const attrsRemoved = await type.attributes();
         expect(attrsRemoved.length).toBe(0);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("instances", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -62,7 +62,7 @@ describe("Type methods", () => {
         await personType.addEntity();
         const instancesWithPerson = await personType.instances();
         expect(instancesWithPerson.length).toBe(1);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("Get/set/delete key", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -77,6 +77,6 @@ describe("Type methods", () => {
         await type.deleteKey(nameType);
         const keysRemoved = await type.keys();
         expect(keysRemoved.length).toBe(0);
-    }, environment.integrationTestsTimeout());
+    });
 });
 

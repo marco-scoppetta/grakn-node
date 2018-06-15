@@ -313,9 +313,12 @@ const methods = {
     return TxRequest(conceptId, conceptMethod);
   },
 
-  getAttributesByTypes: function () {
+  getAttributesByTypes: function (conceptId, types) {
     const conceptMethod = new messages.ConceptMethod();
-    conceptMethod.setGetattributesbytypes(); // Pass Concepts
+    const conceptsMessage = new messages.Concepts();
+    const grpcConcepts = types.map(type => toGrpcConcept(type))
+    conceptsMessage.setConceptList(grpcConcepts);
+    conceptMethod.setGetattributesbytypes(conceptsMessage);
     return TxRequest(conceptId, conceptMethod);
   },
   getKeys: function (conceptId) {

@@ -22,7 +22,7 @@ describe("Schema concept methods", () => {
         expect(await superPersonSchemaConcept.getLabel()).toBe('superperson');
         const nullSchemaConcept = await tx.getSchemaConcept('person');
         expect(nullSchemaConcept).toBeNull();
-    }, environment.integrationTestsTimeout());
+    });
 
     test("isImplicit", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -32,7 +32,7 @@ describe("Schema concept methods", () => {
         await tx.execute('define person has name; name sub attribute, datatype string;');
         const implicitSchemaConcept = await tx.getSchemaConcept('@has-name');
         expect(await implicitSchemaConcept.isImplicit()).toBe(true);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("Get sups and subs", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -55,7 +55,7 @@ describe("Schema concept methods", () => {
         subLabels.sort();
         expect(subLabels[0]).toBe('entity');
         expect(subLabels[1]).toBe('person');
-    }, environment.integrationTestsTimeout());
+    });
 
     test("Get sup", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -64,7 +64,7 @@ describe("Schema concept methods", () => {
         expect(metaType.baseType).toBe('META_TYPE');
         const sup = await metaType.sup();
         expect(sup).toBeNull();
-    }, environment.integrationTestsTimeout());
+    });
 
     test("Set sup", async () => {
         const tx = await session.open(session.txType.WRITE);
@@ -75,6 +75,6 @@ describe("Schema concept methods", () => {
         await maleSchemaConcept.sup(humanSchemaConcept);
         const sup = await maleSchemaConcept.sup();
         expect(await sup.getLabel()).toBe('human');
-    }, environment.integrationTestsTimeout());
+    });
 })
 
