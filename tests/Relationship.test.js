@@ -1,5 +1,6 @@
 const environment = require('./support/GraknTestEnvironment');
 let session;
+let tx;
 
 beforeAll(() => {
     session = environment.session();
@@ -9,10 +10,17 @@ afterAll(async () => {
     await environment.tearDown();
 });
 
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
+
 describe("Relationsihp methods", () => {
 
     test("allRolePlayers && rolePlayers with 2 roles with 1 player each", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -31,7 +39,6 @@ describe("Relationsihp methods", () => {
     });
 
     test("allRolePlayers && rolePlayers with 1 role with 2 players", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -49,7 +56,6 @@ describe("Relationsihp methods", () => {
     });
 
     test("allRolePlayers && rolePlayers with 2 roles with the same player", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -67,7 +73,6 @@ describe("Relationsihp methods", () => {
     });
 
     test("addRolePlayer && removeRolePlayer && rolePlayers", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -87,7 +92,6 @@ describe("Relationsihp methods", () => {
     });
 
     test("rolePlayers(...Role)", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');

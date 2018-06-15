@@ -1,5 +1,6 @@
 const environment = require('./support/GraknTestEnvironment');
 let session;
+let tx;
 
 beforeAll(() => {
     session = environment.session();
@@ -9,10 +10,17 @@ afterAll(async () => {
     await environment.tearDown();
 });
 
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
+
 describe("Type methods", () => {
 
     test("setAbstract && isAbstract", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const dogType = await tx.putEntityType("dog");
         let isAbstract = await dogType.isAbstract();
         expect(isAbstract).toBeFalsy();
@@ -25,7 +33,6 @@ describe("Type methods", () => {
     });
 
     test("get/set/delete plays", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const role = await tx.putRole('father');
         const type = await tx.putEntityType('person');
         const plays = await type.plays();
@@ -40,7 +47,6 @@ describe("Type methods", () => {
     });
 
     test("get/set/delete attributes", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const type = await tx.putEntityType('person');
         const nameType = await tx.putAttributeType('name', session.dataType.STRING);
         const attrs = await type.attributes();
@@ -55,7 +61,6 @@ describe("Type methods", () => {
     });
 
     test("instances", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const personType = await tx.putEntityType("person");
         const instances = await personType.instances();
         expect(instances.length).toBe(0);
@@ -65,7 +70,6 @@ describe("Type methods", () => {
     });
 
     test("Get/set/delete key", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const type = await tx.putEntityType('person');
         const nameType = await tx.putAttributeType('name', session.dataType.STRING);
         const keys = await type.keys();

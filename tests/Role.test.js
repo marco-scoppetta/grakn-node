@@ -1,5 +1,6 @@
 const environment = require('./support/GraknTestEnvironment');
 let session;
+let tx;
 
 beforeAll(() => {
     session = environment.session();
@@ -9,10 +10,17 @@ afterAll(async () => {
     await environment.tearDown();
 });
 
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
+
 describe("Role methods", () => {
 
     test("relationshipTypes", async () => {
-        const tx = await session.open(session.txType.WRITE);
         await tx.execute('define parentship sub relationship, relates parent, relates child;');
         const result = await tx.execute('match $x label parent; get;');
         const concepts = result.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
@@ -24,7 +32,6 @@ describe("Role methods", () => {
     });
 
     test("playedByTypes", async () => {
-        const tx = await session.open(session.txType.WRITE);
         await tx.execute('define parentship sub relationship, relates parent, relates child;');
         await tx.execute('define person sub entity plays parent;')
         const result = await tx.execute('match $x label parent; get;');

@@ -1,5 +1,6 @@
 const environment = require('./support/GraknTestEnvironment');
 let session;
+let tx;
 
 beforeAll(() => {
     session = environment.session();
@@ -9,10 +10,17 @@ afterAll(async () => {
     await environment.tearDown();
 });
 
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
+
 describe("Attribute type methods", () => {
 
     test("putAttribute", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
         const attribute = await attributeType.putAttribute('Marco');
         expect(attribute.isAttribute()).toBeTruthy();
@@ -31,7 +39,6 @@ describe("Attribute type methods", () => {
     });
 
     test('getDataType', async () => {
-        const tx = await session.open(session.txType.WRITE);
         const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
         expect(await attributeType.getDataType()).toBe('String');
 
@@ -43,7 +50,6 @@ describe("Attribute type methods", () => {
     });
 
     test('getAttribute', async () => {
-        const tx = await session.open(session.txType.WRITE);
         const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
         await attributeType.putAttribute('Marco');
         const attribute = await attributeType.getAttribute('Marco');

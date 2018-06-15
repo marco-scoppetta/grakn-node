@@ -8,13 +8,14 @@ const DEFAULT_URI = "localhost:48555";
 const VERSION = require('../../package.json').graknVersion;
 const SCRIPT_PATH = './tests/support/env.sh';
 const INTEGRATION_TESTS_TIMEOUT = 20000;
+const TEST_KEYSPACE = 'testkeyspace';
 
 function newKeyspace() {
     const randomName = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     return 'a' + randomName;
 }
 
-const session = new GraknSession(DEFAULT_URI, newKeyspace());
+const session = new GraknSession(DEFAULT_URI, TEST_KEYSPACE);
 
 jest.setTimeout(INTEGRATION_TESTS_TIMEOUT);
 

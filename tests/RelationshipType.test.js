@@ -1,5 +1,6 @@
 const environment = require('./support/GraknTestEnvironment');
 let session;
+let tx;
 
 beforeAll(() => {
     session = environment.session();
@@ -9,17 +10,23 @@ afterAll(async () => {
     await environment.tearDown();
 });
 
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
+
 describe("Relationship type methods", () => {
 
     test("addRelationship", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType("parenthood");
         const relationship = await relationshipType.addRelationship();
         expect(relationship.isRelationship()).toBeTruthy();
     });
 
     test('Get/set/delete relates', async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType("parenthood");
         const parentRole = await tx.putRole('parent');
         const childRole = await tx.putRole('child');

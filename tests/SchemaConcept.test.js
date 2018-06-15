@@ -1,5 +1,6 @@
 const environment = require('./support/GraknTestEnvironment');
 let session;
+let tx;
 
 beforeAll(() => {
     session = environment.session();
@@ -9,11 +10,18 @@ afterAll(async () => {
     await environment.tearDown();
 });
 
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
+
 
 describe("Schema concept methods", () => {
 
     test("Get/set label", async () => {
-        const tx = await session.open(session.txType.WRITE);
         await tx.execute('define person sub entity;')
         const personSchemaConcept = await tx.getSchemaConcept('person');
         expect(await personSchemaConcept.getLabel()).toBe('person');
@@ -25,7 +33,6 @@ describe("Schema concept methods", () => {
     });
 
     test("isImplicit", async () => {
-        const tx = await session.open(session.txType.WRITE);
         await tx.execute('define person sub entity;')
         const personSchemaConcept = await tx.getSchemaConcept('person');
         expect(await personSchemaConcept.isImplicit()).toBe(false);
@@ -35,7 +42,6 @@ describe("Schema concept methods", () => {
     });
 
     test("Get sups and subs", async () => {
-        const tx = await session.open(session.txType.WRITE);
         await tx.execute('define person sub entity;')
         const personSchemaConcept = await tx.getSchemaConcept('person');
         const sups = await personSchemaConcept.sups();
@@ -58,7 +64,6 @@ describe("Schema concept methods", () => {
     });
 
     test("Get sup", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const entitySchemaConcept = await tx.getSchemaConcept('entity');
         const metaType = await entitySchemaConcept.sup();
         expect(metaType.baseType).toBe('META_TYPE');
@@ -67,7 +72,6 @@ describe("Schema concept methods", () => {
     });
 
     test("Set sup", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const humanSchemaConcept = await tx.putEntityType('human');
         const maleSchemaConcept = await tx.putEntityType('male');
         const supType = await maleSchemaConcept.sup();

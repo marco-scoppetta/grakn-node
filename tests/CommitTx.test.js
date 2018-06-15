@@ -20,6 +20,7 @@ describe('Integration test', () => {
         const tx = await session.open(session.txType.WRITE);
         await tx.execute("define person sub entity;");
         await tx.commit();
+        tx.close();
         const newTx = await session.open(session.txType.WRITE);
         const result2 = await newTx.execute("match $x sub person; get;");
         for (let map of result2) {
@@ -28,21 +29,25 @@ describe('Integration test', () => {
                 expect(label).toBe('person');
             }
         }
+        newTx.close();
     });
 
     test("Tx open in READ mode should throw when trying to define", async () => {
         const tx = await session.open(session.txType.READ);
         await expect(tx.execute("define person sub entity;")).rejects
             .toThrow();
+        tx.close();
     });
 
     test("If tx does not commit, different Tx won't see changes", async () => {
         const tx = await session.open(session.txType.WRITE);
         await tx.execute("define superman sub entity;");
+        tx.close()
         const newTx = await session.open(session.txType.WRITE);
         await expect(newTx.execute("match $x sub superman; get;"))
             .rejects
             .toThrow();
+        newTx.close();
     });
 
 });
