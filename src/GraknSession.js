@@ -19,6 +19,7 @@ function GraknSession(uri, keyspace, credentials) {
   this.keyspace = keyspace;
   this.credentials = credentials;
   this.stub = new services.GraknClient(uri, grpc.credentials.createInsecure());
+  this.deleteService = new DeleteService(this.stub);
 }
 
 /**
@@ -37,7 +38,7 @@ GraknSession.prototype.open = async function (txType) {
  * Method used to delete the keyspace to which this session is bound to.
  */
 GraknSession.prototype.deleteKeyspace = function () {
-  return DeleteService.delete(this.keyspace);
+  return this.deleteService.delete(this.keyspace);
 }
 
 /**
