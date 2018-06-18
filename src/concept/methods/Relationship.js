@@ -1,7 +1,7 @@
 
 const methods = {
   allRolePlayers: async function () {
-    const rolePlayers = await this.graknGrpcService.getRolePlayers(this.id);
+    const rolePlayers = await this.txService.getRolePlayers(this.id);
     // Temp map to store String id to Role object
     const tempMap = new Map(rolePlayers.map(entry => [entry.role.id, entry.role]));
     const map = new Map();
@@ -20,9 +20,9 @@ const methods = {
   },
   rolePlayers: async function (...roles) {
     if (roles.length > 0) {
-      return this.graknGrpcService.getRolePlayersByRoles(this.id, roles);
+      return this.txService.getRolePlayersByRoles(this.id, roles);
     } else {
-      const rolePlayers = await this.graknGrpcService.getRolePlayers(this.id);
+      const rolePlayers = await this.txService.getRolePlayers(this.id);
       const playersArray = rolePlayers.map(entry => entry.player);
       //Helper array to remove duplicates
       const idsArray = rolePlayers.map(entry => entry.player.id);
@@ -30,8 +30,8 @@ const methods = {
       return playersArray.filter((value, i) => i === idsArray.indexOf(value.id));
     }
   },
-  addRolePlayer: function (role, thing) { return this.graknGrpcService.setRolePlayer(this.id, role, thing); },
-  removeRolePlayer: function (role, thing) { return this.graknGrpcService.unsetRolePlayer(this.id, role, thing); }
+  addRolePlayer: function (role, thing) { return this.txService.setRolePlayer(this.id, role, thing); },
+  removeRolePlayer: function (role, thing) { return this.txService.unsetRolePlayer(this.id, role, thing); }
 };
 
 module.exports = {

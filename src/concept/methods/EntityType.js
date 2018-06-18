@@ -1,6 +1,6 @@
 
 const methods = {
-  addEntity: function () { return this.graknGrpcService.addEntity(this.id); },
+  addEntity: function () { return this.txService.addEntity(this.id); },
 };
 
 module.exports = {

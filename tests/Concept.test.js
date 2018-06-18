@@ -37,6 +37,15 @@ describe("Concept methods", () => {
         expect(nullConcept).toBeNull();
     });
 
+    test("delete concept already deleted", async () => {
+        const personType = await tx.putEntityType('person');
+        const person = await personType.addEntity();
+        await person.delete();
+        const nullConcept = await tx.getConcept(person.id);
+        expect(nullConcept).toBeNull();
+        await expect(person.delete()).rejects.toThrowError();
+    });
+
     test("instance isEntity/isRelationship/isAttribute", async () => {
         const personType = await tx.putEntityType('person');
         const person = await personType.addEntity();

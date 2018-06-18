@@ -16,26 +16,13 @@ afterAll(async () => {
 
 describe('Integration test', () => {
 
-    test("Commit Tx", async () => {
-        const tx = await session.open(session.txType.WRITE);
-        await tx.execute("define person sub entity;");
-        await tx.commit();
-        tx.close();
-        const newTx = await session.open(session.txType.WRITE);
-        const result2 = await newTx.execute("match $x sub person; get;");
-        for (let map of result2) {
-            for (let [key, subEntity] of map) {
-                const label = await subEntity.getLabel();
-                expect(label).toBe('person');
-            }
-        }
-        newTx.close();
+    test('Open tx with invalid parameter throws error', async () => {
+        await expect(session.open('invalidTxType')).rejects.toThrowError();
     });
 
     test("Tx open in READ mode should throw when trying to define", async () => {
         const tx = await session.open(session.txType.READ);
-        await expect(tx.execute("define person sub entity;")).rejects
-            .toThrow();
+        await expect(tx.execute("define person sub entity;")).rejects.toThrowError();
         tx.close();
     });
 
@@ -44,9 +31,7 @@ describe('Integration test', () => {
         await tx.execute("define superman sub entity;");
         tx.close()
         const newTx = await session.open(session.txType.WRITE);
-        await expect(newTx.execute("match $x sub superman; get;"))
-            .rejects
-            .toThrow();
+        await expect(newTx.execute("match $x sub superman; get;")).rejects.toThrowError(); // superman label does not exist in the graph
         newTx.close();
     });
 

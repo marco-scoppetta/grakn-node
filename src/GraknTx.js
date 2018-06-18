@@ -1,42 +1,71 @@
 
-function GraknTx(graknGrpcService) {
-    this.graknGrpcService = graknGrpcService;
+
+/**
+ * This is produced by GraknSession and allows the user to construct and perform
+ * basic look ups to the knowledge base. This also allows the execution of Graql queries.
+ * 
+ * @param {Object} txService Object implementing all the functionalities of gRPC Tx service as defined in grakn.proto
+ */
+function GraknTx(txService) {
+    this.txService = txService;
 }
 
+/**
+ * Executes a given Graql query on the current keyspace
+ * @param {String} query String representing a Graql query 
+ */
 GraknTx.prototype.execute = function executeQuery(query) {
-    return this.graknGrpcService.execute(query);
+    return this.txService.execute(query);
 };
 
+/**
+ * Commits any changes to the graph and closes the transaction. The user must use the GraknSession to
+ * get a new open transaction.
+ */
 GraknTx.prototype.commit = async function () {
-    await this.graknGrpcService.commit();
+    await this.txService.commit();
     return this.close();
 }
+
+/**
+ * Get the Concept with identifier provided, if it exists.
+ * 
+ * @param {String} conceptId A unique identifier for the Concept in the graph.
+ */
 GraknTx.prototype.getConcept = function (conceptId) {
-    return this.graknGrpcService.getConcept(conceptId);
+    return this.txService.getConcept(conceptId);
 }
+
 GraknTx.prototype.getSchemaConcept = function (label) {
-    return this.graknGrpcService.getSchemaConcept(label);
+    return this.txService.getSchemaConcept(label);
 }
+
 GraknTx.prototype.getAttributesByValue = function (attributeValue, dataType) {
-    return this.graknGrpcService.getAttributesByValue(attributeValue, dataType);
+    return this.txService.getAttributesByValue(attributeValue, dataType);
 }
+
 GraknTx.prototype.putEntityType = function (label) {
-    return this.graknGrpcService.putEntityType(label);
+    return this.txService.putEntityType(label);
 }
+
 GraknTx.prototype.putRelationshipType = function (label) {
-    return this.graknGrpcService.putRelationshipType(label);
+    return this.txService.putRelationshipType(label);
 }
+
 GraknTx.prototype.putAttributeType = function (value, dataType) {
-    return this.graknGrpcService.putAttributeType(value, dataType);
+    return this.txService.putAttributeType(value, dataType);
 }
+
 GraknTx.prototype.putRole = function (label) {
-    return this.graknGrpcService.putRole(label);
+    return this.txService.putRole(label);
 }
+
 GraknTx.prototype.putRule = function (rule) {
-    return this.graknGrpcService.putRule(rule);
+    return this.txService.putRule(rule);
 }
+
 GraknTx.prototype.close = function () {
-    return this.graknGrpcService.close();
+    return this.txService.close();
 }
 
 module.exports = GraknTx;
