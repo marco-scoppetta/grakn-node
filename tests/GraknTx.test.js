@@ -80,4 +80,19 @@ describe("GraknTx methods", () => {
     expect(role.isRole()).toBeTruthy();
     expect(role.baseType).toBe("ROLE");
   });
+
+  test("getAttributesByValue", async () => {
+    const firstNameAttributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
+    const middleNameAttributeType = await tx.putAttributeType("middlename", session.dataType.STRING);
+    const a1 = await firstNameAttributeType.putAttribute('James');
+    const a2 = await middleNameAttributeType.putAttribute('James');
+    const attributes = await tx.getAttributesByValue('James', session.dataType.STRING);
+    expect(attributes.length).toBe(2);
+    expect(attributes.filter(a => a.id === a1.id).length).toBe(1);
+    expect(attributes.filter(a => a.id === a2.id).length).toBe(1);
+    attributes.forEach(async attr => {
+      expect(attr.isAttribute()).toBeTruthy();
+      expect(await attr.getValue()).toBe('James');
+    });
+  });
 });

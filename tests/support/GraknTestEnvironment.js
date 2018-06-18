@@ -7,7 +7,7 @@ const GraknSession = require("../../src/GraknSession");
 const DEFAULT_URI = "localhost:48555";
 const VERSION = require('../../package.json').graknVersion;
 const SCRIPT_PATH = './tests/support/env.sh';
-const INTEGRATION_TESTS_TIMEOUT = 20000;
+const INTEGRATION_TESTS_TIMEOUT = 2000000;
 const TEST_KEYSPACE = 'testkeyspace';
 
 function newKeyspace() {

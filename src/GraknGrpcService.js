@@ -244,8 +244,20 @@ GraknGrpcService.prototype.getDataTypeOfType = function (id) {
         })
         .catch(e => { throw e; });
 };
-GraknGrpcService.prototype.getRegex = function (id) { };
-GraknGrpcService.prototype.setRegex = function (id) { };
+GraknGrpcService.prototype.getRegex = function (id) {
+    const txRequest = TxRequestBuilder.getRegex(id);
+    return this.communicator.send(txRequest)
+        .then(response => {
+            const optionalRegex = response.getConceptresponse().getOptionalregex();
+            return (optionalRegex.hasPresent()) ? optionalRegex.getPresent() : null;
+        })
+        .catch(e => { throw e; });
+};
+GraknGrpcService.prototype.setRegex = function (id, regex) {
+    const txRequest = TxRequestBuilder.setRegex(id, regex);
+    return this.communicator.send(txRequest)
+        .catch(e => { throw e; });
+};
 
 
 //Thing
@@ -301,13 +313,13 @@ GraknGrpcService.prototype.getAttributesByTypes = function (id, types) {
         .catch(e => { throw e; });
 };
 GraknGrpcService.prototype.getKeys = function (id) {
-    const txRequest = TxRequestBuilder.getAttributesByTypes(id);
+    const txRequest = TxRequestBuilder.getKeys(id);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
 };
-GraknGrpcService.prototype.getKeysByTypes = function (id) {
-    const txRequest = TxRequestBuilder.getAttributesByTypes(id);
+GraknGrpcService.prototype.getKeysByTypes = function (id, types) {
+    const txRequest = TxRequestBuilder.getKeysByTypes(id, types);
     return this.communicator.send(txRequest)
         .then(response => _consumeConceptIterator(response, this))
         .catch(e => { throw e; });
@@ -400,14 +412,15 @@ GraknGrpcService.prototype.getDataTypeOfAttribute = function (id) {
 /**
  * This method creates and consumes an iterator (until server returns Done) and build Concept object from
  * every response.
- * @param {*} grpcConceptResponse gRPC response that will contain iteratorId
+ * 
+ * Used both with ConceptResponse and TxResponse, they both carry IteratorId, but nested differently.
+ * 
+ * @param {*} grpcResponse gRPC response that will contain iteratorId
  * @param {*} graknGrpcService graknGrpcService implementation needed to be injected to new concepts that will be built
  */
-async function _consumeConceptIterator(grpcConceptResponse, graknGrpcService) {
-    const iterator = new GrpcIterator.GrpcConceptIterator(
-        grpcConceptResponse.getConceptresponse().getIteratorid(),
-        graknGrpcService.communicator
-    );
+async function _consumeConceptIterator(grpcResponse, graknGrpcService) {
+    const iteratorId = (grpcResponse.hasConceptresponse()) ? grpcResponse.getConceptresponse().getIteratorid() : grpcResponse.getIteratorid();
+    const iterator = new GrpcIterator.GrpcConceptIterator(iteratorId, graknGrpcService.communicator);
     const concepts = [];
     let concept = await iterator.nextResult().catch(e => { throw e; });
     while (concept) {
@@ -527,9 +540,28 @@ GraknGrpcService.prototype.putAttributeType = function (label, dataType) {
     return this.communicator
         .send(txRequest)
         .then(response => this.conceptFactory.createConcept(response.getConcept()))
-        .catch((e) => {
-            throw e;
-        });
+        .catch((e) => { throw e; });
+}
+
+GraknGrpcService.prototype.getAttributesByValue = function (value, dataType) {
+    if (dataType == null) throw new Error('Datatype of AttributeType not specified.');
+    const txRequest = new messages.TxRequest();
+    const attributeValue = new messages.AttributeValue();
+    switch (dataType) {
+        case 0: attributeValue.setString(value); break;
+        case 1: attributeValue.setBoolean(value); break;
+        case 2: attributeValue.setInteger(value); break;
+        case 3: attributeValue.setLong(value); break;
+        case 4: attributeValue.setFloat(value); break;
+        case 5: attributeValue.setDouble(value); break;
+        case 6: attributeValue.setDate(value); break;
+        default: throw new Error('DataType of attribute not recognised.');
+    }
+    txRequest.setGetattributesbyvalue(attributeValue);
+    return this.communicator
+        .send(txRequest)
+        .then(response => _consumeConceptIterator(response, this))
+        .catch((e) => { throw e; });
 }
 
 

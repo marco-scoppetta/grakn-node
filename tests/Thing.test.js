@@ -105,6 +105,7 @@ describe("Thing methods", () => {
         const personType = await tx.putEntityType('person');
         const attrType = await tx.putAttributeType('name', session.dataType.STRING);
         const attrMarriedType = await tx.putAttributeType('married', session.dataType.BOOLEAN);
+        const whateverType = await tx.putAttributeType('whatever', session.dataType.FLOAT);
         await personType.attribute(attrType);
         await personType.attribute(attrMarriedType);
         const person = await personType.addEntity();
@@ -117,5 +118,36 @@ describe("Thing methods", () => {
         attrs.forEach(att => { expect(att.isAttribute()).toBeTruthy(); });
         const filteredAttrs = await person.attributes(attrMarriedType);
         expect(filteredAttrs.length).toBe(1);
+        const empty = await person.attributes(whateverType);
+        expect(empty.length).toBe(0);
+    });
+
+    test('keys(...AttributeType)', async () => {
+        const personType = await tx.putEntityType('person');
+        const nameType = await tx.putAttributeType('name', session.dataType.STRING);
+        const surnameType = await tx.putAttributeType('surname', session.dataType.STRING);
+
+        await personType.key(nameType);
+        await personType.attribute(surnameType);
+
+        const personName = await nameType.putAttribute('James');
+        const personSurname = await surnameType.putAttribute('Bond');
+
+        const person = await personType.addEntity();
+        await person.attribute(personName);
+        await person.attribute(personSurname);
+
+        const keys = await person.keys()
+        expect(keys.length).toBe(1);
+        expect(keys[0].id).toBe(personName.id);
+
+        const filteredKeys = await person.keys(nameType, surnameType);
+        expect(filteredKeys.length).toBe(1);
+        expect(filteredKeys[0].id).toBe(personName.id);
+
+        //TODO: remove when fixed on server side
+        // const emptyKeys = await person.keys(surnameType);
+        // expect(emptyKeys.length).toBe(0);
+
     });
 });

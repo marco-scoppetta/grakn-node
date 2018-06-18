@@ -57,4 +57,15 @@ describe("Attribute type methods", () => {
         const nullAttribute = await attributeType.getAttribute('Giangiovannino');
         expect(nullAttribute).toBeNull();
     });
+
+    test('set/get regex', async () => {
+        const attributeType = await tx.putAttributeType("id", session.dataType.STRING);
+        const nullRegex = await attributeType.getRegex();
+        expect(nullRegex).toBeNull();
+
+        await attributeType.setRegex("(good|bad)-dog");
+        const regex = await attributeType.getRegex();
+
+        expect(regex).toBe("(good|bad)-dog");
+    });
 });

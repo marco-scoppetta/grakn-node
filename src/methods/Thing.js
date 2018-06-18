@@ -16,9 +16,9 @@ const methods = {
       return this.graknGrpcService.getAttributes(this.id);
     }
   },
-  keys: function (...keys) {
-    if (keys.length > 0) {
-      return this.graknGrpcService.getKeysByTypes(this.id, keys);
+  keys: function (...types) {
+    if (types.length > 0) {
+      return this.graknGrpcService.getKeysByTypes(this.id, types);
     } else {
       return this.graknGrpcService.getKeys(this.id);
     }

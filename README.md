@@ -67,18 +67,19 @@ Once obtained a `GraknTx` you will be able to:
 
  **GraknTx**  
  
-| Method Name                                        | Return type                       | Description                                                                                                                                                   |
-| -------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `execute(String graqlQuery)`                       | Array of Map<*String*, *Concept*> | Executes a Graql query on the session keyspace. It returns a list of Maps, in each map the key represents the Graql variable specified in the query           |
-| `commit()`                                         | *void*                            | Commit current GraknTx, persisting changes in the graph. After committing, the transaction will be closed and you will need to get a new one from the session |
-| `getConcept(String conceptId)`                     | *Concept*                         | Retrieves a Concept by ConceptId                                                                                                                              |
-| `getSchemaConcept(String label)`                   | *SchemaConcept*                   | Retrieves a SchemaConcept by label                                                                                                                            |
-| **N.I. --**`getAttributesByValue(attributeValue)`  | Array of *Attribute*              | Get all Attributes holding the value provided, if any exists                                                                                                  |
-| `putEntityType(String label)`                      | *EntityType*                      | Create a new EntityType with super-type entity, or return a pre-existing EntityType with the specified label                                                  |
-| `putRelationshipType(String label)`                | *RelationshipType*                | Create a new RelationshipType with super-type relation, or return a pre-existing RelationshipType with the specified label                                    |
-| `putAttributeType(String label, session.dataType)` | *AttributeType*                   | Create a new AttributeType with super-type attribute, or return a pre-existing AttributeType with the specified label and DataType                            |
-| `putRole(String label)`                            | *Role*                            | Create a Role, or return a pre-existing Role, with the specified label.                                                                                       |
-| **N.I. --**`putRule()`                             | *Rule*                            |                                                                                                                                                               |  |
+| Method Name                                              | Return type                       | Description                                                                                                                                                   |
+| -------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `execute(String graqlQuery)`                             | Array of Map<*String*, *Concept*> | Executes a Graql query on the session keyspace. It returns a list of Maps, in each map the key represents the Graql variable specified in the query           |
+| `commit()`                                               | *void*                            | Commit current GraknTx, persisting changes in the graph. After committing, the transaction will be closed and you will need to get a new one from the session |
+| `close()`                                                | *void*                            | Closes current GraknTx without committing. This makes the transaction unusable.                                                                               |
+| `getConcept(String conceptId)`                           | *Concept*                         | Retrieves a Concept by ConceptId                                                                                                                              |
+| `getSchemaConcept(String label)`                         | *SchemaConcept*                   | Retrieves a SchemaConcept by label                                                                                                                            |
+| `getAttributesByValue(attributeValue, session.dataType)` | Array of *Attribute*              | Get all Attributes holding the value provided, if any exists                                                                                                  |
+| `putEntityType(String label)`                            | *EntityType*                      | Create a new EntityType with super-type entity, or return a pre-existing EntityType with the specified label                                                  |
+| `putRelationshipType(String label)`                      | *RelationshipType*                | Create a new RelationshipType with super-type relation, or return a pre-existing RelationshipType with the specified label                                    |
+| `putAttributeType(String label, session.dataType)`       | *AttributeType*                   | Create a new AttributeType with super-type attribute, or return a pre-existing AttributeType with the specified label and DataType                            |
+| `putRole(String label)`                                  | *Role*                            | Create a Role, or return a pre-existing Role, with the specified label.                                                                                       |
+| **N.I. --**`putRule()`                                   | *Rule*                            |                                                                                                                                                               |  |
 
 **Concepts hierarchy** 
 
@@ -139,16 +140,16 @@ A `SchemaConcept` concept has all the `Concept` methods plus the following:
 
  A `Thing` concept has all the `Concept` methods plus the following: 
 
- | Method Name                         | Return type             | Description                                                                                                                                                                       |
- | ----------------------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
- | `isInferred()`                      | *Boolean*               | Returns `true` if this Thing is inferred by Reasoner, `false` otherwise                                                                                                           |
- | `type()`                            | *Type*                  | Returns a Type which is the type of this Thing. This Thing is an instance of that type.                                                                                           |
- | `relationships(...Role)`            | Array of *Relationship* | Returns Relationships which this Thing takes part in, which may **optionally** be narrowed to a particular set according to the Roles you are interested in                       |
- | `attributes(...AttributeType)`      | Array of *Attribute*    | Returns Attributes attached to this Thing, which may **optionally** be narrowed to a particular set according to the AttributeTypes you are interested in                         |
- | `plays()`                           | Array of *Role*         | Returns the Roles that this Thing is currently playing                                                                                                                            |
- | **N.I. --**`keys(...Attributetype)` | Array of *Attribute*    | Returns a collection of Attribute attached to this Thing as a key, which may **optionally** be narrowed to a particular set according to the AttributeTypes you are interested in |
- | `attribute(Attribute)`              | *void*                  | Attaches the provided Attribute to this Thing                                                                                                                                     |
- | `deleteAttribute(Attribute)`        | *void*                  | Removes the provided Attribute from this Thing                                                                                                                                    |
+ | Method Name                    | Return type             | Description                                                                                                                                                                       |
+ | ------------------------------ | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+ | `isInferred()`                 | *Boolean*               | Returns `true` if this Thing is inferred by Reasoner, `false` otherwise                                                                                                           |
+ | `type()`                       | *Type*                  | Returns a Type which is the type of this Thing. This Thing is an instance of that type.                                                                                           |
+ | `relationships(...Role)`       | Array of *Relationship* | Returns Relationships which this Thing takes part in, which may **optionally** be narrowed to a particular set according to the Roles you are interested in                       |
+ | `attributes(...AttributeType)` | Array of *Attribute*    | Returns Attributes attached to this Thing, which may **optionally** be narrowed to a particular set according to the AttributeTypes you are interested in                         |
+ | `plays()`                      | Array of *Role*         | Returns the Roles that this Thing is currently playing                                                                                                                            |
+ | `keys(...Attributetype)`       | Array of *Attribute*    | Returns a collection of Attribute attached to this Thing as a key, which may **optionally** be narrowed to a particular set according to the AttributeTypes you are interested in |
+ | `attribute(Attribute)`         | *void*                  | Attaches the provided Attribute to this Thing                                                                                                                                     |
+ | `deleteAttribute(Attribute)`   | *void*                  | Removes the provided Attribute from this Thing                                                                                                                                    |
    
   **Attribute** 
 
@@ -200,13 +201,13 @@ A `Type` concept has all the `SchemaConcept` methods plus the following:
   An `AttributeType` concept has all the `Type` methods plus the following:
 
   
-  | Method Name             | Return type           | Description                                                                                                                                              |
-  | ----------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | `putAttribute(value)`   | *Attribute*           | Returns new or existing Attribute of this type with the provided value. The value provided must conform to the DataType specified for this AttributeType |
-  | `getAttribute(value)`   | *Attribute* or *null* | Returns the Attribute with the provided value or null if no such Attribute exists                                                                        |
-  | `getDataType()`         | *String*              | Get the data type to which instances of the AttributeType must have                                                                                      |
-  | **N.I. --**`getRegex()` | *String* or *null*    | Retrieve the regular expression to which instances of this AttributeType must conform to, or `null` if no regular expression is set                      |
-  | **N.I. --**`setRegex()` | *void*                | Set the regular expression that instances of the AttributeType must conform to                                                                           |
+  | Method Name           | Return type           | Description                                                                                                                                              |
+  | --------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | `putAttribute(value)` | *Attribute*           | Returns new or existing Attribute of this type with the provided value. The value provided must conform to the DataType specified for this AttributeType |
+  | `getAttribute(value)` | *Attribute* or *null* | Returns the Attribute with the provided value or null if no such Attribute exists                                                                        |
+  | `getDataType()`       | *String*              | Get the data type to which instances of the AttributeType must have                                                                                      |
+  | `getRegex()`          | *String* or *null*    | Retrieve the regular expression to which instances of this AttributeType must conform to, or `null` if no regular expression is set                      |
+  | `setRegex()`          | *void*                | Set the regular expression that instances of the AttributeType must conform to                                                                           |
    
   **RelationshipType**  
 
