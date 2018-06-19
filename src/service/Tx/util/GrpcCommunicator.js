@@ -1,30 +1,25 @@
-const AsyncBlockingQueue = require("./AsyncBlockingQueue");
 
 function GrpcCommunicator(stream) {
   this.stream = stream;
-  this.response = new AsyncBlockingQueue();
-  this.rejectOnError = null;
-  this.resolveOnEnd = null
+  this.pending = [];
 
   this.stream.on("data", resp => {
-    this.response.add(resp);
+    this.pending.shift().resolve(resp);
   });
 
   this.stream.on("error", err => {
-    this.rejectOnError(err)
+    this.pending.shift().reject(err);
   });
 
   this.stream.on('status', (e) => {
-    this.rejectOnError(e)
+    if (pending.length) this.pending.shift().reject(e);
   })
 }
 
 GrpcCommunicator.prototype.send = async function (request) {
-  return new Promise(async (resolve, reject) => {
-    this.rejectOnError = reject;
+  return new Promise((resolve, reject) => {
+    this.pending.push({ resolve, reject });
     this.stream.write(request);
-    const response = await this.response.pop();
-    resolve(response);
   })
 };
 
