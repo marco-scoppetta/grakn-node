@@ -1,12 +1,28 @@
 const environment = require('./support/GraknTestEnvironment');
-const session = environment.session();
+let session;
+let tx;
+
+beforeAll(() => {
+    session = environment.session();
+});
+
+afterAll(async () => {
+    await environment.tearDown();
+});
+
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
 
 describe("Entity type methods", () => {
 
     test("addEntity", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const personType = await tx.putEntityType("person");
         const person = await personType.addEntity();
         expect(person.isEntity()).toBeTruthy();
-    }, environment.integrationTestsTimeout());
+    });
 });

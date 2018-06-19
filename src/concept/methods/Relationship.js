@@ -31,10 +31,7 @@ const methods = {
     }
   },
   addRolePlayer: function (role, thing) { return this.txService.setRolePlayer(this.id, role, thing); },
-  removeRolePlayer: function (role, thing) { return this.txService.unsetRolePlayer(this.id, role, thing); },
-  isEntity: () => false,
-  isRelationship: () => true,
-  isAttribute: () => false
+  removeRolePlayer: function (role, thing) { return this.txService.unsetRolePlayer(this.id, role, thing); }
 };
 
 module.exports = {

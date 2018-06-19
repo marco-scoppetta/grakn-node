@@ -1,38 +1,71 @@
 
+
+/**
+ * This is produced by GraknSession and allows the user to construct and perform
+ * basic look ups to the knowledge base. This also allows the execution of Graql queries.
+ * 
+ * @param {Object} txService Object implementing all the functionalities of gRPC Tx service as defined in grakn.proto
+ */
 function GraknTx(txService) {
     this.txService = txService;
 }
 
-GraknTx.prototype.execute = async function executeQuery(query) {
-    return await this.txService.execute(query);
+/**
+ * Executes a given Graql query on the current keyspace
+ * @param {String} query String representing a Graql query 
+ */
+GraknTx.prototype.execute = function executeQuery(query) {
+    return this.txService.execute(query);
 };
 
+/**
+ * Commits any changes to the graph and closes the transaction. The user must use the GraknSession to
+ * get a new open transaction.
+ */
 GraknTx.prototype.commit = async function () {
-    return this.txService.commit();
+    await this.txService.commit();
+    return this.close();
 }
-GraknTx.prototype.getConcept = async function (conceptId) {
+
+/**
+ * Get the Concept with identifier provided, if it exists.
+ * 
+ * @param {String} conceptId A unique identifier for the Concept in the graph.
+ */
+GraknTx.prototype.getConcept = function (conceptId) {
     return this.txService.getConcept(conceptId);
 }
-GraknTx.prototype.getSchemaConcept = async function (label) {
+
+GraknTx.prototype.getSchemaConcept = function (label) {
     return this.txService.getSchemaConcept(label);
 }
-GraknTx.prototype.getAttributesByValue = async function (attributeValue) {
-    return this.txService.getAttributesByValue(attributeValue);
+
+GraknTx.prototype.getAttributesByValue = function (attributeValue, dataType) {
+    return this.txService.getAttributesByValue(attributeValue, dataType);
 }
-GraknTx.prototype.putEntityType = async function (label) {
+
+GraknTx.prototype.putEntityType = function (label) {
     return this.txService.putEntityType(label);
 }
-GraknTx.prototype.putRelationshipType = async function (label) {
+
+GraknTx.prototype.putRelationshipType = function (label) {
     return this.txService.putRelationshipType(label);
 }
-GraknTx.prototype.putAttributeType = async function (value, type) {
-    return this.txService.putAttributeType(value, type);
+
+GraknTx.prototype.putAttributeType = function (value, dataType) {
+    return this.txService.putAttributeType(value, dataType);
 }
-GraknTx.prototype.putRole = async function (label) {
+
+GraknTx.prototype.putRole = function (label) {
     return this.txService.putRole(label);
 }
-GraknTx.prototype.putRule = async function (rule) {
+
+GraknTx.prototype.putRule = function (rule) {
     return this.txService.putRule(rule);
+}
+
+GraknTx.prototype.close = function () {
+    return this.txService.close();
 }
 
 module.exports = GraknTx;

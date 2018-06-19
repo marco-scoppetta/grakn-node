@@ -1,10 +1,26 @@
 const environment = require('./support/GraknTestEnvironment');
-const session = environment.session();
+let session;
+let tx;
+
+beforeAll(() => {
+    session = environment.session();
+});
+
+afterAll(async () => {
+    await environment.tearDown();
+});
+
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
 
 describe("Relationsihp methods", () => {
 
     test("allRolePlayers && rolePlayers with 2 roles with 1 player each", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -20,10 +36,9 @@ describe("Relationsihp methods", () => {
         Array.from(map.values()).forEach(set => { expect(Array.from(set).length).toBe(1); });
         const rolePlayers = await relationship.rolePlayers();
         expect(rolePlayers.length).toBe(2);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("allRolePlayers && rolePlayers with 1 role with 2 players", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -38,10 +53,9 @@ describe("Relationsihp methods", () => {
         Array.from(map.values()).forEach(set => { expect(Array.from(set).length).toBe(2); });
         const rolePlayers = await relationship.rolePlayers();
         expect(rolePlayers.length).toBe(2);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("allRolePlayers && rolePlayers with 2 roles with the same player", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -56,10 +70,9 @@ describe("Relationsihp methods", () => {
         Array.from(map.values()).forEach(set => { expect(Array.from(set).length).toBe(1); });
         const rolePlayers = await relationship.rolePlayers();
         expect(rolePlayers.length).toBe(1);
-    }, environment.integrationTestsTimeout());
+    });
 
     test("addRolePlayer && removeRolePlayer && rolePlayers", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -76,10 +89,9 @@ describe("Relationsihp methods", () => {
         const rolePlayersRemoved = await relationship.rolePlayers();
         expect(rolePlayersRemoved.length).toBe(0);
 
-    }, environment.integrationTestsTimeout());
+    });
 
     test("rolePlayers(...Role)", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const relationshipType = await tx.putRelationshipType('parenthood');
         const relationship = await relationshipType.addRelationship();
         const parentRole = await tx.putRole('parent');
@@ -97,5 +109,5 @@ describe("Relationsihp methods", () => {
         expect(player.id).toBe(child.id);
         const doubleRolePlayers = await relationship.rolePlayers(childRole, parentRole);
         expect(doubleRolePlayers.length).toBe(2);
-    }, environment.integrationTestsTimeout());
+    });
 });

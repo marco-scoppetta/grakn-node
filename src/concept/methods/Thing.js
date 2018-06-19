@@ -16,9 +16,9 @@ const methods = {
       return this.txService.getAttributes(this.id);
     }
   },
-  keys: function (...keys) {
-    if (keys.length > 0) {
-      return this.txService.getKeysByTypes(this.id, keys);
+  keys: function (...types) {
+    if (types.length > 0) {
+      return this.txService.getKeysByTypes(this.id, types);
     } else {
       return this.txService.getKeys(this.id);
     }

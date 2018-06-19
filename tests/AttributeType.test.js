@@ -1,10 +1,26 @@
 const environment = require('./support/GraknTestEnvironment');
-const session = environment.session();
+let session;
+let tx;
+
+beforeAll(() => {
+    session = environment.session();
+});
+
+afterAll(async () => {
+    await environment.tearDown();
+});
+
+beforeEach(async () => {
+    tx = await session.open(session.txType.WRITE);
+})
+
+afterEach(() => {
+    tx.close();
+});
 
 describe("Attribute type methods", () => {
 
     test("putAttribute", async () => {
-        const tx = await session.open(session.txType.WRITE);
         const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
         const attribute = await attributeType.putAttribute('Marco');
         expect(attribute.isAttribute()).toBeTruthy();
@@ -20,10 +36,9 @@ describe("Attribute type methods", () => {
         const doubleAttribute = await doubleAttributeType.putAttribute(11.58);
         expect(await doubleAttribute.getValue()).toBe(11.58);
         expect(await doubleAttribute.dataType()).toBe('Double');
-    }, environment.integrationTestsTimeout());
+    });
 
     test('getDataType', async () => {
-        const tx = await session.open(session.txType.WRITE);
         const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
         expect(await attributeType.getDataType()).toBe('String');
 
@@ -32,15 +47,25 @@ describe("Attribute type methods", () => {
 
         const doubleAttributeType = await tx.putAttributeType("length", session.dataType.DOUBLE);
         expect(await doubleAttributeType.getDataType()).toBe('Double');
-    }, environment.integrationTestsTimeout());
+    });
 
     test('getAttribute', async () => {
-        const tx = await session.open(session.txType.WRITE);
         const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
         await attributeType.putAttribute('Marco');
         const attribute = await attributeType.getAttribute('Marco');
         expect(attribute.isAttribute()).toBeTruthy();
         const nullAttribute = await attributeType.getAttribute('Giangiovannino');
         expect(nullAttribute).toBeNull();
-    }, environment.integrationTestsTimeout());
+    });
+
+    test('set/get regex', async () => {
+        const attributeType = await tx.putAttributeType("id", session.dataType.STRING);
+        const nullRegex = await attributeType.getRegex();
+        expect(nullRegex).toBeNull();
+
+        await attributeType.setRegex("(good|bad)-dog");
+        const regex = await attributeType.getRegex();
+
+        expect(regex).toBe("(good|bad)-dog");
+    });
 });
