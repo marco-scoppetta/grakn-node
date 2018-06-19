@@ -111,7 +111,6 @@ const methods = {
   },
 
   // Rule
-
   getWhen: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setGetwhen(UNIT_MESSAGE);
@@ -138,7 +137,6 @@ const methods = {
   },
 
   // Type
-
   getInstances: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setGetinstances(UNIT_MESSAGE);
@@ -201,7 +199,6 @@ const methods = {
   },
 
   // Entity Type
-
   addEntity: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setAddentity(UNIT_MESSAGE);
@@ -209,8 +206,6 @@ const methods = {
   },
 
   // Relationship Type
-
-
   addRelationship: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setAddrelationship(UNIT_MESSAGE);
@@ -387,6 +382,98 @@ const methods = {
     conceptMethod.setGetdatatypeofattribute(UNIT_MESSAGE);
     return RunConceptMethodRequest(conceptId, conceptMethod);
   },
+
+  //GraknTx methods
+  getConcept: function (conceptId) {
+    const txRequest = new messages.TxRequest();
+    const conceptIdMessage = new messages.ConceptId();
+    conceptIdMessage.setValue(conceptId);
+    txRequest.setGetconcept(conceptIdMessage);
+    return txRequest;
+  },
+  getSchemaConcept: function (label) {
+    const txRequest = new messages.TxRequest();
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    txRequest.setGetschemaconcept(labelMessage);
+    return txRequest;
+  },
+  putEntityType: function (label) {
+    const txRequest = new messages.TxRequest();
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    txRequest.setPutentitytype(labelMessage);
+    return txRequest;
+  },
+  putRelationshipType: function (label) {
+    const txRequest = new messages.TxRequest();
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    txRequest.setPutrelationshiptype(labelMessage);
+    return txRequest;
+  },
+  putRole: function (label) {
+    const txRequest = new messages.TxRequest();
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    txRequest.setPutrole(labelMessage);
+    return txRequest;
+  },
+  putAttributeType: function (label, dataType) {
+    if (dataType == null) throw new Error('Datatype of AttributeType not specified.');
+    const txRequest = new messages.TxRequest();
+    const putMessage = new messages.PutAttributeType();
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    putMessage.setLabel(labelMessage);
+    putMessage.setDatatype(dataType);
+    txRequest.setPutattributetype(putMessage);
+    return txRequest;
+  },
+  getAttributesByValue: function (value, dataType) {
+    if (dataType == null) throw new Error('Datatype of AttributeType not specified.');
+    const txRequest = new messages.TxRequest();
+    const attributeValue = new messages.AttributeValue();
+    setAttributeValue(attributeValue, dataType, value)
+    txRequest.setGetattributesbyvalue(attributeValue);
+    return txRequest;
+  },
+  openTx: function (keyspace, txType, credentials) {
+    const openRequest = new messages.Open();
+    const txRequest = new messages.TxRequest();
+    const messageKeyspace = new messages.Keyspace();
+    messageKeyspace.setValue(keyspace);
+    openRequest.setKeyspace(messageKeyspace);
+    openRequest.setTxtype(txType);
+    if (credentials) {
+      openRequest.setUsername(credentials.username);
+      openRequest.setPassword(credentials.password);
+    }
+    txRequest.setOpen(openRequest);
+    return txRequest;
+  },
+  commit: function () {
+    const commitRequest = new messages.Commit();
+    const txRequest = new messages.TxRequest();
+    txRequest.setCommit(commitRequest);
+    return txRequest;
+  },
+  executeQuery: function (query) {
+    const txRequest = new messages.TxRequest();
+    const executeQuery = new messages.ExecQuery();
+    const queryRequest = new messages.Query();
+    queryRequest.setValue(query);
+    executeQuery.setQuery(queryRequest);
+    txRequest.setExecquery(executeQuery);
+    return txRequest;
+  },
+  next: function (iteratorId) {
+    const nextMessage = new messages.Next();
+    nextMessage.setIteratorid(iteratorId);
+    const txRequest = new messages.TxRequest();
+    txRequest.setNext(nextMessage);
+    return txRequest;
+  }
 
 };
 

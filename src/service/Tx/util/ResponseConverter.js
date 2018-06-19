@@ -1,4 +1,4 @@
-const GrpcIteratorFactory = require("./util/GrpcIteratorFactory");
+const GrpcIteratorFactory = require("./GrpcIteratorFactory");
 
 function ResponseConverter(conceptFactory, communicator) {
     this.iteratorFactory = new GrpcIteratorFactory(communicator);
@@ -27,12 +27,12 @@ ResponseConverter.prototype.conceptsFromIterator = async function (grpcResponse)
 }
 
 ResponseConverter.prototype.conceptFromResponse = function (response) {
-    const concept = response.getConceptresponse().getConcept();
+    const concept = (response.hasConceptresponse()) ? response.getConceptresponse().getConcept() : response.getConcept();
     return this.conceptFactory.createConcept(concept)
 }
 
 ResponseConverter.prototype.conceptFromOptional = function (response) {
-    const optionalConcept = response.getConceptresponse().getOptionalconcept();
+    const optionalConcept = (response.hasConceptresponse()) ? response.getConceptresponse().getOptionalconcept() : response.getOptionalconcept();
     return (optionalConcept.hasPresent()) ? this.conceptFactory.createConcept(optionalConcept.getPresent()) : null;
 }
 
@@ -73,5 +73,49 @@ ResponseConverter.prototype.getAttributeValueFromResponse = function (resp) {
     if (attrValue.hasDouble()) return attrValue.getDouble();
     if (attrValue.hasDate()) return attrValue.getDate();
 }
+
+ResponseConverter.prototype.getOptionalRegex = function (response) {
+    const optionalRegex = response.getConceptresponse().getOptionalregex();
+    return (optionalRegex.hasPresent()) ? optionalRegex.getPresent() : null;
+}
+
+ResponseConverter.prototype.getOptionalDataType = function (response) {
+    const optionalDatatype = response.getConceptresponse().getOptionaldatatype();
+    return (optionalDatatype.hasPresent()) ? this.dataTypeToString(optionalDatatype.getPresent()) : null;
+}
+
+
+function parseQueryResult(queryResult, factory) {
+    if (queryResult.hasOtherresult()) {
+        // compute or aggregate query
+        return JSON.parse(queryResult.getOtherresult());
+    } else {
+        const answerMap = new Map();
+        queryResult.getAnswer().getAnswerMap().forEach((grpcConcept, key) => {
+            answerMap.set(key, factory.createConcept(grpcConcept));
+        });
+        return answerMap;
+    }
+};
+
+ResponseConverter.prototype.executeResponse = async function (resp) {
+    const resultArray = [];
+    if (resp.hasIteratorid()) {
+        const iterator = this.iteratorFactory.createQueryIterator(resp.getIteratorid());
+        let nextResult = await iterator.nextResult();
+        while (nextResult) {
+            const parsedResult = parseQueryResult(nextResult, this.conceptFactory);
+            resultArray.push(parsedResult);
+            nextResult = await iterator.nextResult();
+        }
+    }
+    if (resp.hasQueryresult()) {
+        const queryResult = resp.getQueryresult();
+        const parsedResult = parseQueryResult(queryResult, this.conceptFactory);
+        resultArray.push(parsedResult);
+    }
+    return resultArray;
+};
+
 
 module.exports = ResponseConverter;
