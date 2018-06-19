@@ -19,30 +19,32 @@ You will also need access to a Grakn database. Head [here](https://grakn.ai/page
 Begin by importing the Grakn session:
 
 ```
->>> const GraknSession = require('grakn');
+const GraknSession = require('grakn');
 ```
 
 Now you can create a new session and open a new Grakn transaction:
 
 ```
->>> const session = new GraknSession('localhost:48555', 'keyspace');
->>> const graknTx = await session.open(session.txType.WRITE);
+const session = new GraknSession('localhost:48555', 'keyspace');
+const graknTx = await session.open(session.txType.WRITE);
 ```
 
 You can write to the graph:
 
 ```
->>> graknTx.execute('insert person sub entity;').then((resp) => { console.log(resp.baseType); });
+tx.execute('insert person sub entity;').then((resp) => { console.log(resp.baseType); });
 // "ENTITY_TYPE"
+tx.close();
 ```
 
-Execute Graql query (inside an `async` function):
+Execute Graql query (this example works inside an `async` function):
 
 ```
 const tx = await session.open(client.txType.WRITE);
 const result = await tx.execute("match $x isa person; limit 10; get;");
 const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce((a, c) => a.concat(c), []);
 // `concepts` will be an array containing 10 Entity objects
+tx.close();
 ```
 
 # API Reference
@@ -50,7 +52,8 @@ const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce(
 First create a new GraknSession with 
 
 ```
-const session = new GraknSession(String URI, String keyspace)
+// URI must be contain host address and gRPC port of a running Grakn instance, e.g. "localhost:48555"
+const session = new GraknSession(String URI, String keyspace);
 ```
 
 on the returned session you will then be able to call the following methods:
