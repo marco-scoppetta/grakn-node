@@ -52,7 +52,7 @@ tx.close();
 First create a new GraknSession with 
 
 ```
-// URI must be contain host address and gRPC port of a running Grakn instance, e.g. "localhost:48555"
+// URI must contain host address and gRPC port of a running Grakn instance, e.g. "localhost:48555"
 const session = new GraknSession(String URI, String keyspace);
 ```
 
