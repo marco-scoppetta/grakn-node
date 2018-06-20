@@ -60,8 +60,8 @@ GraknTx.prototype.putRole = function (label) {
     return this.txService.putRole(label);
 }
 
-GraknTx.prototype.putRule = function (rule) {
-    return this.txService.putRule(rule);
+GraknTx.prototype.putRule = function (label, when, then) {
+    return this.txService.putRule(label, when, then);
 }
 
 GraknTx.prototype.close = function () {

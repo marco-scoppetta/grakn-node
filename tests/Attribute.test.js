@@ -32,6 +32,22 @@ describe("Attribute methods", () => {
         expect(await doubleAttribute.getValue()).toBe(11.58);
     });
 
+    // TODO rewrite test when fixed on the server 
+    // test.only("getValue Date", async () => {
+    //     const dateType = await tx.putAttributeType("birth-date", session.dataType.DATE);
+    //     const personType = await tx.putEntityType('person');
+    //     await personType.attribute(dateType);
+
+    //     const insertionResult = await tx.execute("insert $x isa person, has birth-date 2018-08-06;");
+    //     const concepts = insertionResult.map(map => Array.from(map.values())).reduce((a, c) => a.concat(c), []);
+    //     const person = concepts[0];
+    //     const attrs = await person.attributes();
+    //     const date = attrs[0];
+    //     // const setter = (new Date('2018-08-06')).getTime() / 1000;
+    //     const value = await date.getValue();
+    //     const dateNew = await dateType.putAttribute(value);
+    // });
+
     test("ownerInstances", async () => {
         const personType = await tx.putEntityType('person');
         const animalType = await tx.putEntityType('animal');

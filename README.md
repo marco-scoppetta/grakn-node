@@ -29,14 +29,6 @@ const session = new GraknSession('localhost:48555', 'keyspace');
 const graknTx = await session.open(session.txType.WRITE);
 ```
 
-You can write to the graph:
-
-```
-tx.execute('insert person sub entity;').then((resp) => { console.log(resp.baseType); });
-// "ENTITY_TYPE"
-tx.close();
-```
-
 Execute Graql query (this example works inside an `async` function):
 
 ```
@@ -82,7 +74,7 @@ Once obtained a `GraknTx` you will be able to:
 | `putRelationshipType(String label)`                      | *RelationshipType*                | Create a new RelationshipType with super-type relation, or return a pre-existing RelationshipType with the specified label                                    |
 | `putAttributeType(String label, session.dataType)`       | *AttributeType*                   | Create a new AttributeType with super-type attribute, or return a pre-existing AttributeType with the specified label and DataType                            |
 | `putRole(String label)`                                  | *Role*                            | Create a Role, or return a pre-existing Role, with the specified label.                                                                                       |
-| **N.I. --**`putRule()`                                   | *Rule*                            |                                                                                                                                                               |  |
+| `putRule(String label, String when, String then)`        | *Rule*                            | Create a Rule, or return a pre-existing Rule, with the specified label                                                                                        |  |
 
 **Concepts hierarchy** 
 
@@ -245,7 +237,7 @@ A `Type` concept has all the `SchemaConcept` methods plus the following:
 
 A `Rule` concept has all the `SchemaConcept` methods plus the following:  
   
-| Method Name             | Return type        | Description                                                                                                |
-| ----------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------- |
-| **N.I. --** `getWhen()` | *String* or *null* | Retrieves the when part of this Rule. When this query is satisfied the "then" part of the rule is executed |
-| **N.I. --** `getThen()` | *String* or *null* | Retrieves the then part of this Rule. This query is executed when the "when" part of the rule is satisfied |
+| Method Name | Return type | Description                                                                                                |
+| ----------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
+| `getWhen()` | *String*    | Retrieves the when part of this Rule. When this query is satisfied the "then" part of the rule is executed |
+| `getThen()` | *String*    | Retrieves the then part of this Rule. This query is executed when the "when" part of the rule is satisfied |

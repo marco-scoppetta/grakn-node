@@ -79,6 +79,11 @@ ResponseConverter.prototype.getOptionalRegex = function (response) {
     return (optionalRegex.hasPresent()) ? optionalRegex.getPresent() : null;
 }
 
+ResponseConverter.prototype.getOptionalPattern = function (response) {
+    const optionalPattern = response.getConceptresponse().getOptionalpattern();
+    return (optionalPattern.hasPresent()) ? optionalPattern.getPresent().getValue() : null;
+}
+
 ResponseConverter.prototype.getOptionalDataType = function (response) {
     const optionalDatatype = response.getConceptresponse().getOptionaldatatype();
     return (optionalDatatype.hasPresent()) ? this.dataTypeToString(optionalDatatype.getPresent()) : null;

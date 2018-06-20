@@ -81,6 +81,15 @@ describe("GraknTx methods", () => {
     expect(role.baseType).toBe("ROLE");
   });
 
+  test.only("putRule", async () => {
+    const label = "genderisedParentship";
+    const when = "{(parent: $p, child: $c) isa parentship; $p has gender 'female'; $c has gender 'male';}"
+    const then = "{(mother: $p, son: $c) isa parentship;}";
+    const rule = await tx.putRule(label, when, then);
+    expect(await rule.getLabel()).toBe(label);
+    expect(rule.isRule()).toBeTruthy();
+  });
+
   test("getAttributesByValue", async () => {
     const firstNameAttributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
     const middleNameAttributeType = await tx.putAttributeType("middlename", session.dataType.STRING);

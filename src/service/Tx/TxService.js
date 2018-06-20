@@ -62,8 +62,16 @@ TxService.prototype.setDirectSuperConcept = function (id, superConcept) {
 };
 
 // Rule 
-TxService.prototype.getWhen = function (id) { };
-TxService.prototype.getThen = function (id) { };
+TxService.prototype.getWhen = function (id) {
+    const txRequest = TxRequestBuilder.getWhen(id);
+    return this.communicator.send(txRequest)
+        .then(response => this.respConverter.getOptionalPattern(response));
+};
+TxService.prototype.getThen = function (id) {
+    const txRequest = TxRequestBuilder.getThen(id);
+    return this.communicator.send(txRequest)
+        .then(response => this.respConverter.getOptionalPattern(response));
+};
 
 // Role
 TxService.prototype.getRelationshipTypesThatRelateRole = function (id) {
@@ -311,6 +319,12 @@ TxService.prototype.putRelationshipType = function (label) {
 
 TxService.prototype.putRole = function (label) {
     const txRequest = TxRequestBuilder.putRole(label);
+    return this.communicator.send(txRequest)
+        .then(response => this.respConverter.conceptFromResponse(response));
+}
+
+TxService.prototype.putRule = function (label, when, then) {
+    const txRequest = TxRequestBuilder.putRule(label, when, then);
     return this.communicator.send(txRequest)
         .then(response => this.respConverter.conceptFromResponse(response));
 }
