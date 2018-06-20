@@ -116,7 +116,6 @@ const methods = {
     conceptMethod.setGetwhen(UNIT_MESSAGE);
     return RunConceptMethodRequest(conceptId, conceptMethod);
   },
-
   getThen: function (conceptId) {
     const conceptMethod = new messages.ConceptMethod();
     conceptMethod.setGetthen(UNIT_MESSAGE);
@@ -417,6 +416,21 @@ const methods = {
     const labelMessage = new messages.Label();
     labelMessage.setValue(label);
     txRequest.setPutrole(labelMessage);
+    return txRequest;
+  },
+  putRule: function (label, when, then) {
+    const labelMessage = new messages.Label();
+    labelMessage.setValue(label);
+    const whenMessage = new messages.Pattern();
+    const thenMessage = new messages.Pattern();
+    whenMessage.setValue(when);
+    thenMessage.setValue(then);
+    const putMessage = new messages.PutRule();
+    putMessage.setLabel(labelMessage);
+    putMessage.setWhen(whenMessage);
+    putMessage.setThen(thenMessage);
+    const txRequest = new messages.TxRequest();
+    txRequest.setPutrule(putMessage);
     return txRequest;
   },
   putAttributeType: function (label, dataType) {
