@@ -1,17 +1,17 @@
-const environment = require('./support/GraknTestEnvironment');
+const env = require('./support/GraknTestEnvironment');
 let session;
 let tx;
 
 beforeAll(() => {
-    session = environment.session();
+    session = env.session();
 });
 
 afterAll(async () => {
-    await environment.tearDown();
+    await env.tearDown();
 });
 
 beforeEach(async () => {
-    tx = await session.open(session.txType.WRITE);
+    tx = await session.open(env.txType().WRITE);
 })
 
 afterEach(() => {
@@ -88,7 +88,7 @@ describe("Thing methods", () => {
 
     test("set/delete/get attributes", async () => {
         const personType = await tx.putEntityType('person');
-        const attrType = await tx.putAttributeType('name', session.dataType.STRING);
+        const attrType = await tx.putAttributeType('name', env.dataType().STRING);
         await personType.attribute(attrType);
         const person = await personType.addEntity();
         const name = await attrType.putAttribute('Marco');
@@ -103,9 +103,9 @@ describe("Thing methods", () => {
 
     test("attributes(...AttributeType)", async () => {
         const personType = await tx.putEntityType('person');
-        const attrType = await tx.putAttributeType('name', session.dataType.STRING);
-        const attrMarriedType = await tx.putAttributeType('married', session.dataType.BOOLEAN);
-        const whateverType = await tx.putAttributeType('whatever', session.dataType.FLOAT);
+        const attrType = await tx.putAttributeType('name', env.dataType().STRING);
+        const attrMarriedType = await tx.putAttributeType('married', env.dataType().BOOLEAN);
+        const whateverType = await tx.putAttributeType('whatever', env.dataType().FLOAT);
         await personType.attribute(attrType);
         await personType.attribute(attrMarriedType);
         const person = await personType.addEntity();
@@ -124,8 +124,8 @@ describe("Thing methods", () => {
 
     test('keys(...AttributeType)', async () => {
         const personType = await tx.putEntityType('person');
-        const nameType = await tx.putAttributeType('name', session.dataType.STRING);
-        const surnameType = await tx.putAttributeType('surname', session.dataType.STRING);
+        const nameType = await tx.putAttributeType('name', env.dataType().STRING);
+        const surnameType = await tx.putAttributeType('surname', env.dataType().STRING);
 
         await personType.key(nameType);
         await personType.attribute(surnameType);

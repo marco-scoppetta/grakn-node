@@ -1,17 +1,17 @@
-const environment = require('./support/GraknTestEnvironment');
+const env = require('./support/GraknTestEnvironment');
 let session;
 let tx;
 
 beforeAll(() => {
-  session = environment.session();
+  session = env.session();
 });
 
 afterAll(async () => {
-  await environment.tearDown();
+  await env.tearDown();
 });
 
 beforeEach(async () => {
-  tx = await session.open(session.txType.WRITE);
+  tx = await session.open(env.txType().WRITE);
 })
 
 afterEach(() => {
@@ -71,7 +71,7 @@ describe("GraknTx methods", () => {
   });
 
   test("putAttributeType", async () => {
-    const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
+    const attributeType = await tx.putAttributeType("firstname", env.dataType().STRING);
     expect(attributeType.isAttributeType()).toBeTruthy();
   });
 
@@ -91,11 +91,11 @@ describe("GraknTx methods", () => {
   });
 
   test("getAttributesByValue", async () => {
-    const firstNameAttributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
-    const middleNameAttributeType = await tx.putAttributeType("middlename", session.dataType.STRING);
+    const firstNameAttributeType = await tx.putAttributeType("firstname", env.dataType().STRING);
+    const middleNameAttributeType = await tx.putAttributeType("middlename", env.dataType().STRING);
     const a1 = await firstNameAttributeType.putAttribute('James');
     const a2 = await middleNameAttributeType.putAttribute('James');
-    const attributes = await tx.getAttributesByValue('James', session.dataType.STRING);
+    const attributes = await tx.getAttributesByValue('James', env.dataType().STRING);
     expect(attributes.length).toBe(2);
     expect(attributes.filter(a => a.id === a1.id).length).toBe(1);
     expect(attributes.filter(a => a.id === a2.id).length).toBe(1);
