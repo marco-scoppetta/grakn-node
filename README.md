@@ -26,13 +26,13 @@ Now you can create a new session and open a new Grakn transaction:
 
 ```
 const session = Grakn.session('localhost:48555', 'keyspace');
-const graknTx = await session.open(session.txType.WRITE);
+const graknTx = await session.open(Grakn.txType.WRITE);
 ```
 
 Execute Graql query (this example works inside an `async` function):
 
 ```
-const tx = await session.open(client.txType.WRITE);
+const tx = await session.open(Grakn.txType.WRITE);
 const result = await tx.execute("match $x isa person; limit 10; get;");
 const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce((a, c) => a.concat(c), []);
 // `concepts` will be an array containing 10 Entity objects
@@ -45,36 +45,36 @@ First create a new GraknSession with
 
 ```
 // URI must contain host address and gRPC port of a running Grakn instance, e.g. "localhost:48555"
-const session = new GraknSession(String URI, String keyspace);
+const session = Grakn.session(String URI, String keyspace);
 ```
 
 on the returned session you will then be able to call the following methods:
 
 **GraknSession**
 
-| Method Name            | Return type | Description                                                            |
-| ---------------------- | ----------- | ---------------------------------------------------------------------- |
-| `open(session.txType)` | *GraknTx*   | Return a new or existing GraknTx bound to the keyspace of this session |
-| `deleteKeyspace()`     | *void*      | Deletes keyspace of this session                                       |
+| Method Name          | Return type | Description                                                            |
+| -------------------- | ----------- | ---------------------------------------------------------------------- |
+| `open(Grakn.txType)` | *GraknTx*   | Return a new or existing GraknTx bound to the keyspace of this session |
+| `deleteKeyspace()`   | *void*      | Deletes keyspace of this session                                       |
  
 
 Once obtained a `GraknTx` you will be able to:
 
  **GraknTx**  
  
-| Method Name                                              | Return type                       | Description                                                                                                                                                   |
-| -------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `execute(String graqlQuery)`                             | Array of Map<*String*, *Concept*> | Executes a Graql query on the session keyspace. It returns a list of Maps, in each map the key represents the Graql variable specified in the query           |
-| `commit()`                                               | *void*                            | Commit current GraknTx, persisting changes in the graph. After committing, the transaction will be closed and you will need to get a new one from the session |
-| `close()`                                                | *void*                            | Closes current GraknTx without committing. This makes the transaction unusable.                                                                               |
-| `getConcept(String conceptId)`                           | *Concept*                         | Retrieves a Concept by ConceptId                                                                                                                              |
-| `getSchemaConcept(String label)`                         | *SchemaConcept*                   | Retrieves a SchemaConcept by label                                                                                                                            |
-| `getAttributesByValue(attributeValue, session.dataType)` | Array of *Attribute*              | Get all Attributes holding the value provided, if any exists                                                                                                  |
-| `putEntityType(String label)`                            | *EntityType*                      | Create a new EntityType with super-type entity, or return a pre-existing EntityType with the specified label                                                  |
-| `putRelationshipType(String label)`                      | *RelationshipType*                | Create a new RelationshipType with super-type relation, or return a pre-existing RelationshipType with the specified label                                    |
-| `putAttributeType(String label, session.dataType)`       | *AttributeType*                   | Create a new AttributeType with super-type attribute, or return a pre-existing AttributeType with the specified label and DataType                            |
-| `putRole(String label)`                                  | *Role*                            | Create a Role, or return a pre-existing Role, with the specified label.                                                                                       |
-| `putRule(String label, String when, String then)`        | *Rule*                            | Create a Rule, or return a pre-existing Rule, with the specified label                                                                                        |  |
+| Method Name                                            | Return type                       | Description                                                                                                                                                   |
+| ------------------------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `execute(String graqlQuery)`                           | Array of Map<*String*, *Concept*> | Executes a Graql query on the session keyspace. It returns a list of Maps, in each map the key represents the Graql variable specified in the query           |
+| `commit()`                                             | *void*                            | Commit current GraknTx, persisting changes in the graph. After committing, the transaction will be closed and you will need to get a new one from the session |
+| `close()`                                              | *void*                            | Closes current GraknTx without committing. This makes the transaction unusable.                                                                               |
+| `getConcept(String conceptId)`                         | *Concept*                         | Retrieves a Concept by ConceptId                                                                                                                              |
+| `getSchemaConcept(String label)`                       | *SchemaConcept*                   | Retrieves a SchemaConcept by label                                                                                                                            |
+| `getAttributesByValue(attributeValue, Grakn.dataType)` | Array of *Attribute*              | Get all Attributes holding the value provided, if any exists                                                                                                  |
+| `putEntityType(String label)`                          | *EntityType*                      | Create a new EntityType with super-type entity, or return a pre-existing EntityType with the specified label                                                  |
+| `putRelationshipType(String label)`                    | *RelationshipType*                | Create a new RelationshipType with super-type relation, or return a pre-existing RelationshipType with the specified label                                    |
+| `putAttributeType(String label, Grakn.dataType)`       | *AttributeType*                   | Create a new AttributeType with super-type attribute, or return a pre-existing AttributeType with the specified label and DataType                            |
+| `putRole(String label)`                                | *Role*                            | Create a Role, or return a pre-existing Role, with the specified label.                                                                                       |
+| `putRule(String label, String when, String then)`      | *Rule*                            | Create a Rule, or return a pre-existing Rule, with the specified label                                                                                        |  |
 
 **Concepts hierarchy** 
 
