@@ -1,17 +1,17 @@
-const environment = require('./support/GraknTestEnvironment');
+const env = require('./support/GraknTestEnvironment');
 let session;
 let tx;
 
 beforeAll(() => {
-    session = environment.session();
+    session = env.session();
 });
 
 afterAll(async () => {
-    await environment.tearDown();
+    await env.tearDown();
 });
 
 beforeEach(async () => {
-    tx = await session.open(session.txType.WRITE);
+    tx = await session.open(env.txType().WRITE);
 })
 
 afterEach(() => {

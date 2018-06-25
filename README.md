@@ -16,16 +16,16 @@ You will also need access to a Grakn database. Head [here](https://grakn.ai/page
 
 # Quickstart
 
-Begin by importing the Grakn session:
+Begin by importing Grakn:
 
 ```
-const GraknSession = require('grakn');
+const Grakn = require('grakn');
 ```
 
 Now you can create a new session and open a new Grakn transaction:
 
 ```
-const session = new GraknSession('localhost:48555', 'keyspace');
+const session = Grakn.session('localhost:48555', 'keyspace');
 const graknTx = await session.open(session.txType.WRITE);
 ```
 

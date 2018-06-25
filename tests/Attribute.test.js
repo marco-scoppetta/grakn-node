@@ -1,17 +1,17 @@
-const environment = require('./support/GraknTestEnvironment');
+const env = require('./support/GraknTestEnvironment');
 let session;
 let tx;
 
 beforeAll(() => {
-    session = environment.session();
+    session = env.session();
 });
 
 afterAll(async () => {
-    await environment.tearDown();
+    await env.tearDown();
 });
 
 beforeEach(async () => {
-    tx = await session.open(session.txType.WRITE);
+    tx = await session.open(env.txType().WRITE);
 })
 
 afterEach(() => {
@@ -21,20 +21,20 @@ afterEach(() => {
 describe("Attribute methods", () => {
 
     test("dataType", async () => {
-        const attributeType = await tx.putAttributeType("firstname", session.dataType.STRING);
+        const attributeType = await tx.putAttributeType("firstname", env.dataType().STRING);
         const attribute = await attributeType.putAttribute('Marco');
         expect(await attribute.dataType()).toBe('String');
     });
 
     test("getValue", async () => {
-        const doubleAttributeType = await tx.putAttributeType("length", session.dataType.DOUBLE);
+        const doubleAttributeType = await tx.putAttributeType("length", env.dataType().DOUBLE);
         const doubleAttribute = await doubleAttributeType.putAttribute(11.58);
         expect(await doubleAttribute.getValue()).toBe(11.58);
     });
 
     // TODO rewrite test when fixed on the server 
     // test.only("getValue Date", async () => {
-    //     const dateType = await tx.putAttributeType("birth-date", session.dataType.DATE);
+    //     const dateType = await tx.putAttributeType("birth-date", env.dataType().DATE);
     //     const personType = await tx.putEntityType('person');
     //     await personType.attribute(dateType);
 
@@ -51,7 +51,7 @@ describe("Attribute methods", () => {
     test("ownerInstances", async () => {
         const personType = await tx.putEntityType('person');
         const animalType = await tx.putEntityType('animal');
-        const nameType = await tx.putAttributeType("name", session.dataType.STRING);
+        const nameType = await tx.putAttributeType("name", env.dataType().STRING);
         await personType.attribute(nameType);
         await animalType.attribute(nameType);
         const person = await personType.addEntity();

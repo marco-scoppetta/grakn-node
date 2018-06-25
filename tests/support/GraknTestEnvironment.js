@@ -2,7 +2,7 @@ const { spawn, spawnSync } = require('child_process');
 const { StringDecoder } = require('string_decoder');
 const decoder = new StringDecoder('utf8');
 
-const GraknSession = require("../../src/GraknSession");
+const Grakn = require("../../src/Grakn");
 
 const DEFAULT_URI = "localhost:48555";
 const VERSION = require('../../package.json').graknVersion;
@@ -15,7 +15,7 @@ function newKeyspace() {
     return 'a' + randomName;
 }
 
-const session = new GraknSession(DEFAULT_URI, TEST_KEYSPACE);
+const session = Grakn.session(DEFAULT_URI, TEST_KEYSPACE);
 
 jest.setTimeout(INTEGRATION_TESTS_TIMEOUT);
 
@@ -24,9 +24,9 @@ module.exports = {
         var process = spawnSync(SCRIPT_PATH, ['start', VERSION]);
         if (process.status != 0) {
             var err = Buffer.from(process.output[2]);
-            console.log('Failed to start test environment: ' + decoder.write(err));
+            console.log('Failed to start test env: ' + decoder.write(err));
         } else {
-            console.log('Grakn environment ready.');
+            console.log('Grakn env ready.');
         }
 
     },
@@ -34,9 +34,9 @@ module.exports = {
         var process = spawnSync(SCRIPT_PATH, ['stop']);
         if (process.status != 0) {
             var err = Buffer.from(process.output[2]);
-            console.log('Failed to stop test environment: ' + decoder.write(err));
+            console.log('Failed to stop test env: ' + decoder.write(err));
         } else {
-            console.log('Grakn environment stopped.');
+            console.log('Grakn env stopped.');
         }
     },
     newKeyspace,
@@ -44,5 +44,7 @@ module.exports = {
     tearDown: async () => {
         await session.deleteKeyspace();
         session.close();
-    }
+    },
+    dataType: () => Grakn.dataType,
+    txType: () => Grakn.txType
 }

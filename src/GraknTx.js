@@ -1,7 +1,7 @@
 
 
 /**
- * This is produced by GraknSession and allows the user to construct and perform
+ * This is produced by Grakn and allows the user to construct and perform
  * basic look ups to the knowledge base. This also allows the execution of Graql queries.
  * 
  * @param {Object} txService Object implementing all the functionalities of gRPC Tx service as defined in grakn.proto
@@ -19,7 +19,7 @@ GraknTx.prototype.execute = function executeQuery(query) {
 };
 
 /**
- * Commits any changes to the graph and closes the transaction. The user must use the GraknSession to
+ * Commits any changes to the graph and closes the transaction. The user must use the GraknSession object to
  * get a new open transaction.
  */
 GraknTx.prototype.commit = async function () {

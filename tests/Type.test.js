@@ -1,17 +1,17 @@
-const environment = require('./support/GraknTestEnvironment');
+const env = require('./support/GraknTestEnvironment');
 let session;
 let tx;
 
 beforeAll(() => {
-    session = environment.session();
+    session = env.session();
 });
 
 afterAll(async () => {
-    await environment.tearDown();
+    await env.tearDown();
 });
 
 beforeEach(async () => {
-    tx = await session.open(session.txType.WRITE);
+    tx = await session.open(env.txType().WRITE);
 })
 
 afterEach(() => {
@@ -48,7 +48,7 @@ describe("Type methods", () => {
 
     test("get/set/delete attributes", async () => {
         const type = await tx.putEntityType('person');
-        const nameType = await tx.putAttributeType('name', session.dataType.STRING);
+        const nameType = await tx.putAttributeType('name', env.dataType().STRING);
         const attrs = await type.attributes();
         expect(attrs.length).toBe(0);
         await type.attribute(nameType);
@@ -71,7 +71,7 @@ describe("Type methods", () => {
 
     test("Get/set/delete key", async () => {
         const type = await tx.putEntityType('person');
-        const nameType = await tx.putAttributeType('name', session.dataType.STRING);
+        const nameType = await tx.putAttributeType('name', env.dataType().STRING);
         const keys = await type.keys();
         expect(keys.length).toBe(0);
         await type.key(nameType);
