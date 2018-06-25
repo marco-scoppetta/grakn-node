@@ -42,11 +42,11 @@ function GrpcConceptIterator(communicator, nextRequest) {
 
 GrpcConceptIterator.prototype.nextResult = async function () {
   return await this.communicator.send(this.nextRequest)
-    .then(_handleConceptResponse)
+    .then(handleConceptResponse)
     .catch(e => { throw e; });
 };
 
-function _handleConceptResponse(response) {
+function handleConceptResponse(response) {
   if (response.hasDone()) return null;
   if (response.hasConcept()) return response.getConcept();
   throw "Unexpected response from server.";
@@ -61,11 +61,11 @@ function GrpcRolePlayerIterator(communicator, nextRequest) {
 
 GrpcRolePlayerIterator.prototype.nextResult = async function () {
   return await this.communicator.send(this.nextRequest)
-    .then(_handleRolePlayerResponse)
+    .then(handleRolePlayerResponse)
     .catch(e => { throw e; });
 };
 
-function _handleRolePlayerResponse(response) {
+function handleRolePlayerResponse(response) {
   if (response.hasDone()) return null;
   if (response.hasRoleplayer()) return response.getRoleplayer();
   throw "Unexpected response from server.";

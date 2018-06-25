@@ -15,7 +15,9 @@ function ResponseConverter(conceptFactory, communicator) {
  * @param {*} txService txService implementation needed to be injected to new concepts that will be built
  */
 ResponseConverter.prototype.conceptsFromIterator = async function (grpcResponse) {
-    const iteratorId = (grpcResponse.hasConceptresponse()) ? grpcResponse.getConceptresponse().getIteratorid() : grpcResponse.getIteratorid();
+    const iteratorId = (grpcResponse.hasConceptresponse()) ?
+        grpcResponse.getConceptresponse().getIteratorid() :
+        grpcResponse.getIteratorid();
     const iterator = this.iteratorFactory.createConceptIterator(iteratorId);
     const concepts = [];
     let concept = await iterator.nextResult();
@@ -27,13 +29,19 @@ ResponseConverter.prototype.conceptsFromIterator = async function (grpcResponse)
 }
 
 ResponseConverter.prototype.conceptFromResponse = function (response) {
-    const concept = (response.hasConceptresponse()) ? response.getConceptresponse().getConcept() : response.getConcept();
+    const concept = (response.hasConceptresponse()) ?
+        response.getConceptresponse().getConcept() :
+        response.getConcept();
     return this.conceptFactory.createConcept(concept)
 }
 
 ResponseConverter.prototype.conceptFromOptional = function (response) {
-    const optionalConcept = (response.hasConceptresponse()) ? response.getConceptresponse().getOptionalconcept() : response.getOptionalconcept();
-    return (optionalConcept.hasPresent()) ? this.conceptFactory.createConcept(optionalConcept.getPresent()) : null;
+    const optionalConcept = (response.hasConceptresponse()) ?
+        response.getConceptresponse().getOptionalconcept() :
+        response.getOptionalconcept();
+    return (optionalConcept.hasPresent()) ?
+        this.conceptFactory.createConcept(optionalConcept.getPresent()) :
+        null;
 }
 
 ResponseConverter.prototype.consumeRolePlayerIterator = async function (grpcConceptResponse) {
@@ -76,17 +84,23 @@ ResponseConverter.prototype.getAttributeValueFromResponse = function (resp) {
 
 ResponseConverter.prototype.getOptionalRegex = function (response) {
     const optionalRegex = response.getConceptresponse().getOptionalregex();
-    return (optionalRegex.hasPresent()) ? optionalRegex.getPresent() : null;
+    return (optionalRegex.hasPresent()) ?
+        optionalRegex.getPresent() :
+        null;
 }
 
 ResponseConverter.prototype.getOptionalPattern = function (response) {
     const optionalPattern = response.getConceptresponse().getOptionalpattern();
-    return (optionalPattern.hasPresent()) ? optionalPattern.getPresent().getValue() : null;
+    return (optionalPattern.hasPresent()) ?
+        optionalPattern.getPresent().getValue() :
+        null;
 }
 
 ResponseConverter.prototype.getOptionalDataType = function (response) {
     const optionalDatatype = response.getConceptresponse().getOptionaldatatype();
-    return (optionalDatatype.hasPresent()) ? this.dataTypeToString(optionalDatatype.getPresent()) : null;
+    return (optionalDatatype.hasPresent()) ?
+        this.dataTypeToString(optionalDatatype.getPresent()) :
+        null;
 }
 
 
@@ -96,9 +110,12 @@ function parseQueryResult(queryResult, factory) {
         return JSON.parse(queryResult.getOtherresult());
     } else {
         const answerMap = new Map();
-        queryResult.getAnswer().getAnswerMap().forEach((grpcConcept, key) => {
-            answerMap.set(key, factory.createConcept(grpcConcept));
-        });
+        queryResult
+            .getAnswer()
+            .getAnswerMap()
+            .forEach((grpcConcept, key) => {
+                answerMap.set(key, factory.createConcept(grpcConcept));
+            });
         return answerMap;
     }
 };
