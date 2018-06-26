@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "google-protobuf": "^3.6.0",
-    "grpc": "^1.12.4"
+    "grpc": "^1.12.3"
   },
   "devDependencies": {
     "jest": "^23.0.0"
