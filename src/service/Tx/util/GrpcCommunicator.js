@@ -12,7 +12,7 @@ function GrpcCommunicator(stream) {
   });
 
   this.stream.on('status', (e) => {
-    if (pending.length) this.pending.shift().reject(e);
+    if (this.pending.length) this.pending.shift().reject(e);
   })
 }
 
