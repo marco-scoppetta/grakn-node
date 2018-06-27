@@ -26,13 +26,13 @@ Now you can create a new session and open a new Grakn transaction:
 
 ```
 const session = Grakn.session('localhost:48555', 'keyspace');
-const graknTx = await session.open(Grakn.txType.WRITE);
+const graknTx = await session.transaction(Grakn.txType.WRITE);
 ```
 
 Execute Graql query (this example works inside an `async` function):
 
 ```
-const tx = await session.open(Grakn.txType.WRITE);
+const tx = await session.transaction(Grakn.txType.WRITE);
 const result = await tx.execute("match $x isa person; limit 10; get;");
 const concepts = result.map(answerMap => Array.from(answerMap.values())).reduce((a, c) => a.concat(c), []);
 // `concepts` will be an array containing 10 Entity objects
@@ -52,10 +52,10 @@ on the returned session you will then be able to call the following methods:
 
 **GraknSession**
 
-| Method Name          | Return type | Description                                                            |
-| -------------------- | ----------- | ---------------------------------------------------------------------- |
-| `open(Grakn.txType)` | *GraknTx*   | Return a new or existing GraknTx bound to the keyspace of this session |
-| `deleteKeyspace()`   | *void*      | Deletes keyspace of this session                                       |
+| Method Name                 | Return type | Description                                                |
+| --------------------------- | ----------- | ---------------------------------------------------------- |
+| `transaction(Grakn.txType)` | *GraknTx*   | Return a new GraknTx bound to the keyspace of this session |
+| `deleteKeyspace()`          | *void*      | Deletes keyspace of this session                           |
  
 
 Once obtained a `GraknTx` you will be able to:

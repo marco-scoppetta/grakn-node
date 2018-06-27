@@ -17,20 +17,20 @@ afterAll(async () => {
 describe('Integration test', () => {
 
     test('Open tx with invalid parameter throws error', async () => {
-        await expect(session.open('invalidTxType')).rejects.toThrowError();
+        await expect(session.transaction('invalidTxType')).rejects.toThrowError();
     });
 
     test("Tx open in READ mode should throw when trying to define", async () => {
-        const tx = await session.open(env.txType().READ);
+        const tx = await session.transaction(env.txType().READ);
         await expect(tx.execute("define person sub entity;")).rejects.toThrowError();
         tx.close();
     });
 
     test("If tx does not commit, different Tx won't see changes", async () => {
-        const tx = await session.open(env.txType().WRITE);
+        const tx = await session.transaction(env.txType().WRITE);
         await tx.execute("define superman sub entity;");
         tx.close()
-        const newTx = await session.open(env.txType().WRITE);
+        const newTx = await session.transaction(env.txType().WRITE);
         await expect(newTx.execute("match $x sub superman; get;")).rejects.toThrowError(); // superman label does not exist in the graph
         newTx.close();
     });

@@ -11,7 +11,7 @@ afterAll(async () => {
 });
 
 beforeEach(async () => {
-  tx = await session.open(env.txType().WRITE);
+  tx = await session.transaction(env.txType().WRITE);
 })
 
 afterEach(() => {

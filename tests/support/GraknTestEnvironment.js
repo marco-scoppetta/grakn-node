@@ -2,7 +2,7 @@ const { spawn, spawnSync } = require('child_process');
 const { StringDecoder } = require('string_decoder');
 const decoder = new StringDecoder('utf8');
 
-const Grakn = require("../../src/Grakn");
+const Grakn = require("../../build/Grakn");
 
 const DEFAULT_URI = "localhost:48555";
 const VERSION = require('../../package.json').graknVersion;

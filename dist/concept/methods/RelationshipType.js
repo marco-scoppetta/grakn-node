@@ -1,0 +1,1 @@
+"use strict";const methods={addRelationship:function(){return this.txService.addRelationship(this.id)},relates:function(a){return a?this.txService.setRelatedRole(this.id,a):this.txService.getRelatedRoles(this.id)},deleteRelates:function(a){return this.txService.unsetRelatedRole(this.id,a)}};module.exports={get:function(){return methods}};

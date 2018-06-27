@@ -26,7 +26,7 @@ function GraknSession(uri, keyspace, credentials) {
  * @param {GraknSession.txType} txType Type of transaction to open READ, WRITE or BATCH
  * @returns GraknTx
  */
-GraknSession.prototype.open = async function (txType) {
+GraknSession.prototype.transaction = async function (txType) {
   const txService = new TxService(this.stub.tx());
   await txService.openTx(this.keyspace, txType, this.credentials).catch(e => { throw e; });
   const tx = new GraknTx(txService);
