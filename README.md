@@ -52,29 +52,29 @@ on the returned session you will then be able to call the following methods:
 
 **GraknSession**
 
-| Method Name                 | Return type | Description                                                |
-| --------------------------- | ----------- | ---------------------------------------------------------- |
-| `transaction(Grakn.txType)` | *GraknTx*   | Return a new GraknTx bound to the keyspace of this session |
-| `deleteKeyspace()`          | *void*      | Deletes keyspace of this session                           |
+| Method                            | Return type | Description                                                |
+| --------------------------------- | ----------- | ---------------------------------------------------------- |
+| async `transaction(Grakn.txType)` | *GraknTx*   | Return a new GraknTx bound to the keyspace of this session |
+| async `deleteKeyspace()`          | *void*      | Deletes keyspace of this session                           |
  
 
 Once obtained a `GraknTx` you will be able to:
 
  **GraknTx**  
  
-| Method Name                                            | Return type                       | Description                                                                                                                                                   |
-| ------------------------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `execute(String graqlQuery)`                           | Array of Map<*String*, *Concept*> | Executes a Graql query on the session keyspace. It returns a list of Maps, in each map the key represents the Graql variable specified in the query           |
-| `commit()`                                             | *void*                            | Commit current GraknTx, persisting changes in the graph. After committing, the transaction will be closed and you will need to get a new one from the session |
-| `close()`                                              | *void*                            | Closes current GraknTx without committing. This makes the transaction unusable.                                                                               |
-| `getConcept(String conceptId)`                         | *Concept*                         | Retrieves a Concept by ConceptId                                                                                                                              |
-| `getSchemaConcept(String label)`                       | *SchemaConcept*                   | Retrieves a SchemaConcept by label                                                                                                                            |
-| `getAttributesByValue(attributeValue, Grakn.dataType)` | Array of *Attribute*              | Get all Attributes holding the value provided, if any exists                                                                                                  |
-| `putEntityType(String label)`                          | *EntityType*                      | Create a new EntityType with super-type entity, or return a pre-existing EntityType with the specified label                                                  |
-| `putRelationshipType(String label)`                    | *RelationshipType*                | Create a new RelationshipType with super-type relation, or return a pre-existing RelationshipType with the specified label                                    |
-| `putAttributeType(String label, Grakn.dataType)`       | *AttributeType*                   | Create a new AttributeType with super-type attribute, or return a pre-existing AttributeType with the specified label and DataType                            |
-| `putRole(String label)`                                | *Role*                            | Create a Role, or return a pre-existing Role, with the specified label.                                                                                       |
-| `putRule(String label, String when, String then)`      | *Rule*                            | Create a Rule, or return a pre-existing Rule, with the specified label                                                                                        |  |
+| Method                                                       | Return type                       | Description                                                                                                                                                   |
+| ------------------------------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| async `execute(String graqlQuery)`                           | Array of Map<*String*, *Concept*> | Executes a Graql query on the session keyspace. It returns a list of Maps, in each map the key represents the Graql variable specified in the query           |
+| async `commit()`                                             | *void*                            | Commit current GraknTx, persisting changes in the graph. After committing, the transaction will be closed and you will need to get a new one from the session |
+| async `close()`                                              | *void*                            | Closes current GraknTx without committing. This makes the transaction unusable.                                                                               |
+| async `getConcept(String conceptId)`                         | *Concept*                         | Retrieves a Concept by ConceptId                                                                                                                              |
+| async `getSchemaConcept(String label)`                       | *SchemaConcept*                   | Retrieves a SchemaConcept by label                                                                                                                            |
+| async `getAttributesByValue(attributeValue, Grakn.dataType)` | Array of *Attribute*              | Get all Attributes holding the value provided, if any exists                                                                                                  |
+| async `putEntityType(String label)`                          | *EntityType*                      | Create a new EntityType with super-type entity, or return a pre-existing EntityType with the specified label                                                  |
+| async `putRelationshipType(String label)`                    | *RelationshipType*                | Create a new RelationshipType with super-type relation, or return a pre-existing RelationshipType with the specified label                                    |
+| async `putAttributeType(String label, Grakn.dataType)`       | *AttributeType*                   | Create a new AttributeType with super-type attribute, or return a pre-existing AttributeType with the specified label and DataType                            |
+| async `putRole(String label)`                                | *Role*                            | Create a Role, or return a pre-existing Role, with the specified label.                                                                                       |
+| async `putRule(String label, String when, String then)`      | *Rule*                            | Create a Rule, or return a pre-existing Rule, with the specified label                                                                                        |  |
 
 **Concepts hierarchy** 
 
@@ -102,9 +102,9 @@ Grakn is composed of different types of Concepts, that have a specific hierarchy
 
 These methods are available on every type of `Concept` 
 
-| Method Name            | Return type | Description                                      |
+| Method                 | Return type | Description                                      |
 | ---------------------- | ----------- | ------------------------------------------------ |
-| `delete()`             | *void*      | Delete concept                                   |
+| async `delete()`       | *void*      | Delete concept                                   |
 | `isSchemaConcept()`    | *Boolean*   | Check whether this Concept is a SchemaConcept    |
 | `isType() `            | *Boolean*   | Check whether this Concept is a Type             |
 | `isThing() `           | *Boolean*   | Check whether this Concept is a Thing            |
@@ -121,53 +121,53 @@ These methods are available on every type of `Concept`
 
 A `SchemaConcept` concept has all the `Concept` methods plus the following:
 
-| Method Name    | Return type                | Description                                                                                                                                                          |
-| -------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getLabel()`   | *String*                   | Get label of this SchemaConcept                                                                                                                                      |
-| `setLabel()`   | *void*                     | Set label of this SchemaConcept                                                                                                                                      |
-| `isImplicit()` | *Boolean*                  | Returns `true` when the SchemaConcept is implicit, i.e. when it's been created by Grakn and not explicitly by the user, `false` when explicitly created by the user. |
-| `sup(Type)`    | *void*                     | Set direct super SchemaConcept of this SchemaConcept                                                                                                                 |
-| `sup()`        | *SchemaConcept*  or *null* | Get direct super SchemaConcept of this SchemaConcept                                                                                                                 |
-| `subs()`       | Array of *SchemaConcept*   | Get all indirect subs of this SchemaConcept.                                                                                                                         |
-| `sups()`       | Array of *SchemaConcept*   | Get all indirect sups of this SchemaConcept.                                                                                                                         |
+| Method               | Return type                | Description                                                                                                                                                          |
+| -------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| async `getLabel()`   | *String*                   | Get label of this SchemaConcept                                                                                                                                      |
+| async `setLabel()`   | *void*                     | Set label of this SchemaConcept                                                                                                                                      |
+| async `isImplicit()` | *Boolean*                  | Returns `true` when the SchemaConcept is implicit, i.e. when it's been created by Grakn and not explicitly by the user, `false` when explicitly created by the user. |
+| async `sup(Type)`    | *void*                     | Set direct super SchemaConcept of this SchemaConcept                                                                                                                 |
+| async `sup()`        | *SchemaConcept*  or *null* | Get direct super SchemaConcept of this SchemaConcept                                                                                                                 |
+| async `subs()`       | Array of *SchemaConcept*   | Get all indirect subs of this SchemaConcept.                                                                                                                         |
+| async `sups()`       | Array of *SchemaConcept*   | Get all indirect sups of this SchemaConcept.                                                                                                                         |
    
   **Thing** 
 
  A `Thing` concept has all the `Concept` methods plus the following: 
 
- | Method Name                    | Return type             | Description                                                                                                                                                                       |
- | ------------------------------ | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
- | `isInferred()`                 | *Boolean*               | Returns `true` if this Thing is inferred by Reasoner, `false` otherwise                                                                                                           |
- | `type()`                       | *Type*                  | Returns a Type which is the type of this Thing. This Thing is an instance of that type.                                                                                           |
- | `relationships(...Role)`       | Array of *Relationship* | Returns Relationships which this Thing takes part in, which may **optionally** be narrowed to a particular set according to the Roles you are interested in                       |
- | `attributes(...AttributeType)` | Array of *Attribute*    | Returns Attributes attached to this Thing, which may **optionally** be narrowed to a particular set according to the AttributeTypes you are interested in                         |
- | `plays()`                      | Array of *Role*         | Returns the Roles that this Thing is currently playing                                                                                                                            |
- | `keys(...Attributetype)`       | Array of *Attribute*    | Returns a collection of Attribute attached to this Thing as a key, which may **optionally** be narrowed to a particular set according to the AttributeTypes you are interested in |
- | `attribute(Attribute)`         | *void*                  | Attaches the provided Attribute to this Thing                                                                                                                                     |
- | `deleteAttribute(Attribute)`   | *void*                  | Removes the provided Attribute from this Thing                                                                                                                                    |
+ | Method                               | Return type             | Description                                                                                                                                                                       |
+ | ------------------------------------ | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+ | async `isInferred()`                 | *Boolean*               | Returns `true` if this Thing is inferred by Reasoner, `false` otherwise                                                                                                           |
+ | async `type()`                       | *Type*                  | Returns a Type which is the type of this Thing. This Thing is an instance of that type.                                                                                           |
+ | async `relationships(...Role)`       | Array of *Relationship* | Returns Relationships which this Thing takes part in, which may **optionally** be narrowed to a particular set according to the Roles you are interested in                       |
+ | async `attributes(...AttributeType)` | Array of *Attribute*    | Returns Attributes attached to this Thing, which may **optionally** be narrowed to a particular set according to the AttributeTypes you are interested in                         |
+ | async `plays()`                      | Array of *Role*         | Returns the Roles that this Thing is currently playing                                                                                                                            |
+ | async `keys(...Attributetype)`       | Array of *Attribute*    | Returns a collection of Attribute attached to this Thing as a key, which may **optionally** be narrowed to a particular set according to the AttributeTypes you are interested in |
+ | async `attribute(Attribute)`         | *void*                  | Attaches the provided Attribute to this Thing                                                                                                                                     |
+ | async `deleteAttribute(Attribute)`   | *void*                  | Removes the provided Attribute from this Thing                                                                                                                                    |
    
   **Attribute** 
 
   An `Attribute` concept has all the `Thing` methods plus the following:
 
   
- | Method Name        | Return type      | Description                                               |
- | ------------------ | ---------------- | --------------------------------------------------------- |
- | `dataType()`       | *String*         | Returns DataType of this Attribute                        |
- | `getValue()`       | *String*         | Get value of this Attribute                               |
- | `ownerInstances()` | Array of *Thing* | Returns the set of all Things that possess this Attribute |
+ | Method                   | Return type      | Description                                               |
+ | ------------------------ | ---------------- | --------------------------------------------------------- |
+ | async `dataType()`       | *String*         | Returns DataType of this Attribute                        |
+ | async `getValue()`       | *String*         | Get value of this Attribute                               |
+ | async `ownerInstances()` | Array of *Thing* | Returns the set of all Things that possess this Attribute |
    
   **Relationship**  
 
 A `Relationship` concept has all the `Thing` methods plus the following:
 
   
-| Method Name                     | Return type               | Description                                                                                              |
-| ------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `allRolePlayers()`              | Map<*Role*, Set<*Thing*>> | Returns a Map that links all the Roles of this Relationship to all the Things that are playing each Role |
-| `rolePlayers(...Role)`          | Array of *Thing*          | Returns a list of every Thing involved in this Relationship, optionally filtered by Roles played         |
-| `addRolePlayer(Role, Thing)`    | *void*                    | Expands this Relationship to include a new role player (Thing) which is playing a specific Role          |
-| `removeRolePlayer(Role, Thing)` | *void*                    | Removes the Thing which is playing a Role in this Relationship.                                          |  |
+| Method                                | Return type               | Description                                                                                              |
+| ------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------- |
+| async `allRolePlayers()`              | Map<*Role*, Set<*Thing*>> | Returns a Map that links all the Roles of this Relationship to all the Things that are playing each Role |
+| async `rolePlayers(...Role)`          | Array of *Thing*          | Returns a list of every Thing involved in this Relationship, optionally filtered by Roles played         |
+| async `addRolePlayer(Role, Thing)`    | *void*                    | Expands this Relationship to include a new role player (Thing) which is playing a specific Role          |
+| async `removeRolePlayer(Role, Thing)` | *void*                    | Removes the Thing which is playing a Role in this Relationship.                                          |  |
 
     NB: There are no specific methods for `Entity` concept.
 
@@ -176,68 +176,68 @@ A `Relationship` concept has all the `Thing` methods plus the following:
 A `Type` concept has all the `SchemaConcept` methods plus the following:
 
   
-| Method Name                      | Return type              | Description                                                                                                                    |
-| -------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `setAbstract(Boolean)`           | *void*                   | Sets the Type to be abstract - which prevents it from having any instances                                                     |
-| `isAbstract()`                   | *Boolean*                | Returns `true` if the type is set to abstract, `false` otherwise                                                               |
-| `plays()`                        | Array of *Role*          | Returns all the Roles which instances of this Type can indirectly play                                                         |
-| `plays(Role)`                    | *void*                   | Add a new Role to the ones that the instances of this Type are allowed to play                                                 |
-| `attributes()`                   | Array of *AttributeType* | The AttributeTypes which this Type is linked with.                                                                             |
-| `instances()`                    | Array of *Thing*         | Get all indirect instances of this Type                                                                                        |
-| `keys()`                         | Array of *AttributeType* | The AttributeTypes which this Type is linked with as a key                                                                     |
-| `key(AttributeType)`             | *void*                   | Creates an implicit RelationshipType which allows this Type and a AttributeType to be linked in a strictly one-to-one mapping. |
-| `attribute(AttributeType)`       | *void*                   | Add a new AttributeType which the instances of this Type are allowed to have attached to themselves                            |
-| `deletePlays(Role)`              | *void*                   | Delete a Role from the ones that the instances of this Type are allowed to play                                                |
-| `deleteAttribute(AttributeType)` | *void*                   | Delete AttributeType from the ones that the instances of this Type are allowed to have attached to themselves                  |
-| `deleteKey(AttributeType)`       | *void*                   | Delete AttributeType from available keys                                                                                       |
+| Method                                 | Return type              | Description                                                                                                                    |
+| -------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| async `setAbstract(Boolean)`           | *void*                   | Sets the Type to be abstract - which prevents it from having any instances                                                     |
+| async `isAbstract()`                   | *Boolean*                | Returns `true` if the type is set to abstract, `false` otherwise                                                               |
+| async `plays()`                        | Array of *Role*          | Returns all the Roles which instances of this Type can indirectly play                                                         |
+| async `plays(Role)`                    | *void*                   | Add a new Role to the ones that the instances of this Type are allowed to play                                                 |
+| async `attributes()`                   | Array of *AttributeType* | The AttributeTypes which this Type is linked with.                                                                             |
+| async `instances()`                    | Array of *Thing*         | Get all indirect instances of this Type                                                                                        |
+| async `keys()`                         | Array of *AttributeType* | The AttributeTypes which this Type is linked with as a key                                                                     |
+| async `key(AttributeType)`             | *void*                   | Creates an implicit RelationshipType which allows this Type and a AttributeType to be linked in a strictly one-to-one mapping. |
+| async `attribute(AttributeType)`       | *void*                   | Add a new AttributeType which the instances of this Type are allowed to have attached to themselves                            |
+| async `deletePlays(Role)`              | *void*                   | Delete a Role from the ones that the instances of this Type are allowed to play                                                |
+| async `deleteAttribute(AttributeType)` | *void*                   | Delete AttributeType from the ones that the instances of this Type are allowed to have attached to themselves                  |
+| async `deleteKey(AttributeType)`       | *void*                   | Delete AttributeType from available keys                                                                                       |
   
   **AttributeType**
 
   An `AttributeType` concept has all the `Type` methods plus the following:
 
   
-  | Method Name           | Return type           | Description                                                                                                                                              |
-  | --------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | `putAttribute(value)` | *Attribute*           | Returns new or existing Attribute of this type with the provided value. The value provided must conform to the DataType specified for this AttributeType |
-  | `getAttribute(value)` | *Attribute* or *null* | Returns the Attribute with the provided value or null if no such Attribute exists                                                                        |
-  | `getDataType()`       | *String*              | Get the data type to which instances of the AttributeType must have                                                                                      |
-  | `getRegex()`          | *String* or *null*    | Retrieve the regular expression to which instances of this AttributeType must conform to, or `null` if no regular expression is set                      |
-  | `setRegex()`          | *void*                | Set the regular expression that instances of the AttributeType must conform to                                                                           |
+  | Method                      | Return type           | Description                                                                                                                                              |
+  | --------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | async `putAttribute(value)` | *Attribute*           | Returns new or existing Attribute of this type with the provided value. The value provided must conform to the DataType specified for this AttributeType |
+  | async `getAttribute(value)` | *Attribute* or *null* | Returns the Attribute with the provided value or null if no such Attribute exists                                                                        |
+  | async `getDataType()`       | *String*              | Get the data type to which instances of the AttributeType must have                                                                                      |
+  | async `getRegex()`          | *String* or *null*    | Retrieve the regular expression to which instances of this AttributeType must conform to, or `null` if no regular expression is set                      |
+  | async `setRegex()`          | *void*                | Set the regular expression that instances of the AttributeType must conform to                                                                           |
    
   **RelationshipType**  
 
   A `RelationshipType` concept has all the `Type` methods plus the following:
  
- | Method Name           | Return type     | Description                                                                          |
- | --------------------- | --------------- | ------------------------------------------------------------------------------------ |
- | `addRelationship()`   | *Relationship*  | Creates and returns a new Relationship instance, whose direct type will be this type |
- | `relates()`           | Array of *Role* | Returns a list of the RoleTypes which make up this RelationshipType                  |
- | `relates(Role)`       | *void*          | Sets a new Role for this RelationshipType                                            |
- | `deleteRelates(Role)` | *void*          | Delete a Role from this RelationshipType                                             |
+ | Method                      | Return type     | Description                                                                          |
+ | --------------------------- | --------------- | ------------------------------------------------------------------------------------ |
+ | async `addRelationship()`   | *Relationship*  | Creates and returns a new Relationship instance, whose direct type will be this type |
+ | async `relates()`           | Array of *Role* | Returns a list of the RoleTypes which make up this RelationshipType                  |
+ | async `relates(Role)`       | *void*          | Sets a new Role for this RelationshipType                                            |
+ | async `deleteRelates(Role)` | *void*          | Delete a Role from this RelationshipType                                             |
   
   **EntityType**  
 
   An `EntityType` concept has all the `Type` methods plus the following:
 
-  | Method Name   | Return type | Description                                                                    |
-  | ------------- | ----------- | ------------------------------------------------------------------------------ |
-  | `addEntity()` | *Entity*    | Creates and returns a new Entity instance, whose direct type will be this type |
+  | Method              | Return type | Description                                                                    |
+  | ------------------- | ----------- | ------------------------------------------------------------------------------ |
+  | async `addEntity()` | *Entity*    | Creates and returns a new Entity instance, whose direct type will be this type |
 
 
   **Role**  
 
   A `Role` concept has all the `SchemaConcept` methods plus the following:
   
-| Method Name           | Return type                 | Description                                                 |
-| --------------------- | --------------------------- | ----------------------------------------------------------- |
-| `relationshipTypes()` | Array of *RelationshipType* | Returns the RelationshipTypes that this Role takes part in. |
-| `playedByTypes()`     | Array of *Type*             | Returns a collection of the Types that can play this Role   |
+| Method                      | Return type                 | Description                                                 |
+| --------------------------- | --------------------------- | ----------------------------------------------------------- |
+| async `relationshipTypes()` | Array of *RelationshipType* | Returns the RelationshipTypes that this Role takes part in. |
+| async `playedByTypes()`     | Array of *Type*             | Returns a collection of the Types that can play this Role   |
   
   **Rule**  
 
 A `Rule` concept has all the `SchemaConcept` methods plus the following:  
   
-| Method Name | Return type | Description                                                                                                |
-| ----------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
-| `getWhen()` | *String*    | Retrieves the when part of this Rule. When this query is satisfied the "then" part of the rule is executed |
-| `getThen()` | *String*    | Retrieves the then part of this Rule. This query is executed when the "when" part of the rule is satisfied |
+| Method            | Return type | Description                                                                                                |
+| ----------------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
+| async `getWhen()` | *String*    | Retrieves the when part of this Rule. When this query is satisfied the "then" part of the rule is executed |
+| async `getThen()` | *String*    | Retrieves the then part of this Rule. This query is executed when the "when" part of the rule is satisfied |

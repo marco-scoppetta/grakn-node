@@ -2,10 +2,9 @@ const { spawn, spawnSync } = require('child_process');
 const { StringDecoder } = require('string_decoder');
 const decoder = new StringDecoder('utf8');
 
-const Grakn = require("../../build/Grakn");
+const Grakn = require("../../dist/Grakn");
 
 const DEFAULT_URI = "localhost:48555";
-const VERSION = require('../../package.json').graknVersion;
 const SCRIPT_PATH = './tests/support/env.sh';
 const INTEGRATION_TESTS_TIMEOUT = 2000000;
 const TEST_KEYSPACE = 'testkeyspace';
@@ -21,7 +20,7 @@ jest.setTimeout(INTEGRATION_TESTS_TIMEOUT);
 
 module.exports = {
     beforeAll: function () {
-        var process = spawnSync(SCRIPT_PATH, ['start', VERSION]);
+        var process = spawnSync(SCRIPT_PATH, ['start', '1.2.0']);
         if (process.status != 0) {
             var err = Buffer.from(process.output[2]);
             console.log('Failed to start test env: ' + decoder.write(err));
